@@ -27,7 +27,7 @@ export interface SimenvConfig {
   /**
    * @generated from protobuf field: string args = 2;
    */
-  args: string; // args of the simenv type, format: json string of struct
+  args: string; // args of the simenv, format: json string of struct
 }
 /**
  * @generated from protobuf message game.simenv.SimCmd
@@ -36,11 +36,11 @@ export interface SimCmd {
   /**
    * @generated from protobuf field: string type = 1;
    */
-  type: string; // sim command type, predefine: init/start/pause/step/resume/stop/episode/param
+  type: string; // cmd: init/start/pause/step/resume/stop/episode/param
   /**
    * @generated from protobuf field: string params = 2;
    */
-  params: string; // params of the command type, format: json string of struct
+  params: string; // params of the cmd, format: json string of struct
 }
 /**
  * @generated from protobuf message game.simenv.SimInfo
@@ -49,7 +49,7 @@ export interface SimInfo {
   /**
    * @generated from protobuf field: string state = 1;
    */
-  state: string; // sim state, preset: uninited/stopped/running/suspended
+  state: string; // sim state: uninited/stopped/running/suspended
   /**
    * @generated from protobuf field: string data = 2;
    */

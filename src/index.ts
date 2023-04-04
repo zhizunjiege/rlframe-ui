@@ -1,6 +1,6 @@
 import App from "./App.vue";
 
-import { Quasar, Notify, LocalStorage, SessionStorage } from "quasar";
+import { Quasar, Notify } from "quasar";
 import iconSet from "quasar/icon-set/bootstrap-icons";
 import langCn from "quasar/lang/zh-CN";
 import "quasar/src/css/index.sass";
@@ -38,8 +38,6 @@ const quasarConfig = {
   lang: langCn,
   plugins: {
     Notify,
-    LocalStorage,
-    SessionStorage,
   },
 };
 

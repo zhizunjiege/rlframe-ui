@@ -1,0 +1,26 @@
+input::placeholder,
+textarea::placeholder {
+  color: var(--q-foil) !important;
+}
+
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 8px;
+  background-color: var(--q-primary);
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background-color: var(--q-secondary);
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 0.25rem;
+  background-color: var(--q-info);
+}
+
+.ui-icon {
+  cursor: pointer;
+  color: var(--q-positive);
+  &:hover {
+    color: var(--q-accent);
+  }
+}

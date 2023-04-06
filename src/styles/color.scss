@@ -1,55 +1,57 @@
-@import "./variables.scss";
+@use "sass:map";
 
 // used for light mode
+$light-colors: (
+  primary: #1976d2ff,
+  secondary: #26a69aff,
+  positive: #21ba45ff,
+  info: #31ccecff,
+  warning: #f2c037ff,
+  negative: #c10015ff,
+  accent: #00e0ffff,
+  ignore: #afafafaf,
+  disable: #efefefef,
+  foreground: #000000ff,
+  background: #f0f0f0ff,
+);
 body.body--light {
-  --q-primary: #1976d2ff;
-  --q-secondary: #26a69aff;
-  --q-positive: #21ba45ff;
-  --q-negative: #c10015ff;
-  --q-accent: #9c27b0ff;
-  --q-foil: #ffffff73;
-  --q-info: #31ccecff;
-  --q-warning: #f2c037ff;
-  --q-error: #c10015ff;
-  --q-disable: #040b22ff;
+  @each $name, $color in $light-colors {
+    --ui-#{$name}: #{$color};
+  }
+
+  color: map.get($light-colors, foreground);
+  background-color: map.get($light-colors, background);
 }
 
 // used for dark mode
+$dark-colors: (
+  primary: #10253fb2,
+  secondary: #10253fff,
+  positive: #21ba45ff,
+  info: #31ccecff,
+  warning: #f2c037ff,
+  negative: #c10015ff,
+  accent: #00e0ffff,
+  ignore: #4f4f4f4f,
+  disable: #1212124f,
+  foreground: #ffffffff,
+  background: #040b22ff,
+);
 body.body--dark {
-  --q-primary: #10253fb2;
-  --q-secondary: #10253fff;
-  --q-positive: #ffffffff;
-  --q-negative: #ffffff0d;
-  --q-accent: #00e0ffff;
-  --q-foil: #ffffff73;
-  --q-info: #068295ff;
-  --q-warning: #f2c037ff;
-  --q-error: #c10015ff;
-  --q-disable: #040b22ff;
-}
+  @each $name, $color in $dark-colors {
+    --ui-#{$name}: #{$color};
+  }
 
-// used for quasar internal dark mode
-body {
-  --q-dark: #10253fb2;
-  --q-dark-page: #040b22ff;
+  color: map.get($dark-colors, foreground);
+  background-color: map.get($dark-colors, background);
 }
 
 // warpped with class
-.bg-foil {
-  background-color: var(--q-foil) !important;
-}
-.text-foil {
-  color: var(--q-foil) !important;
-}
-.bg-error {
-  background-color: var(--q-error) !important;
-}
-.text-error {
-  color: var(--q-error) !important;
-}
-.bg-disable {
-  background-color: var(--q-disable) !important;
-}
-.text-disable {
-  color: var(--q-disable) !important;
+@each $name, $_ in $dark-colors {
+  .bg-#{$name} {
+    background-color: var(--ui-#{$name}) !important;
+  }
+  .text-#{$name} {
+    color: var(--ui-#{$name}) !important;
+  }
 }

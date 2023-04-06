@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf" class="fullscreen">
-    <q-header>
+    <q-header class="bg-primary">
       <q-toolbar>
         <q-img :src="Logo" width="2rem" alt="Logo" class="q-mr-md" />
         <q-img :src="Brand" width="12rem" alt="Brand" class="q-mr-xl" />
@@ -53,7 +53,11 @@
         </q-toolbar-title>
         <q-space />
         <q-toolbar-title shrink class="text-subtitle2">
-          {{ isTaskOpen ? taskStore.task!.name : "" }}
+          {{
+            isTaskOpen
+              ? taskStore.task!.name + (taskStore.saved ? "" : "*")
+              : ""
+          }}
         </q-toolbar-title>
         <q-space />
         <q-icon
@@ -71,7 +75,6 @@
       :mini="mini"
       :width="200"
       side="left"
-      class="ui-drawer"
       @mouseover="mini = false"
       @mouseout="mini = true"
     >
@@ -81,7 +84,7 @@
           clickable
           :disable="!isTaskOpen"
           to="/home/task/basic"
-          active-class="ui-tab-active"
+          active-class="bg-secondary text-accent"
         >
           <q-item-section avatar>
             <q-icon name="bi-info-circle" />
@@ -93,7 +96,7 @@
           clickable
           :disable="!isTaskOpen"
           to="/home/task/services"
-          active-class="ui-tab-active"
+          active-class="bg-secondary text-accent"
         >
           <q-item-section avatar>
             <q-icon name="bi-cpu" />
@@ -104,8 +107,8 @@
           v-ripple
           clickable
           :disable="!isTaskOpen"
-          to="homr/task/routes"
-          active-class="ui-tab-active"
+          to="/home/task/routes"
+          active-class="bg-secondary text-accent"
         >
           <q-item-section avatar>
             <q-icon name="bi-router" />
@@ -124,11 +127,13 @@
 </template>
 
 <script setup lang="ts">
+import { QDialogOptions } from "quasar";
 import Brand from "~/assets/brand.png";
 import Logo from "~/assets/logo.png";
 
 import { useTaskStore } from "~/stores/task";
 
+const $q = useQuasar();
 const router = useRouter();
 const taskStore = useTaskStore();
 
@@ -149,24 +154,62 @@ function pageStyle(offset: number, height: number) {
   };
 }
 
+const saveDialog: QDialogOptions = {
+  title: "提示",
+  message: "是否保存当前任务？",
+  cancel: true,
+  persistent: true,
+  options: {
+    type: "radio",
+    model: "save",
+    inline: true,
+    items: [
+      { label: "保存", value: "save" },
+      { label: "不保存", value: "dont" },
+    ],
+  },
+};
+
 // new task
 function newTask() {
-  router.push("/home/task");
+  if (!taskStore.saved) {
+    $q.dialog(saveDialog).onOk(async (data: string) => {
+      if (data === "save") {
+        await taskStore.saveTask();
+      }
+      taskStore.newTask();
+      router.push("/home/task/basic");
+    });
+  } else {
+    taskStore.newTask();
+    router.push("/home/task/basic");
+  }
 }
 
 // open task
 function openTask() {
-  router.push("/home/task/manage");
+  router.push("/home/task/manage?openonly=true");
 }
 
 // save task
-function saveTask() {
-  router.push("/home/task?id=-1");
+async function saveTask() {
+  await taskStore.saveTask();
 }
 
 // close task
 function closeTask() {
-  router.push("/home");
+  if (!taskStore.saved) {
+    $q.dialog(saveDialog).onOk(async (data: string) => {
+      if (data === "save") {
+        await taskStore.saveTask();
+      }
+      taskStore.closeTask();
+      router.push("/home");
+    });
+  } else {
+    taskStore.closeTask();
+    router.push("/home");
+  }
 }
 </script>
 
@@ -177,9 +220,5 @@ function closeTask() {
 }
 .ui-menu-item {
   min-width: 4.5rem;
-}
-.ui-tab-active {
-  background-color: var(--q-negative);
-  color: var(--q-accent);
 }
 </style>

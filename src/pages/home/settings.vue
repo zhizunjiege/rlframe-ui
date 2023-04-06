@@ -11,8 +11,8 @@
               <q-input
                 v-model.lazy="bffAddr"
                 dense
-                standout="bg-negative"
-                input-class="text-positive"
+                standout="bg-ignore"
+                input-class="text-foreground"
                 class="ui-input"
                 @blur="appStore.systemSettings.bffAddr = bffAddr"
               />
@@ -24,8 +24,9 @@
               <q-input
                 v-model.lazy="webAddr"
                 dense
-                standout="bg-negative"
-                input-class="text-positive"
+                disable
+                standout="bg-ignore"
+                input-class="text-foreground"
                 class="ui-input"
                 @blur="appStore.systemSettings.webAddr = webAddr"
               />
@@ -50,9 +51,9 @@
                 v-model="appStore.systemSettings.defaultEngine"
                 :options="simEngines"
                 dense
-                standout="bg-negative"
-                input-class="text-positive"
-                popup-content-class="bg-secondary"
+                standout="bg-ignore"
+                input-class="text-foreground"
+                popup-content-class="shadow-0 bg-secondary"
                 options-selected-class="text-accent"
                 class="ui-input"
               />
@@ -70,8 +71,8 @@
                 v-model.number="appStore.systemSettings.maxTerminalMsgs"
                 dense
                 type="number"
-                standout="bg-negative"
-                input-class="text-positive"
+                standout="bg-ignore"
+                input-class="text-foreground"
                 class="ui-input"
               />
             </td>
@@ -88,8 +89,8 @@
                 v-model.number="appStore.systemSettings.localDataExpire"
                 dense
                 type="number"
-                standout="bg-negative"
-                input-class="text-positive"
+                standout="bg-ignore"
+                input-class="text-foreground"
                 class="ui-input"
               />
             </td>
@@ -110,7 +111,7 @@ const bffAddr = ref(appStore.systemSettings.bffAddr);
 const webAddr = ref(appStore.systemSettings.webAddr);
 
 // simulation engines
-const simEngines = ref(["CQSim"]);
+const simEngines = ref(["CQSIM"]);
 </script>
 
 <style scoped lang="scss">
@@ -124,10 +125,9 @@ const simEngines = ref(["CQSim"]);
   td {
     font-size: 0.875rem;
     padding: 0.5rem 1.5rem;
-    border-color: var(--q-negative);
+    border-color: var(--ui-secondary);
   }
 }
-
 .ui-input {
   float: right;
   width: 75%;

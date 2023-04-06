@@ -24,7 +24,7 @@
             v-for="(task, index) in taskStore.recent"
             :key="task.id"
             class="cursor-pointer ui-row"
-            @click="openTask(index)"
+            @click="openTask(task.id)"
           >
             <td>{{ task.id }}</td>
             <td class="ellipsis">
@@ -46,7 +46,7 @@
                 name="bi-x-circle"
                 size="xs"
                 class="ui-icon"
-                @click.stop="deleteTask(index)"
+                @click.stop="taskStore.delRecentTask(index)"
               >
                 <q-tooltip anchor="top right" self="top left">
                   清除记录
@@ -69,16 +69,22 @@
 <script setup lang="ts">
 import { useTaskStore } from "~/stores/task";
 
+const $q = useQuasar();
+const router = useRouter();
 const taskStore = useTaskStore();
 
 // open task
-function openTask(index: number) {
-  console.log(index);
-}
-
-// delete recent task
-function deleteTask(index: number) {
-  console.log(index);
+async function openTask(id: number) {
+  try {
+    await taskStore.openTask(id);
+    router.push("/home/task/basic");
+  } catch (e) {
+    $q.notify({
+      type: "negative",
+      message: "打开任务失败，该任务可能已失效",
+    });
+    console.error(e);
+  }
 }
 </script>
 
@@ -92,14 +98,14 @@ function deleteTask(index: number) {
 }
 .ui-row {
   &:hover {
-    background-color: var(--q-primary);
+    background-color: var(--ui-primary);
   }
 }
 .ui-thead {
   position: sticky;
   top: 0;
   z-index: 1;
-  background-color: var(--q-secondary);
+  background-color: var(--ui-secondary);
   th {
     font-size: 1rem !important;
   }

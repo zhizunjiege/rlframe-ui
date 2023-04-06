@@ -4,6 +4,7 @@
 
 <script setup lang="ts">
 import { useAppStore } from "~/stores/app";
+import { useTaskStore } from "~/stores/task";
 
 const $q = useQuasar();
 
@@ -22,7 +23,7 @@ watch(
       await appStore.grpc!.queryService({ ids: [] });
     } catch (e) {
       $q.notify({
-        type: "error",
+        type: "negative",
         message: "连接BFF服务失败，请检查地址是否正确",
       });
       console.error(e);
@@ -38,13 +39,26 @@ watch(
       await appStore.rest!.meta();
     } catch (e) {
       $q.notify({
-        type: "error",
+        type: "negative",
         message: "连接WEB服务失败，请检查地址是否正确",
       });
       console.error(e);
     }
   },
   { immediate: true }
+);
+
+const taskStore = useTaskStore();
+
+taskStore.loadRecentTasks();
+onBeforeUnmount(taskStore.saveRecentTasks);
+
+watch(
+  () => taskStore.task,
+  () => {
+    taskStore.saved = false;
+  },
+  { deep: true }
 );
 </script>
 

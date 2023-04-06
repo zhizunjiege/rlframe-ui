@@ -85,12 +85,6 @@ type SelectOptions = {
   offset?: number;
 };
 
-// insert data
-type InsertData<T extends keyof DBTables> = Omit<DBTables[T], "id">;
-
-// update data
-type UpdateData<T extends keyof DBTables> = Partial<Omit<DBTables[T], "id">>;
-
 // RestClient class used to communicate with the database
 class RestClient {
   private addr: string;
@@ -109,10 +103,10 @@ class RestClient {
 
   public async select<T extends keyof DBTables>(
     table: T,
-    columns: string[] = [],
+    columns: (keyof DBTables[T])[] = [],
     options: SelectOptions = {}
   ): Promise<DBTables[T][]> {
-    const colArgs = columns.map((v) => `columns=${v}`);
+    const colArgs = columns.map((v) => `columns=${v as string}`);
     const optArgs = Object.entries(options).map(([k, v]) => `${k}=${v}`);
     const args = [...colArgs, ...optArgs].join("&");
     const response = await fetch(`${this.addr}/${table}?${args}`, {
@@ -127,7 +121,7 @@ class RestClient {
 
   public async insert<T extends keyof DBTables>(
     table: T,
-    data: InsertData<T>
+    data: DBTables[T]
   ): Promise<{ lastrowid: number }> {
     const row = { ...data } as DBTables[T];
     this.encode(table, row);
@@ -143,12 +137,11 @@ class RestClient {
 
   public async update<T extends keyof DBTables>(
     table: T,
-    id: number,
-    data: UpdateData<T>
+    data: Partial<DBTables[T]>
   ): Promise<{ rowcount: number }> {
     const row = { ...data } as DBTables[T];
     this.encode(table, row);
-    const response = await fetch(`${this.addr}/${table}/${id}`, {
+    const response = await fetch(`${this.addr}/${table}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -158,12 +151,40 @@ class RestClient {
     return response.json();
   }
 
+  public async replace<T extends keyof DBTables>(
+    table: T,
+    data: Partial<DBTables[T]>
+  ): Promise<{ lastrowid: number; rowcount: number }> {
+    const id = data.id;
+    if (id !== undefined) {
+      if (id < 0) {
+        const rst = await this.insert(table, data as DBTables[T]);
+        return {
+          lastrowid: rst.lastrowid,
+          rowcount: 1,
+        };
+      } else {
+        const rst = await this.update(table, data);
+        return {
+          lastrowid: id,
+          rowcount: rst.rowcount,
+        };
+      }
+    } else {
+      throw new Error("Id is required");
+    }
+  }
+
   public async delete<T extends keyof DBTables>(
     table: T,
-    id: number
+    ids: number[]
   ): Promise<{ rowcount: number }> {
-    const response = await fetch(`${this.addr}/${table}/${id}`, {
+    const response = await fetch(`${this.addr}/${table}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ids }),
     });
     return response.json();
   }

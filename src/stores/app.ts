@@ -5,7 +5,6 @@ export const useAppStore = defineStore("app", {
     systemSettings: {
       bffAddr: "localhost:9999", // address of bff server
       webAddr: window.location.host, // address of web server
-      defaultEngine: "CQSIM", // default simulation engine
       maxTerminalMsgs: 200, // max number of terminal messages
       localDataExpire: 365, // local storage expire time in days
     },

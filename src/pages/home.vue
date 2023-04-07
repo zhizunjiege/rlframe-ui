@@ -131,11 +131,27 @@ import { QDialogOptions } from "quasar";
 import Brand from "~/assets/brand.png";
 import Logo from "~/assets/logo.png";
 
-import { useTaskStore } from "~/stores/task";
+import { useTaskStore } from "~/stores";
 
 const $q = useQuasar();
 const router = useRouter();
 const taskStore = useTaskStore();
+
+taskStore.loadRecentTasks();
+onBeforeUnmount(taskStore.saveRecentTasks);
+
+// watch for task change
+watch(
+  () => taskStore.task,
+  () => {
+    if (taskStore.direct) {
+      taskStore.direct = false;
+    } else {
+      taskStore.saved = false;
+    }
+  },
+  { deep: true }
+);
 
 // current task
 const isTaskOpen = computed(() => {
@@ -151,6 +167,7 @@ function pageStyle(offset: number, height: number) {
   return {
     minHeight: h,
     height: h,
+    overflow: "auto",
   };
 }
 
@@ -220,5 +237,25 @@ function closeTask() {
 }
 .ui-menu-item {
   min-width: 4.5rem;
+}
+</style>
+
+<style lang="scss">
+.ui-task-card {
+  width: 50%;
+}
+.ui-task-table {
+  table {
+    table-layout: fixed;
+  }
+  td {
+    font-size: 0.875rem !important;
+    padding: 0.5rem 1.5rem !important;
+    border-color: var(--ui-secondary) !important;
+  }
+}
+.ui-task-input {
+  float: right;
+  width: 75%;
 }
 </style>

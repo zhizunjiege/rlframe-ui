@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { useTaskStore } from "~/stores/task";
+import { useTaskStore } from "~/stores";
 
 const $q = useQuasar();
 const router = useRouter();

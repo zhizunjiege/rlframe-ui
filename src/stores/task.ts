@@ -1,5 +1,6 @@
 import { AgentTable, SimenvTable, TaskTable } from "api";
 import { useAppStore } from "./app";
+import { getTimeString } from "~/utils";
 
 type CurrentTask = Modified<
   Required<TaskTable>,
@@ -25,6 +26,7 @@ type RecentTask = Required<
 export const useTaskStore = defineStore("task", {
   state: () => ({
     saved: true, // task is saved
+    direct: false, // saved is directly edited
     task: null as Nullable<CurrentTask>, // current task
     recent: [] as RecentTask[], // recent tasks
   }),
@@ -59,10 +61,9 @@ export const useTaskStore = defineStore("task", {
       return this.recent.splice(index, 1);
     },
 
-    setSaved(saved = true) {
-      nextTick(() => {
-        this.saved = saved;
-      });
+    setSaved(saved: boolean) {
+      this.saved = saved;
+      this.direct = true;
     },
 
     newTask() {
@@ -70,16 +71,17 @@ export const useTaskStore = defineStore("task", {
         id: -1,
         name: "未命名任务",
         description: "",
-        create_time: "",
-        update_time: "",
+        create_time: getTimeString(),
+        update_time: getTimeString(),
         services: {},
         routes: {},
       };
+      this.setSaved(false);
     },
 
     closeTask() {
       this.task = null;
-      this.setSaved();
+      this.setSaved(true);
     },
 
     async openTask(id: number) {
@@ -97,7 +99,7 @@ export const useTaskStore = defineStore("task", {
           }
         }
         this.addRecentTask();
-        this.setSaved();
+        this.setSaved(true);
       } else {
         throw new Error(`Task ${id} not found`);
       }
@@ -180,8 +182,12 @@ export const useTaskStore = defineStore("task", {
         };
         const { lastrowid } = await appStore.rest!.replace("task", data);
         this.task.id = lastrowid;
+        if (data.id < 0) {
+          this.task.create_time = getTimeString();
+        }
+        this.task.update_time = getTimeString();
         this.addRecentTask();
-        this.setSaved();
+        this.setSaved(true);
       } else {
         throw new Error(`Task not found`);
       }

@@ -1,9 +1,9 @@
 <template>
-  <q-card flat class="q-mx-auto q-pt-xl transparent ui-card">
+  <q-card flat class="q-mx-auto q-pt-xl transparent ui-task-card">
     <q-card-section class="text-center text-h6">系统设置</q-card-section>
     <q-card-section>
       <p class="text-subtitle1">服务地址</p>
-      <q-markup-table flat separator="horizontal" class="ui-table">
+      <q-markup-table flat separator="horizontal" class="ui-task-table">
         <tbody>
           <tr>
             <td>BFF服务地址(主机:端口)</td>
@@ -13,7 +13,7 @@
                 dense
                 standout="bg-ignore"
                 input-class="text-foreground"
-                class="ui-input"
+                class="ui-task-input"
                 @blur="appStore.systemSettings.bffAddr = bffAddr"
               />
             </td>
@@ -27,7 +27,7 @@
                 disable
                 standout="bg-ignore"
                 input-class="text-foreground"
-                class="ui-input"
+                class="ui-task-input"
                 @blur="appStore.systemSettings.webAddr = webAddr"
               />
             </td>
@@ -37,28 +37,8 @@
     </q-card-section>
     <q-card-section>
       <p class="text-subtitle1">其他设置</p>
-      <q-markup-table flat separator="horizontal" class="ui-table">
+      <q-markup-table flat separator="horizontal" class="ui-task-table">
         <tbody>
-          <tr>
-            <td>
-              默认仿真平台
-              <q-tooltip anchor="top right" self="top right">
-                训练任务默认使用的仿真平台
-              </q-tooltip>
-            </td>
-            <td>
-              <q-select
-                v-model="appStore.systemSettings.defaultEngine"
-                :options="simEngines"
-                dense
-                standout="bg-ignore"
-                input-class="text-foreground"
-                popup-content-class="shadow-0 bg-secondary"
-                options-selected-class="text-accent"
-                class="ui-input"
-              />
-            </td>
-          </tr>
           <tr>
             <td>
               控制台消息数目最大值
@@ -73,7 +53,7 @@
                 type="number"
                 standout="bg-ignore"
                 input-class="text-foreground"
-                class="ui-input"
+                class="ui-task-input"
               />
             </td>
           </tr>
@@ -91,7 +71,7 @@
                 type="number"
                 standout="bg-ignore"
                 input-class="text-foreground"
-                class="ui-input"
+                class="ui-task-input"
               />
             </td>
           </tr>
@@ -102,34 +82,13 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from "~/stores/app";
+import { useAppStore } from "~/stores";
 
 const appStore = useAppStore();
 
 // local system settings
 const bffAddr = ref(appStore.systemSettings.bffAddr);
 const webAddr = ref(appStore.systemSettings.webAddr);
-
-// simulation engines
-const simEngines = ref(["CQSIM"]);
 </script>
 
-<style scoped lang="scss">
-.ui-card {
-  width: 50%;
-}
-.ui-table {
-  :deep(table) {
-    table-layout: fixed;
-  }
-  td {
-    font-size: 0.875rem;
-    padding: 0.5rem 1.5rem;
-    border-color: var(--ui-secondary);
-  }
-}
-.ui-input {
-  float: right;
-  width: 75%;
-}
-</style>
+<style scoped lang="scss"></style>

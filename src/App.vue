@@ -3,8 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from "~/stores/app";
-import { useTaskStore } from "~/stores/task";
+import { useAppStore } from "~/stores";
 
 const $q = useQuasar();
 
@@ -46,19 +45,6 @@ watch(
     }
   },
   { immediate: true }
-);
-
-const taskStore = useTaskStore();
-
-taskStore.loadRecentTasks();
-onBeforeUnmount(taskStore.saveRecentTasks);
-
-watch(
-  () => taskStore.task,
-  () => {
-    taskStore.saved = false;
-  },
-  { deep: true }
 );
 </script>
 

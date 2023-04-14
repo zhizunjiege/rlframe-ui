@@ -70,7 +70,7 @@ export const useTaskStore = defineStore("task", {
       this.task = {
         id: -1,
         name: "未命名任务",
-        description: "",
+        description: "未命名任务",
         create_time: getTimeString(),
         update_time: getTimeString(),
         services: {},
@@ -163,6 +163,10 @@ export const useTaskStore = defineStore("task", {
             service.infos.type as "agent" | "simenv",
             service.configs
           );
+          if (service.configs.id < 0) {
+            service.configs.create_time = getTimeString();
+          }
+          service.configs.update_time = getTimeString();
           service.configs.id = lastrowid;
         }
         const data = {
@@ -181,11 +185,11 @@ export const useTaskStore = defineStore("task", {
           routes: this.task.routes,
         };
         const { lastrowid } = await appStore.rest!.replace("task", data);
-        this.task.id = lastrowid;
-        if (data.id < 0) {
+        if (this.task.id < 0) {
           this.task.create_time = getTimeString();
         }
         this.task.update_time = getTimeString();
+        this.task.id = lastrowid;
         this.addRecentTask();
         this.setSaved(true);
       } else {

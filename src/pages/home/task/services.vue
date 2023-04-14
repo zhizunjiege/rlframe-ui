@@ -106,102 +106,120 @@
           </tbody>
         </q-markup-table>
         <q-item-section class="q-my-sm" />
-        <q-markup-table flat separator="horizontal" class="ui-task-table">
-          <tbody>
-            <tr>
-              <td>配置方式</td>
-              <td>
-                <q-btn-toggle
-                  v-model="modeRecords[key]"
-                  spread
-                  :options="configModes"
-                  toggle-color="secondary"
-                  toggle-text-color="accent"
-                  class="ui-task-input"
-                />
-              </td>
-            </tr>
-            <tr v-if="modeRecords[key] === 'manual'">
-              <td>智能生成</td>
-              <td>
-                <q-select
-                  v-model="value.configs.type"
-                  :disable="!value.infos.type"
-                  :options="
-                    value.infos.type === 'simenv'
-                      ? simEngines
-                      : value.infos.type === 'agent'
-                      ? rlModels
-                      : []
-                  "
-                  dense
-                  standout="bg-ignore"
-                  input-class="text-foreground"
-                  popup-content-class="shadow-0 bg-secondary"
-                  options-selected-class="text-accent"
-                  class="ui-task-input"
-                >
-                  <template #after>
-                    <q-btn
-                      :disable="!value.infos.type"
-                      round
-                      dense
-                      flat
-                      icon="bi-send"
-                      class="ui-icon"
-                      @click="generateConfigs(key)"
-                    >
-                      <q-tooltip anchor="top right" self="top left">
-                        确认
-                      </q-tooltip>
-                    </q-btn>
-                  </template>
-                </q-select>
-              </td>
-            </tr>
-            <tr v-else-if="modeRecords[key] === 'reuse'">
-              <td>配置选择</td>
-              <td>
-                <!-- TODO: use database rows to init -->
-                <q-select
-                  v-model="value.configs.type"
-                  :disable="!value.infos.type"
-                  :options="
-                    value.infos.type === 'simenv'
-                      ? simEngines
-                      : value.infos.type === 'agent'
-                      ? rlModels
-                      : []
-                  "
-                  dense
-                  standout="bg-ignore"
-                  input-class="text-foreground"
-                  popup-content-class="shadow-0 bg-secondary"
-                  options-selected-class="text-accent"
-                  class="ui-task-input"
-                >
-                  <template #after>
-                    <q-btn
-                      :disable="!value.infos.type"
-                      round
-                      dense
-                      flat
-                      icon="bi-send"
-                      class="ui-icon"
-                      @click="generateConfigs(key)"
-                    >
-                      <q-tooltip anchor="top right" self="top left">
-                        确认
-                      </q-tooltip>
-                    </q-btn>
-                  </template>
-                </q-select>
-              </td>
-            </tr>
-          </tbody>
-        </q-markup-table>
-        <q-item-section class="q-my-sm" />
-        <!-- <component :is="import(`~/plugins/${value.infos.type}s/${}.vue`)" /> -->
+        <template v-if="value.infos.type === 'simenv'">
+          <q-markup-table flat separator="horizontal" class="ui-task-table">
+            <tbody>
+              <tr>
+                <td>引擎类型</td>
+                <td>
+                  <q-select
+                    v-model="value.configs.type"
+                    :disable="!value.infos.type"
+                    :options="simEngines"
+                    dense
+                    standout="bg-ignore"
+                    input-class="text-foreground"
+                    popup-content-class="shadow-0 bg-secondary"
+                    options-selected-class="text-accent"
+                    class="ui-task-input"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </q-markup-table>
+          <q-item-section class="q-my-sm" />
+          <q-expansion-item
+            :group="key as string"
+            label="引擎参数"
+            header-class="q-px-lg bg-secondary text-subtitle2"
+          >
+            <component
+              :is="getAsyncComp(value.infos.type, value.configs.type, 'args')"
+              v-model:args="(value.configs as SimenvTable).args"
+            />
+          </q-expansion-item>
+        </template>
+        <template v-else-if="value.infos.type === 'agent'">
+          <q-markup-table flat separator="horizontal" class="ui-task-table">
+            <tbody>
+              <tr>
+                <td>算法类型</td>
+                <td>
+                  <q-select
+                    v-model="value.configs.type"
+                    :disable="!value.infos.type"
+                    :options="rlModels"
+                    dense
+                    standout="bg-ignore"
+                    input-class="text-foreground"
+                    popup-content-class="shadow-0 bg-secondary"
+                    options-selected-class="text-accent"
+                    class="ui-task-input"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </q-markup-table>
+          <q-item-section class="q-my-sm" />
+          <q-expansion-item
+            :group="key as string"
+            label="算法参数"
+            header-class="q-px-lg bg-secondary text-subtitle2"
+          >
+            <component
+              :is="getAsyncComp(value.infos.type, value.configs.type, 'hypers')"
+              v-model:hypers="(value.configs as AgentTable).hypers"
+            />
+          </q-expansion-item>
+          <q-item-section class="q-my-sm" />
+          <q-expansion-item
+            :group="key as string"
+            label="状态-输入预处理函数"
+            header-class="q-px-lg bg-secondary text-subtitle2"
+          >
+            <q-input
+              v-model="(value.configs as AgentTable).sifunc"
+              dense
+              autogrow
+              type="textarea"
+              standout="bg-ignore"
+              input-class="text-foreground q-px-md"
+              class="full-width"
+            />
+          </q-expansion-item>
+          <q-item-section class="q-my-sm" />
+          <q-expansion-item
+            :group="key as string"
+            label="输出-动作后处理函数"
+            header-class="q-px-lg bg-secondary text-subtitle2"
+          >
+            <q-input
+              v-model="(value.configs as AgentTable).oafunc"
+              dense
+              autogrow
+              type="textarea"
+              standout="bg-ignore"
+              input-class="text-foreground q-px-md"
+              class="full-width"
+            />
+          </q-expansion-item>
+          <q-item-section class="q-my-sm" />
+          <q-expansion-item
+            :group="key as string"
+            label="奖励函数"
+            header-class="q-px-lg bg-secondary text-subtitle2"
+          >
+            <q-input
+              v-model="(value.configs as AgentTable).rewfunc"
+              dense
+              autogrow
+              type="textarea"
+              standout="bg-ignore"
+              input-class="text-foreground q-px-md"
+              class="full-width"
+            />
+          </q-expansion-item>
+        </template>
       </q-expansion-item>
     </q-card-section>
   </q-card>
@@ -230,12 +248,6 @@ const serviceTypes = ref([
   { label: "智能服务", value: "agent" },
 ]);
 
-// service config mode
-const configModes = ref([
-  { label: "手动配置", value: "manual" },
-  { label: "重用配置", value: "reuse" },
-]);
-
 // sim engines
 const simEngines = ref(["CQSIM"]);
 
@@ -250,14 +262,14 @@ const rlModels = ref([
   "IPPO",
 ]);
 
-// config mode records
-const modeRecords = reactive({} as Record<string, Nullable<string>>);
-
-// generate service configs
-function generateConfigs(id: string | number) {
-  console.log(id);
+function getAsyncComp(type1: string, type2: string, component: string) {
+  return defineAsyncComponent(
+    () =>
+      import(
+        `../../../plugins/${type1}s/${type2.toLowerCase()}/${component}.vue`
+      )
+  );
 }
-
 // add a service
 function addService(type = "") {
   let service: NonNullable<typeof taskStore.task>["services"][string];
@@ -270,7 +282,16 @@ function addService(type = "") {
         port: 10001,
         desc: "仿真服务",
       },
-      configs: {} as SimenvTable,
+      configs: {
+        id: -1,
+        name: "仿真服务配置",
+        description: "",
+        create_time: "",
+        update_time: "",
+        type: simEngines.value[0],
+        args: {},
+        params: {},
+      },
     };
   } else if (type === "agent") {
     service = {
@@ -281,7 +302,22 @@ function addService(type = "") {
         port: 10002,
         desc: "智能服务",
       },
-      configs: {} as AgentTable,
+      configs: {
+        id: -1,
+        name: "智能服务配置",
+        description: "",
+        create_time: "",
+        update_time: "",
+        training: true,
+        type: rlModels.value[0],
+        hypers: {},
+        sifunc:
+          'import math\nfrom typing import Any, Dict, List\n\nimport numpy as np\n\n\ndef func(states: Dict[str, List[Dict[str, Any]]]) -> np.ndarray | Dict[str | int, np.ndarray]:\n    """Convert `states` to `inputs` for model inferecing."""\n    global caches\n    example = states[\'model\'][0]\n    return np.array([example[\'param\']])\n',
+        oafunc:
+          'from typing import Any, Dict, List\n\nimport numpy as np\n\n\ndef func(outputs: np.ndarray | Dict[str | int, np.ndarray]) -> Dict[str, List[Dict[str, Any]]]:\n    """Convert `outputs` to `actions` for model simulation."""\n    global caches\n    return {\n        \'model\': [{\n            \'param\': 0,\n        }],\n    }\n',
+        rewfunc:
+          'from typing import Any, Dict, List\n\nimport numpy as np\n\n\ndef func(\n    states: Dict[str, List[Dict[str, Any]]],\n    inputs: np.ndarray | Dict[str | int, np.ndarray],\n    actions: Dict[str, List[Dict[str, Any]]],\n    outputs: np.ndarray | Dict[str | int, np.ndarray],\n    next_states: Dict[str, List[Dict[str, Any]]],\n    next_inputs: np.ndarray | Dict[str | int, np.ndarray],\n    terminated: bool,\n    truncated: bool,\n) -> float | Dict[str | int, float]:\n    """Calculate the reward for the current step."""\n    if terminated:\n        return 1.0\n    else:\n        return 0.0\n',
+      },
     };
   } else {
     service = {
@@ -297,7 +333,6 @@ function addService(type = "") {
   }
   const id = randomString(8);
   taskStore.task!.services[`service-${id}`] = service;
-  modeRecords[`service-${id}`] = null;
 }
 
 // selected service
@@ -307,13 +342,9 @@ const selectedService = ref([] as string[]);
 function delService() {
   selectedService.value.forEach((key) => {
     delete taskStore.task!.services[key];
-    delete modeRecords[key];
   });
   selectedService.value = [];
 }
-
-// async components
-// const comp = import(`~/plugins/${}s/${}.vue`);
 
 if (taskStore.task) {
   if (Object.keys(taskStore.task.services).length === 0) {

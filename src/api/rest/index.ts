@@ -13,6 +13,7 @@ export type AgentTable = {
   description: string;
   create_time?: string;
   update_time?: string;
+  training: boolean;
   type: string;
   hypers: AnyDict;
   sifunc: string;
@@ -112,11 +113,15 @@ class RestClient {
     const response = await fetch(`${this.addr}/${table}?${args}`, {
       method: "GET",
     });
-    const rows = (await response.json()) as DBTables[T][];
-    for (const row of rows) {
-      this.decode(table, row);
+    if (response.ok) {
+      const rows = (await response.json()) as DBTables[T][];
+      for (const row of rows) {
+        this.decode(table, row);
+      }
+      return rows;
+    } else {
+      throw new Error(response.statusText);
     }
-    return rows;
   }
 
   public async insert<T extends keyof DBTables>(
@@ -132,7 +137,11 @@ class RestClient {
       },
       body: JSON.stringify(row),
     });
-    return response.json();
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error(response.statusText);
+    }
   }
 
   public async update<T extends keyof DBTables>(
@@ -148,7 +157,11 @@ class RestClient {
       },
       body: JSON.stringify(row),
     });
-    return response.json();
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error(response.statusText);
+    }
   }
 
   public async replace<T extends keyof DBTables>(
@@ -186,7 +199,11 @@ class RestClient {
       },
       body: JSON.stringify({ ids }),
     });
-    return response.json();
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error(response.statusText);
+    }
   }
 
   /*

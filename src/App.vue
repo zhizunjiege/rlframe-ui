@@ -60,4 +60,18 @@ body {
   margin: 0;
   box-sizing: border-box;
 }
+
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: var(--ui-primary);
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background-color: var(--ui-secondary);
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 0.25rem;
+  background-color: var(--ui-info);
+}
 </style>

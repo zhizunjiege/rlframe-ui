@@ -2,10 +2,10 @@
   <q-card
     v-if="taskStore.task"
     flat
-    class="q-mx-auto q-pt-xl transparent ui-task-card"
+    class="q-mx-auto q-pt-xl transparent ui-card"
   >
     <q-card-section>
-      <q-markup-table flat separator="horizontal" class="ui-task-table">
+      <q-markup-table flat separator="horizontal" class="ui-table">
         <tbody>
           <tr>
             <td>任务名称</td>
@@ -15,7 +15,7 @@
                 dense
                 standout="bg-ignore"
                 input-class="text-foreground"
-                class="ui-task-input"
+                class="ui-input"
               />
             </td>
           </tr>
@@ -30,7 +30,7 @@
                 type="textarea"
                 standout="bg-ignore"
                 input-class="text-foreground"
-                class="ui-task-input"
+                class="ui-input"
               />
             </td>
           </tr>
@@ -43,7 +43,7 @@
                 disable
                 standout="bg-ignore"
                 input-class="text-foreground"
-                class="ui-task-input"
+                class="ui-input"
               />
             </td>
           </tr>
@@ -56,7 +56,7 @@
                 disable
                 standout="bg-ignore"
                 input-class="text-foreground"
-                class="ui-task-input"
+                class="ui-input"
               />
             </td>
           </tr>

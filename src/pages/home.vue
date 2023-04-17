@@ -19,15 +19,21 @@
                     <q-item-label>新建任务</q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item v-ripple v-close-popup clickable @click="openTask">
+                <q-item
+                  v-ripple
+                  v-close-popup
+                  clickable
+                  to="/home/task/manage?openonly=true"
+                  active-class=""
+                >
                   <q-item-section>打开任务</q-item-section>
                 </q-item>
                 <q-item
                   v-ripple
                   v-close-popup
                   clickable
-                  :disable="!isTaskOpen"
-                  @click="saveTask"
+                  :disable="!taskStore.task || taskStore.saved"
+                  @click="taskStore.saveTask"
                 >
                   <q-item-section>保存任务</q-item-section>
                 </q-item>
@@ -35,13 +41,19 @@
                   v-ripple
                   v-close-popup
                   clickable
-                  :disable="!isTaskOpen"
+                  :disable="!taskStore.task"
                   @click="closeTask"
                 >
                   <q-item-section>关闭任务</q-item-section>
                 </q-item>
                 <q-separator />
-                <q-item v-ripple v-close-popup clickable to="/home/task/manage">
+                <q-item
+                  v-ripple
+                  v-close-popup
+                  clickable
+                  to="/home/task/manage?openonly=false"
+                  active-class=""
+                >
                   <q-item-section class="q-px-sm">任务管理</q-item-section>
                 </q-item>
               </q-list>
@@ -54,7 +66,7 @@
         <q-space />
         <q-toolbar-title shrink class="text-subtitle2">
           {{
-            isTaskOpen
+            taskStore.task
               ? taskStore.task!.name + (taskStore.saved ? "" : "*")
               : ""
           }}
@@ -70,7 +82,7 @@
     </q-header>
 
     <q-drawer
-      :model-value="isTaskOpen"
+      :model-value="taskStore.task !== null"
       :show-if-above="false"
       :mini="mini"
       :width="200"
@@ -82,7 +94,7 @@
         <q-item
           v-ripple
           clickable
-          :disable="!isTaskOpen"
+          :disable="!taskStore.task"
           to="/home/task/basic"
           active-class="bg-secondary text-accent"
         >
@@ -94,7 +106,7 @@
         <q-item
           v-ripple
           clickable
-          :disable="!isTaskOpen"
+          :disable="!taskStore.task"
           to="/home/task/services"
           active-class="bg-secondary text-accent"
         >
@@ -106,7 +118,7 @@
         <q-item
           v-ripple
           clickable
-          :disable="!isTaskOpen"
+          :disable="!taskStore.task"
           to="/home/task/routes"
           active-class="bg-secondary text-accent"
         >
@@ -153,11 +165,6 @@ watch(
   { deep: true }
 );
 
-// current task
-const isTaskOpen = computed(() => {
-  return taskStore.task !== null;
-});
-
 // mini drawer
 const mini = ref(false);
 
@@ -176,6 +183,7 @@ const saveDialog: QDialogOptions = {
   message: "是否保存当前任务？",
   cancel: true,
   persistent: true,
+  class: "bg-secondary",
   options: {
     type: "radio",
     model: "save",
@@ -202,17 +210,6 @@ function newTask() {
     router.push("/home/task/basic");
   }
 }
-
-// open task
-function openTask() {
-  router.push("/home/task/manage?openonly=true");
-}
-
-// save task
-async function saveTask() {
-  await taskStore.saveTask();
-}
-
 // close task
 function closeTask() {
   if (!taskStore.saved) {
@@ -241,10 +238,10 @@ function closeTask() {
 </style>
 
 <style lang="scss">
-.ui-task-card {
+.ui-card {
   width: 50%;
 }
-.ui-task-table {
+.ui-table {
   table {
     table-layout: fixed;
   }
@@ -254,8 +251,14 @@ function closeTask() {
     border-color: var(--ui-secondary) !important;
   }
 }
-.ui-task-input {
+.ui-input {
   float: right;
   width: 75%;
+}
+.ui-icon {
+  cursor: pointer;
+  &:hover {
+    color: var(--ui-accent);
+  }
 }
 </style>

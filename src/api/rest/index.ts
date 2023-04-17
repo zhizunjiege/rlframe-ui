@@ -6,7 +6,7 @@ type AnyDict = {
   [key: string]: any;
 };
 
-// export agent table struct
+// agent table struct
 export type AgentTable = {
   id: number;
   name: string;
@@ -24,7 +24,7 @@ export type AgentTable = {
   status?: AnyDict;
 };
 
-// export simenv table struct
+// simenv table struct
 export type SimenvTable = {
   id: number;
   name: string;
@@ -36,7 +36,7 @@ export type SimenvTable = {
   params?: AnyDict;
 };
 
-// export task table struct
+// task table struct
 export type TaskTable = {
   id: number;
   name: string;
@@ -63,14 +63,14 @@ export type TaskTable = {
 };
 
 // database tables full structs
-type DBTables = {
+export type DBTables = {
   agent: AgentTable;
   simenv: SimenvTable;
   task: TaskTable;
 };
 
 // database tables meta infos
-type DBTablesMeta = {
+export type DBTablesMeta = {
   [table in keyof DBTables]: {
     [column in keyof DBTables[table]]: {
       type: string;
@@ -80,7 +80,7 @@ type DBTablesMeta = {
 };
 
 // select options
-type SelectOptions = {
+export type SelectOptions = {
   id?: number;
   limit?: number;
   offset?: number;
@@ -168,23 +168,19 @@ class RestClient {
     table: T,
     data: Partial<DBTables[T]>
   ): Promise<{ lastrowid: number; rowcount: number }> {
-    const id = data.id;
-    if (id !== undefined) {
-      if (id < 0) {
-        const rst = await this.insert(table, data as DBTables[T]);
-        return {
-          lastrowid: rst.lastrowid,
-          rowcount: 1,
-        };
-      } else {
-        const rst = await this.update(table, data);
-        return {
-          lastrowid: id,
-          rowcount: rst.rowcount,
-        };
-      }
+    const id = data.id ?? -1;
+    if (id < 0) {
+      const rst = await this.insert(table, data as DBTables[T]);
+      return {
+        lastrowid: rst.lastrowid,
+        rowcount: 1,
+      };
     } else {
-      throw new Error("Id is required");
+      const rst = await this.update(table, data);
+      return {
+        lastrowid: id,
+        rowcount: rst.rowcount,
+      };
     }
   }
 

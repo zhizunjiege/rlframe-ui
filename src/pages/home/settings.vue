@@ -1,9 +1,9 @@
 <template>
-  <q-card flat class="q-mx-auto q-pt-xl transparent ui-task-card">
+  <q-card flat class="q-mx-auto q-pt-xl transparent ui-card">
     <q-card-section class="text-center text-h6">系统设置</q-card-section>
     <q-card-section>
       <p class="text-subtitle1">服务地址</p>
-      <q-markup-table flat separator="horizontal" class="ui-task-table">
+      <q-markup-table flat separator="horizontal" class="ui-table">
         <tbody>
           <tr>
             <td>BFF服务地址(主机:端口)</td>
@@ -13,7 +13,7 @@
                 dense
                 standout="bg-ignore"
                 input-class="text-foreground"
-                class="ui-task-input"
+                class="ui-input"
                 @blur="appStore.systemSettings.bffAddr = bffAddr"
               />
             </td>
@@ -27,7 +27,7 @@
                 disable
                 standout="bg-ignore"
                 input-class="text-foreground"
-                class="ui-task-input"
+                class="ui-input"
                 @blur="appStore.systemSettings.webAddr = webAddr"
               />
             </td>
@@ -37,7 +37,7 @@
     </q-card-section>
     <q-card-section>
       <p class="text-subtitle1">其他设置</p>
-      <q-markup-table flat separator="horizontal" class="ui-task-table">
+      <q-markup-table flat separator="horizontal" class="ui-table">
         <tbody>
           <tr>
             <td>
@@ -53,25 +53,7 @@
                 type="number"
                 standout="bg-ignore"
                 input-class="text-foreground"
-                class="ui-task-input"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              本地数据有效期限(天)
-              <q-tooltip anchor="top right" self="top right">
-                浏览器缓存数据的有效期限，单位为天
-              </q-tooltip>
-            </td>
-            <td>
-              <q-input
-                v-model.number="appStore.systemSettings.localDataExpire"
-                dense
-                type="number"
-                standout="bg-ignore"
-                input-class="text-foreground"
-                class="ui-task-input"
+                class="ui-input"
               />
             </td>
           </tr>

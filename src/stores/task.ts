@@ -1,34 +1,16 @@
-import { AgentTable, SimenvTable, TaskTable } from "api";
-import { useAppStore } from "./app";
+import { Task, useCacheStore } from "./cache";
 import { getTimeString } from "~/utils";
 
-type CurrentTask = Modified<
-  Required<TaskTable>,
-  {
-    services: Modified<
-      TaskTable["services"],
-      {
-        [key: string]: Modified<
-          TaskTable["services"][string],
-          {
-            configs: AgentTable | SimenvTable;
-          }
-        >;
-      }
-    >;
-  }
->;
-
-type RecentTask = Required<
-  Pick<TaskTable, "id" | "name" | "description" | "create_time" | "update_time">
+type Recent = Required<
+  Pick<Task, "id" | "name" | "description" | "create_time" | "update_time">
 >;
 
 export const useTaskStore = defineStore("task", {
   state: () => ({
     saved: true, // task is saved
     direct: false, // saved is directly edited
-    task: null as Nullable<CurrentTask>, // current task
-    recent: [] as RecentTask[], // recent tasks
+    task: null as Nullable<Task>, // current task
+    recent: [] as Recent[], // recent tasks
   }),
   actions: {
     loadRecentTasks() {
@@ -40,25 +22,24 @@ export const useTaskStore = defineStore("task", {
     saveRecentTasks() {
       localStorage.setItem("recentTasks", JSON.stringify(this.recent));
     },
-    addRecentTask() {
-      if (this.task) {
-        for (let i = 0; i < this.recent.length; i++) {
-          if (this.recent[i].id === this.task.id) {
-            this.delRecentTask(i);
-            break;
-          }
-        }
-        this.recent.unshift({
-          id: this.task.id,
-          name: this.task.name,
-          description: this.task.description,
-          create_time: this.task.create_time,
-          update_time: this.task.update_time,
-        });
-      }
+
+    addRecentTask(task: Task | Recent) {
+      this.delRecentTask(task);
+      this.recent.unshift({
+        id: task.id,
+        name: task.name,
+        description: task.description,
+        create_time: task.create_time,
+        update_time: task.update_time,
+      });
     },
-    delRecentTask(index: number) {
-      return this.recent.splice(index, 1);
+    delRecentTask(task: Task | Recent) {
+      for (let i = 0; i < this.recent.length; i++) {
+        if (this.recent[i].id === task.id) {
+          this.recent.splice(i, 1);
+          break;
+        }
+      }
     },
 
     setSaved(saved: boolean) {
@@ -78,123 +59,45 @@ export const useTaskStore = defineStore("task", {
       };
       this.setSaved(false);
     },
-
     closeTask() {
       this.task = null;
       this.setSaved(true);
     },
-
     async openTask(id: number) {
-      const appStore = useAppStore();
-      const tasks = await appStore.rest!.select("task", [], { id });
-      if (tasks.length > 0) {
-        this.task = tasks[0] as unknown as CurrentTask;
-        for (const [key, value] of Object.entries(tasks[0].services)) {
-          const type = value.infos.type;
-          const service = this.task.services[key];
-          if (type === "agent") {
-            service.configs = await this.getAgentConfigs(value.configs);
-          } else if (type === "simenv") {
-            service.configs = await this.getSimenvConfigs(value.configs);
-          }
-        }
-        this.addRecentTask();
-        this.setSaved(true);
-      } else {
-        throw new Error(`Task ${id} not found`);
-      }
+      const cacheStore = useCacheStore();
+      this.task = await cacheStore.getTask(id);
+      this.addRecentTask(this.task);
+      this.setSaved(true);
     },
-    async getAgentConfigs(id: number) {
-      const appStore = useAppStore();
-      const agents = await appStore.rest!.select(
-        "agent",
-        [
-          "id",
-          "name",
-          "description",
-          "create_time",
-          "update_time",
-          "type",
-          "hypers",
-          "sifunc",
-          "oafunc",
-          "rewfunc",
-        ],
-        {
-          id,
-        }
-      );
-      if (agents.length > 0) {
-        return agents[0];
-      } else {
-        throw new Error(`Agent ${id} not found`);
-      }
-    },
-    async getSimenvConfigs(id: number) {
-      const appStore = useAppStore();
-      const simenvs = await appStore.rest!.select(
-        "simenv",
-        [
-          "id",
-          "name",
-          "description",
-          "create_time",
-          "update_time",
-          "type",
-          "args",
-          "params",
-        ],
-        {
-          id,
-        }
-      );
-      if (simenvs.length > 0) {
-        return simenvs[0];
-      } else {
-        throw new Error(`Simenv ${id} not found`);
-      }
-    },
-
     async saveTask() {
-      const appStore = useAppStore();
-      if (this.task && !this.saved) {
-        for (const service of Object.values(this.task.services)) {
-          const { lastrowid } = await appStore.rest!.replace(
-            service.infos.type as "agent" | "simenv",
-            service.configs
-          );
-          if (service.configs.id < 0) {
-            service.configs.create_time = getTimeString();
-          }
-          service.configs.update_time = getTimeString();
-          service.configs.id = lastrowid;
-        }
-        const data = {
-          id: this.task.id,
-          name: this.task.name,
-          description: this.task.description,
-          services: Object.fromEntries(
-            Object.entries(this.task.services).map(([k, v]) => [
-              k,
-              {
-                infos: v.infos,
-                configs: v.configs.id,
-              },
-            ])
-          ),
-          routes: this.task.routes,
-        };
-        const { lastrowid } = await appStore.rest!.replace("task", data);
-        if (this.task.id < 0) {
-          this.task.create_time = getTimeString();
-        }
-        this.task.update_time = getTimeString();
-        this.task.id = lastrowid;
-        this.addRecentTask();
-        this.setSaved(true);
-      } else {
-        throw new Error(`Task not found`);
+      const cacheStore = useCacheStore();
+      this.task = await cacheStore.setTask(this.task!);
+      this.addRecentTask(this.task);
+      this.setSaved(true);
+    },
+    async copyTask(id: number) {
+      const cacheStore = useCacheStore();
+      const task = await cacheStore.getTask(id);
+      task.id = -1;
+      task.name = `${task.name}-副本`;
+      for (const k of Object.keys(task.services)) {
+        task.services[k].configs.id = -1;
       }
+      return await cacheStore.setTask(task);
+    },
+    async deleteTask(id: number) {
+      const cacheStore = useCacheStore();
+      const tasks = await cacheStore.select("task", [], { id });
+      const task = tasks[0];
+      for (const id of Object.keys(task.services)) {
+        if (task.services[id].infos.type === "simenv") {
+          await cacheStore.delete("simenv", [task.services[id].configs]);
+        } else if (task.services[id].infos.type === "agent") {
+          await cacheStore.delete("agent", [task.services[id].configs]);
+        }
+      }
+      await cacheStore.delete("task", [id]);
+      this.delRecentTask(task as Recent);
     },
   },
 });

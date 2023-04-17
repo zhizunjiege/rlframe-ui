@@ -6,7 +6,6 @@ export const useAppStore = defineStore("app", {
       bffAddr: "localhost:9999", // address of bff server
       webAddr: window.location.host, // address of web server
       maxTerminalMsgs: 200, // max number of terminal messages
-      localDataExpire: 365, // local storage expire time in days
     },
     grpc: null as Nullable<ReturnType<typeof createGrpcClient>>, // grpc client
     rest: null as Nullable<ReturnType<typeof createRestClient>>, // rest client
@@ -24,6 +23,7 @@ export const useAppStore = defineStore("app", {
         JSON.stringify(this.systemSettings)
       );
     },
+
     setGrpcClient() {
       this.grpc = createGrpcClient(this.systemSettings.bffAddr);
     },

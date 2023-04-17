@@ -2,20 +2,20 @@
   <q-card
     v-if="taskStore.task"
     flat
-    class="q-mx-auto q-pt-xl transparent ui-task-card"
+    class="q-mx-auto q-pt-xl transparent ui-card"
   >
     <q-card-section class="flex justify-between">
       <q-btn
         label="添加服务"
         icon="bi-plus"
-        class="q-px-xl bg-secondary text-subtitle1 ui-btn"
+        class="q-px-xl bg-secondary text-subtitle1 ui-services-btn"
         @click="addService()"
       />
       <q-btn
         :disable="selectedService.length === 0"
         label="删除服务"
         icon="bi-x"
-        class="q-px-xl bg-secondary text-subtitle1 ui-btn"
+        class="q-px-xl bg-secondary text-subtitle1 ui-services-btn"
         @click="delService()"
       />
     </q-card-section>
@@ -32,7 +32,7 @@
           </q-item-section>
           <q-item-section> {{ key }} </q-item-section>
         </template>
-        <q-markup-table flat separator="horizontal" class="ui-task-table">
+        <q-markup-table flat separator="horizontal" class="ui-table">
           <tbody>
             <tr>
               <td>服务类型</td>
@@ -47,7 +47,7 @@
                   input-class="text-foreground"
                   popup-content-class="shadow-0 bg-secondary"
                   options-selected-class="text-accent"
-                  class="ui-task-input"
+                  class="ui-input"
                 />
               </td>
             </tr>
@@ -59,7 +59,7 @@
                   dense
                   standout="bg-ignore"
                   input-class="text-foreground"
-                  class="ui-task-input"
+                  class="ui-input"
                 />
               </td>
             </tr>
@@ -71,7 +71,7 @@
                   dense
                   standout="bg-ignore"
                   input-class="text-foreground"
-                  class="ui-task-input"
+                  class="ui-input"
                 />
               </td>
             </tr>
@@ -84,7 +84,7 @@
                   type="number"
                   standout="bg-ignore"
                   input-class="text-foreground"
-                  class="ui-task-input"
+                  class="ui-input"
                 />
               </td>
             </tr>
@@ -99,7 +99,7 @@
                   type="textarea"
                   standout="bg-ignore"
                   input-class="text-foreground"
-                  class="ui-task-input"
+                  class="ui-input"
                 />
               </td>
             </tr>
@@ -107,7 +107,7 @@
         </q-markup-table>
         <q-item-section class="q-my-sm" />
         <template v-if="value.infos.type === 'simenv'">
-          <q-markup-table flat separator="horizontal" class="ui-task-table">
+          <q-markup-table flat separator="horizontal" class="ui-table">
             <tbody>
               <tr>
                 <td>引擎类型</td>
@@ -121,7 +121,7 @@
                     input-class="text-foreground"
                     popup-content-class="shadow-0 bg-secondary"
                     options-selected-class="text-accent"
-                    class="ui-task-input"
+                    class="ui-input"
                   />
                 </td>
               </tr>
@@ -140,7 +140,7 @@
           </q-expansion-item>
         </template>
         <template v-else-if="value.infos.type === 'agent'">
-          <q-markup-table flat separator="horizontal" class="ui-task-table">
+          <q-markup-table flat separator="horizontal" class="ui-table">
             <tbody>
               <tr>
                 <td>算法类型</td>
@@ -154,7 +154,7 @@
                     input-class="text-foreground"
                     popup-content-class="shadow-0 bg-secondary"
                     options-selected-class="text-accent"
-                    class="ui-task-input"
+                    class="ui-input"
                   />
                 </td>
               </tr>
@@ -340,10 +340,18 @@ const selectedService = ref([] as string[]);
 
 // del services
 function delService() {
-  selectedService.value.forEach((key) => {
-    delete taskStore.task!.services[key];
+  $q.dialog({
+    title: "提示",
+    message: "确认删除选择的服务？",
+    cancel: true,
+    persistent: true,
+    class: "bg-secondary",
+  }).onOk(async () => {
+    selectedService.value.forEach((key) => {
+      delete taskStore.task!.services[key];
+    });
+    selectedService.value = [];
   });
-  selectedService.value = [];
 }
 
 if (taskStore.task) {
@@ -355,7 +363,7 @@ if (taskStore.task) {
 </script>
 
 <style scoped lang="scss">
-.ui-btn {
+.ui-services-btn {
   width: 25%;
 }
 </style>

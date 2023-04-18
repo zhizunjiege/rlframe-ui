@@ -32,15 +32,15 @@ const ajv = new Ajv();
 const validate = ajv.compile(argsSchema);
 
 const props = defineProps<{
-  args: SimenvTable["args"];
+  configs: SimenvTable["args"];
 }>();
 const emits = defineEmits<{
-  (event: "update:args", args: SimenvTable["args"]): void;
+  (event: "update:configs", configs: SimenvTable["args"]): void;
 }>();
 
-let simArgs = {} as SimenvTable["args"];
-if (isEmpty(props.args)) {
-  simArgs = {
+let args = {} as SimenvTable["args"];
+if (isEmpty(props.configs)) {
+  args = {
     platform: {
       ctrl_addr: "127.0.0.1:50041",
       res_addr: "127.0.0.1:8001",
@@ -74,23 +74,23 @@ if (isEmpty(props.args)) {
     },
   };
 } else {
-  simArgs = deepCopy(props.args);
+  args = deepCopy(props.configs);
 }
 
 const argsStr = ref("");
 const simTermFunc = ref("");
 
-simTermFunc.value = simArgs.proxy.sim_term_func;
-simArgs.proxy.sim_term_func = "";
-argsStr.value = JSON.stringify(simArgs, null, 4);
+simTermFunc.value = args.proxy.sim_term_func;
+args.proxy.sim_term_func = "";
+argsStr.value = JSON.stringify(args, null, 4);
 
 function onBlur() {
   try {
-    simArgs = JSON.parse(argsStr.value);
-    simArgs.proxy.sim_term_func = simTermFunc.value;
-    const valid = validate(simArgs);
+    args = JSON.parse(argsStr.value);
+    args.proxy.sim_term_func = simTermFunc.value;
+    const valid = validate(args);
     if (valid) {
-      emits("update:args", simArgs);
+      emits("update:configs", args);
     } else {
       const err = validate.errors
         ?.map((e) => `${e.instancePath} ${e.message}`)

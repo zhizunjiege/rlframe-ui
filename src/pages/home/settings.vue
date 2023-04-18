@@ -24,7 +24,6 @@
               <q-input
                 v-model.lazy="webAddr"
                 dense
-                disable
                 standout="bg-ignore"
                 input-class="text-foreground"
                 class="ui-input"

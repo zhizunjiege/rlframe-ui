@@ -8,14 +8,14 @@
       <q-btn
         label="添加服务"
         icon="bi-plus"
-        class="q-px-xl bg-secondary text-subtitle1 ui-services-btn"
+        class="q-px-md bg-secondary text-subtitle1 ui-services-btn"
         @click="addService()"
       />
       <q-btn
         :disable="selectedService.length === 0"
         label="删除服务"
         icon="bi-x"
-        class="q-px-xl bg-secondary text-subtitle1 ui-services-btn"
+        class="q-px-md bg-secondary text-subtitle1 ui-services-btn"
         @click="delService()"
       />
     </q-card-section>
@@ -134,8 +134,8 @@
             header-class="q-px-lg bg-secondary text-subtitle2"
           >
             <component
-              :is="getAsyncComp(value.infos.type, value.configs.type, 'args')"
-              v-model:args="(value.configs as SimenvTable).args"
+              :is="getAsyncComp(value.infos.type, value.configs.type)"
+              v-model:configs="(value.configs as SimenvTable).args"
             />
           </q-expansion-item>
         </template>
@@ -167,8 +167,8 @@
             header-class="q-px-lg bg-secondary text-subtitle2"
           >
             <component
-              :is="getAsyncComp(value.infos.type, value.configs.type, 'hypers')"
-              v-model:hypers="(value.configs as AgentTable).hypers"
+              :is="getAsyncComp(value.infos.type, value.configs.type)"
+              v-model:configs="(value.configs as AgentTable).hypers"
             />
           </q-expansion-item>
           <q-item-section class="q-my-sm" />
@@ -262,12 +262,10 @@ const rlModels = ref([
   "IPPO",
 ]);
 
-function getAsyncComp(type1: string, type2: string, component: string) {
+function getAsyncComp(type1: string, type2: string) {
   return defineAsyncComponent(
     () =>
-      import(
-        `../../../plugins/${type1}s/${type2.toLowerCase()}/${component}.vue`
-      )
+      import(`../../../plugins/${type1}s/${type2.toLowerCase()}/configs.vue`)
   );
 }
 // add a service

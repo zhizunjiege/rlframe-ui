@@ -1,7 +1,7 @@
 import { base64decode, base64encode } from "@protobuf-ts/runtime";
 
 // dictionary
-type AnyDict = {
+export type AnyDict = {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   [key: string]: any;
 };

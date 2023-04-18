@@ -22,15 +22,15 @@ const ajv = new Ajv();
 const validate = ajv.compile(hypersSchema);
 
 const props = defineProps<{
-  hypers: AgentTable["hypers"];
+  configs: AgentTable["hypers"];
 }>();
 const emits = defineEmits<{
-  (event: "update:hypers", hypers: AgentTable["hypers"]): void;
+  (event: "update:configs", configs: AgentTable["hypers"]): void;
 }>();
 
-let intHypers = {} as AgentTable["hypers"];
-if (isEmpty(props.hypers)) {
-  intHypers = {
+let hypers = {} as AgentTable["hypers"];
+if (isEmpty(props.configs)) {
+  hypers = {
     obs_dim: 4,
     act_num: 2,
     hidden_layers: [64, 64],
@@ -48,19 +48,19 @@ if (isEmpty(props.hypers)) {
     seed: null,
   };
 } else {
-  intHypers = deepCopy(props.hypers);
+  hypers = deepCopy(props.configs);
 }
 
 const hypersStr = ref("");
 
-hypersStr.value = JSON.stringify(intHypers, null, 4);
+hypersStr.value = JSON.stringify(hypers, null, 4);
 
 function onBlur() {
   try {
-    intHypers = JSON.parse(hypersStr.value);
-    const valid = validate(intHypers);
+    hypers = JSON.parse(hypersStr.value);
+    const valid = validate(hypers);
     if (valid) {
-      emits("update:hypers", intHypers);
+      emits("update:configs", hypers);
     } else {
       const err = validate.errors
         ?.map((e) => `${e.instancePath} ${e.message}`)

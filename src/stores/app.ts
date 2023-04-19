@@ -6,7 +6,7 @@ export const useAppStore = defineStore("app", {
       bffAddr: "localhost:9999", // address of bff server
       webAddr: window.location.host, // address of web server
       maxTerminalMessages: 100, // max number of terminal messages
-      detailsUpdateInterval: 1000, // interval of updating details
+      detailsRefreshInterval: 1000, // interval of refreshing details
     },
     grpc: null as Nullable<ReturnType<typeof createGrpcClient>>, // grpc client
     rest: null as Nullable<ReturnType<typeof createRestClient>>, // rest client

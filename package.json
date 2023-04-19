@@ -16,6 +16,7 @@
     "@protobuf-ts/runtime-rpc": "^2.8.2",
     "@quasar/extras": "^1.15.11",
     "ajv": "^8.12.0",
+    "browser-fs-access": "^0.33.1",
     "pinia": "^2.0.32",
     "quasar": "^2.11.7",
     "vue": "^3.2.47",

@@ -208,10 +208,10 @@ class RestClient {
   private decode<T extends keyof DBTables>(table: T, row: DBTables[T]) {
     const meta = this.tables?.[table];
     for (const key in row) {
-      if (meta?.[key].type === "BLOB") {
+      if (meta?.[key].type === "BLOB" && row[key]) {
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         row[key] = base64decode(row[key] as string) as any;
-      } else if (meta?.[key].type === "JSON") {
+      } else if (meta?.[key].type === "JSON" && row[key]) {
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         row[key] = JSON.parse(row[key] as string);
       }
@@ -224,10 +224,10 @@ class RestClient {
   private encode<T extends keyof DBTables>(table: T, row: DBTables[T]) {
     const meta = this.tables?.[table];
     for (const key in row) {
-      if (meta?.[key].type === "BLOB") {
+      if (meta?.[key].type === "BLOB" && row[key]) {
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         row[key] = base64encode(row[key] as Uint8Array) as any;
-      } else if (meta?.[key].type === "JSON") {
+      } else if (meta?.[key].type === "JSON" && row[key]) {
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         row[key] = JSON.stringify(row[key]) as any;
       }

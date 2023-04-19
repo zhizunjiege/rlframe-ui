@@ -1,6 +1,6 @@
 <template>
   <div class="fit flex flex-center">
-    <q-card flat class="column ui-manage-card">
+    <q-card flat class="column overflow-auto ui-manage-card">
       <q-card-section horizontal class="col-shrink flex items-center">
         <q-card-section class="text-accent">任务管理</q-card-section>
         <q-card-section class="q-py-none ui-manage-search">
@@ -132,20 +132,20 @@
 
 <script setup lang="ts">
 import { QTableProps } from "quasar";
-import { DBTables } from "~/api";
-import { useCacheStore, useTaskStore } from "~/stores";
+import { TaskTable } from "~/api";
+import { useAppStore, useTaskStore } from "~/stores";
 
 const $q = useQuasar();
 const route = useRoute();
 const router = useRouter();
-const cacheStore = useCacheStore();
+const appStore = useAppStore();
 const taskStore = useTaskStore();
 
 // q-table selected
-const selected = ref([] as DBTables["task"][]);
+const selected = ref([] as TaskTable[]);
 
 // q-table rows
-const rows = ref([] as DBTables["task"][]);
+const rows = ref([] as TaskTable[]);
 
 // q-table columns
 const columns = [
@@ -180,7 +180,7 @@ const columns = [
   {
     name: "services",
     label: "服务数量",
-    field: (r: DBTables["task"]) => Object.keys(r.services).length,
+    field: (r: TaskTable) => Object.keys(r.services).length,
     align: "center",
     sortable: true,
   },
@@ -243,8 +243,14 @@ async function openTask(id: number) {
 }
 // copy task
 async function copyTask(id: number) {
-  const task = (await taskStore.copyTask(id)) as unknown as DBTables["task"];
-  rows.value.unshift(task);
+  const task = await taskStore.getTask(id);
+  task.id = -1;
+  task.name = `${task.name}-副本`;
+  for (const k of Object.keys(task.services)) {
+    task.services[k].configs.id = -1;
+  }
+  await taskStore.setTask(task);
+  rows.value.unshift(task as unknown as TaskTable);
 }
 // delete selected tasks
 async function deleteTasks() {
@@ -264,10 +270,24 @@ async function deleteTasks() {
       persistent: true,
       class: "bg-secondary",
     }).onOk(async () => {
-      const promises = selected.value.map((item) => {
-        return taskStore.deleteTask(item.id);
-      });
-      await Promise.all(promises);
+      const tasks = [];
+      const simenvs = [];
+      const agents = [];
+      for (const task of selected.value) {
+        tasks.push(task.id);
+        for (const srv of Object.values(task.services)) {
+          if (srv.infos.type === "simenv") {
+            simenvs.push(srv.configs);
+          } else if (srv.infos.type === "agent") {
+            agents.push(srv.configs);
+          }
+        }
+      }
+      await Promise.all([
+        appStore.rest!.delete("simenv", simenvs),
+        appStore.rest!.delete("agent", agents),
+        appStore.rest!.delete("task", tasks),
+      ]);
       rows.value = rows.value.filter(
         (item) => !selected.value.find((i) => i.id === item.id)
       );
@@ -278,7 +298,7 @@ async function deleteTasks() {
 
 // initialize
 (async () => {
-  rows.value = await cacheStore.select("task", [], {});
+  rows.value = await appStore.rest!.select("task", [], {});
 })();
 </script>
 

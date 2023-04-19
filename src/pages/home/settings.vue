@@ -52,10 +52,10 @@
             </td>
           </tr>
           <tr>
-            <td>服务状态更新间隔（ms）</td>
+            <td>服务细节更新间隔（ms）</td>
             <td>
               <q-input
-                v-model.number="appStore.systemSettings.detailsUpdateInterval"
+                v-model.number="appStore.systemSettings.detailsRefreshInterval"
                 dense
                 type="number"
                 standout="bg-ignore"

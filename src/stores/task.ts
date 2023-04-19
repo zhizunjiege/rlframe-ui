@@ -2,9 +2,41 @@ import { TaskTable, SimenvTable, AgentTable } from "~/api";
 import { getTimeString } from "~/utils";
 import { useAppStore } from "./app";
 
+export type Task = Modified<
+  Required<TaskTable>,
+  {
+    services: Modified<
+      TaskTable["services"],
+      {
+        [key: string]: Modified<
+          TaskTable["services"][string],
+          {
+            configs: SimenvTable | AgentTable;
+          }
+        >;
+      }
+    >;
+  }
+>;
+
 export type Recent = Required<
   Pick<Task, "id" | "name" | "description" | "create_time" | "update_time">
 >;
+
+const simenvColumns = [] as (keyof SimenvTable)[];
+const agentColumns = [
+  "id",
+  "name",
+  "description",
+  "create_time",
+  "update_time",
+  "training",
+  "type",
+  "hypers",
+  "sifunc",
+  "oafunc",
+  "rewfunc",
+] as (keyof AgentTable)[];
 
 export const useTaskStore = defineStore("task", {
   state: () => ({
@@ -65,40 +97,69 @@ export const useTaskStore = defineStore("task", {
       this.setSaved(true);
     },
     async openTask(id: number) {
-      const cacheStore = useCacheStore();
-      this.task = await cacheStore.getTask(id);
+      this.task = await this.getTask(id);
       this.addRecentTask(this.task);
       this.setSaved(true);
     },
     async saveTask() {
-      const cacheStore = useCacheStore();
-      this.task = await cacheStore.setTask(this.task!);
-      this.addRecentTask(this.task);
+      await this.setTask(this.task!);
+      this.addRecentTask(this.task!);
       this.setSaved(true);
     },
-    async copyTask(id: number) {
-      const cacheStore = useCacheStore();
-      const task = await cacheStore.getTask(id);
-      task.id = -1;
-      task.name = `${task.name}-副本`;
-      for (const k of Object.keys(task.services)) {
-        task.services[k].configs.id = -1;
-      }
-      return await cacheStore.setTask(task);
-    },
-    async deleteTask(id: number) {
-      const cacheStore = useCacheStore();
-      const tasks = await cacheStore.select("task", [], { id });
-      const task = tasks[0];
-      for (const id of Object.keys(task.services)) {
-        if (task.services[id].infos.type === "simenv") {
-          await cacheStore.delete("simenv", [task.services[id].configs]);
-        } else if (task.services[id].infos.type === "agent") {
-          await cacheStore.delete("agent", [task.services[id].configs]);
+
+    async getTask(id: number) {
+      const appStore = useAppStore();
+      const tasks = await appStore.rest!.select("task", [], { id });
+      if (tasks.length > 0) {
+        const task = tasks[0] as unknown as Task;
+        for (const [k, v] of Object.entries(tasks[0].services)) {
+          const type = v.infos.type as "simenv" | "agent";
+          let res: SimenvTable[] | AgentTable[] = [];
+          if (type === "simenv") {
+            res = await appStore.rest!.select("simenv", simenvColumns, {
+              id: v.configs,
+            });
+          } else if (type === "agent") {
+            res = await appStore.rest!.select("agent", agentColumns, {
+              id: v.configs,
+            });
+          }
+          task.services[k].configs = res[0];
         }
+        return task;
+      } else {
+        throw new Error(`Task ${id} not found`);
       }
-      await cacheStore.delete("task", [id]);
-      this.delRecentTask(task as Recent);
+    },
+    async setTask(task: Task) {
+      const appStore = useAppStore();
+      for (const srv of Object.values(task.services)) {
+        const type = srv.infos.type as "simenv" | "agent";
+        const { lastrowid } = await appStore.rest!.replace(type, srv.configs);
+        if (srv.configs.id < 0) {
+          srv.configs.create_time = getTimeString();
+        }
+        srv.configs.update_time = getTimeString();
+        srv.configs.id = lastrowid;
+      }
+      const { lastrowid } = await appStore.rest!.replace("task", {
+        ...task,
+        services: Object.fromEntries(
+          Object.entries(task.services).map(([k, v]) => [
+            k,
+            {
+              infos: v.infos,
+              configs: v.configs.id,
+            },
+          ])
+        ),
+      });
+      if (task.id < 0) {
+        task.create_time = getTimeString();
+      }
+      task.update_time = getTimeString();
+      task.id = lastrowid;
+      return lastrowid;
     },
   },
 });

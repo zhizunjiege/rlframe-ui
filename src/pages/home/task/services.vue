@@ -16,7 +16,7 @@
         label="删除服务"
         icon="bi-x"
         class="q-px-md bg-secondary text-subtitle1 ui-services-btn"
-        @click="delService()"
+        @click="delServices()"
       />
     </q-card-section>
     <q-card-section v-for="(value, key) in taskStore.task.services" :key="key">
@@ -143,6 +143,18 @@
           <q-markup-table flat separator="horizontal" class="ui-table">
             <tbody>
               <tr>
+                <td>是否训练</td>
+                <td>
+                  <q-checkbox
+                    v-model="(value.configs as AgentTable).training"
+                    :disable="!value.infos.type"
+                    :true-value="1"
+                    :false-value="0"
+                    class="float-right"
+                  />
+                </td>
+              </tr>
+              <tr>
                 <td>算法类型</td>
                 <td>
                   <q-select
@@ -227,11 +239,12 @@
 
 <script setup lang="ts">
 import { AgentTable, SimenvTable } from "~/api";
-import { useTaskStore } from "~/stores";
-import { randomString } from "~/utils";
+import { useAppStore, useTaskStore } from "~/stores";
+import { getTimeString, isEmpty, randomString } from "~/utils";
 
 const $q = useQuasar();
 const router = useRouter();
+const appStore = useAppStore();
 const taskStore = useTaskStore();
 
 if (!taskStore.task) {
@@ -283,9 +296,9 @@ function addService(type = "") {
       configs: {
         id: -1,
         name: "仿真服务配置",
-        description: "",
-        create_time: "",
-        update_time: "",
+        description: "仿真服务配置",
+        create_time: getTimeString(),
+        update_time: getTimeString(),
         type: simEngines.value[0],
         args: {},
         params: {},
@@ -303,9 +316,9 @@ function addService(type = "") {
       configs: {
         id: -1,
         name: "智能服务配置",
-        description: "",
-        create_time: "",
-        update_time: "",
+        description: "智能服务配置",
+        create_time: getTimeString(),
+        update_time: getTimeString(),
         training: true,
         type: rlModels.value[0],
         hypers: {},
@@ -337,7 +350,7 @@ function addService(type = "") {
 const selectedService = ref([] as string[]);
 
 // del services
-function delService() {
+function delServices() {
   $q.dialog({
     title: "提示",
     message: "确认删除选择的服务？",
@@ -345,18 +358,22 @@ function delService() {
     persistent: true,
     class: "bg-secondary",
   }).onOk(async () => {
-    selectedService.value.forEach((key) => {
-      delete taskStore.task!.services[key];
-    });
+    for (const id of selectedService.value) {
+      const srv = taskStore.task!.services[id];
+      if (taskStore.task!.id >= 0 && srv.configs.id >= 0) {
+        await appStore.rest!.delete(srv.infos.type as "simenv" | "agent", [
+          srv.configs.id,
+        ]);
+      }
+      delete taskStore.task!.services[id];
+    }
     selectedService.value = [];
   });
 }
 
-if (taskStore.task) {
-  if (Object.keys(taskStore.task.services).length === 0) {
-    addService("simenv");
-    addService("agent");
-  }
+if (taskStore.task && isEmpty(taskStore.task.services)) {
+  addService("simenv");
+  addService("agent");
 }
 </script>
 

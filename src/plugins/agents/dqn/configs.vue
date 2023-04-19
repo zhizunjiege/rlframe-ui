@@ -13,9 +13,9 @@
 
 <script setup lang="ts">
 import Ajv from "ajv";
-import hypersSchema from "./schema.json";
 import { AgentTable } from "~/api";
 import { isEmpty, deepCopy } from "~/utils";
+import hypersSchema from "./schema.json";
 
 const $q = useQuasar();
 const ajv = new Ajv();

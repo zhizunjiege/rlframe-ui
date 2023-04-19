@@ -1,6 +1,6 @@
-import { DBTables, SelectOptions } from "api";
-import { useAppStore } from "./app";
+import { DBTables, SelectOptions } from "~/api";
 import { deepCopy, getTimeString } from "~/utils";
+import { useAppStore } from "./app";
 
 type Cache = {
   [table in keyof DBTables as `${table}s`]: {

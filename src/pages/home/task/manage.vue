@@ -132,7 +132,7 @@
 
 <script setup lang="ts">
 import { QTableProps } from "quasar";
-import { DBTables } from "api";
+import { DBTables } from "~/api";
 import { useCacheStore, useTaskStore } from "~/stores";
 
 const $q = useQuasar();

@@ -222,8 +222,8 @@
 </template>
 
 <script setup lang="ts">
-import { AnyDict, ServiceInfo, SimenvConfig, AgentConfig } from "api";
-import { useAppStore, useCacheStore, useTaskStore } from "~/stores";
+import { AnyDict, ServiceInfo, SimenvConfig, AgentConfig } from "~/api";
+import { useAppStore, useTaskStore } from "~/stores";
 import { isEmpty, getTimeString } from "~/utils";
 
 const $q = useQuasar();
@@ -525,7 +525,7 @@ type Message = {
 };
 const messages = ref([] as Message[]);
 function addMsg(text: string, type: Message["type"] = "info") {
-  if (messages.value.length > appStore.systemSettings.maxTerminalMsgs) {
+  if (messages.value.length > appStore.systemSettings.maxTerminalMessages) {
     messages.value.shift();
   }
   messages.value.push({

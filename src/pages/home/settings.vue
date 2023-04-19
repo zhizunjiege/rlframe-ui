@@ -39,15 +39,23 @@
       <q-markup-table flat separator="horizontal" class="ui-table">
         <tbody>
           <tr>
-            <td>
-              控制台消息数目最大值
-              <q-tooltip anchor="top right" self="top right">
-                控制台显示的消息数目的最大值
-              </q-tooltip>
-            </td>
+            <td>控制台消息数目最大值</td>
             <td>
               <q-input
-                v-model.number="appStore.systemSettings.maxTerminalMsgs"
+                v-model.number="appStore.systemSettings.maxTerminalMessages"
+                dense
+                type="number"
+                standout="bg-ignore"
+                input-class="text-foreground"
+                class="ui-input"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>服务状态更新间隔（ms）</td>
+            <td>
+              <q-input
+                v-model.number="appStore.systemSettings.detailsUpdateInterval"
                 dense
                 type="number"
                 standout="bg-ignore"

@@ -6,6 +6,18 @@ export type AnyDict = {
   [key: string]: any;
 };
 
+// simenv table struct
+export type SimenvTable = {
+  id: number;
+  name: string;
+  description: string;
+  create_time?: string;
+  update_time?: string;
+  type: string;
+  args: AnyDict;
+  params?: AnyDict;
+};
+
 // agent table struct
 export type AgentTable = {
   id: number;
@@ -22,18 +34,6 @@ export type AgentTable = {
   weights?: Uint8Array;
   buffer?: Uint8Array;
   status?: AnyDict;
-};
-
-// simenv table struct
-export type SimenvTable = {
-  id: number;
-  name: string;
-  description: string;
-  create_time?: string;
-  update_time?: string;
-  type: string;
-  args: AnyDict;
-  params?: AnyDict;
 };
 
 // task table struct

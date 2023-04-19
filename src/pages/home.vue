@@ -146,7 +146,6 @@
 import { QDialogOptions } from "quasar";
 import Brand from "~/assets/brand.png";
 import Logo from "~/assets/logo.png";
-
 import { useTaskStore } from "~/stores";
 
 const $q = useQuasar();

@@ -1,5 +1,3 @@
-import App from "./App.vue";
-
 import { Quasar, Dialog, Notify } from "quasar";
 import iconSet from "quasar/icon-set/bootstrap-icons";
 import langCn from "quasar/lang/zh-CN";
@@ -11,6 +9,8 @@ import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
 
 import "~/styles/index.scss";
+
+import App from "~/App.vue";
 
 // config quasar
 const quasarConfig = {

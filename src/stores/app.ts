@@ -1,11 +1,12 @@
-import { createGrpcClient, createRestClient } from "api";
+import { createGrpcClient, createRestClient } from "~/api";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
     systemSettings: {
       bffAddr: "localhost:9999", // address of bff server
       webAddr: window.location.host, // address of web server
-      maxTerminalMsgs: 100, // max number of terminal messages
+      maxTerminalMessages: 100, // max number of terminal messages
+      detailsUpdateInterval: 1000, // interval of updating details
     },
     grpc: null as Nullable<ReturnType<typeof createGrpcClient>>, // grpc client
     rest: null as Nullable<ReturnType<typeof createRestClient>>, // rest client

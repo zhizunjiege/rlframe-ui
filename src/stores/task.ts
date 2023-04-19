@@ -1,7 +1,8 @@
-import { Task, useCacheStore } from "./cache";
+import { TaskTable, SimenvTable, AgentTable } from "~/api";
 import { getTimeString } from "~/utils";
+import { useAppStore } from "./app";
 
-type Recent = Required<
+export type Recent = Required<
   Pick<Task, "id" | "name" | "description" | "create_time" | "update_time">
 >;
 

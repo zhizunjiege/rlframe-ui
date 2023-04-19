@@ -23,9 +23,9 @@
 
 <script setup lang="ts">
 import Ajv from "ajv";
-import argsSchema from "./schema.json";
 import { SimenvTable } from "~/api";
 import { isEmpty, deepCopy } from "~/utils";
+import argsSchema from "./schema.json";
 
 const $q = useQuasar();
 const ajv = new Ajv();

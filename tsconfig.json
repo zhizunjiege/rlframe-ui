@@ -11,7 +11,7 @@
     "sourceMap": true,
     "lib": ["es2016", "dom"],
     "strict": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "useDefineForClassFields": true,
     "esModuleInterop": true
   },

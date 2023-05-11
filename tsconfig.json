@@ -2,8 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"],
-      "api": ["src/api/index"]
+      "~/*": ["src/*"]
     },
     "target": "es2016",
     "module": "esnext",
@@ -12,7 +11,7 @@
     "sourceMap": true,
     "lib": ["es2016", "dom"],
     "strict": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "useDefineForClassFields": true,
     "esModuleInterop": true
   },

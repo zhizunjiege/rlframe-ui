@@ -27,25 +27,25 @@ export interface AgentConfig {
    */
   training: boolean;
   /**
-   * @generated from protobuf field: string states_inputs_func = 2;
-   */
-  statesInputsFunc: string; // preprocess states to network inputs, format: python code
-  /**
-   * @generated from protobuf field: string outputs_actions_func = 3;
-   */
-  outputsActionsFunc: string; // postprocess network outputs to actions, format: python code
-  /**
-   * @generated from protobuf field: string reward_func = 4;
-   */
-  rewardFunc: string;
-  /**
-   * @generated from protobuf field: string type = 5;
+   * @generated from protobuf field: string type = 2;
    */
   type: string; // type of rl algorithm
   /**
-   * @generated from protobuf field: string hypers = 6;
+   * @generated from protobuf field: string hypers = 3;
    */
-  hypers: string; // hyper parameters, format: json string of struct
+  hypers: string; // hyper params, format: json string of struct
+  /**
+   * @generated from protobuf field: string sifunc = 4;
+   */
+  sifunc: string; // states to inputs function, format: python code
+  /**
+   * @generated from protobuf field: string oafunc = 5;
+   */
+  oafunc: string; // outputs to actions funtion, format: python code
+  /**
+   * @generated from protobuf field: string rewfunc = 6;
+   */
+  rewfunc: string; // reward function, format: python code
 }
 /**
  * @generated from protobuf message game.agent.AgentMode
@@ -88,36 +88,21 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
   constructor() {
     super("game.agent.AgentConfig", [
       { no: 1, name: "training", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-      {
-        no: 2,
-        name: "states_inputs_func",
-        kind: "scalar",
-        T: 9 /*ScalarType.STRING*/,
-      },
-      {
-        no: 3,
-        name: "outputs_actions_func",
-        kind: "scalar",
-        T: 9 /*ScalarType.STRING*/,
-      },
-      {
-        no: 4,
-        name: "reward_func",
-        kind: "scalar",
-        T: 9 /*ScalarType.STRING*/,
-      },
-      { no: 5, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-      { no: 6, name: "hypers", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 2, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 3, name: "hypers", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 4, name: "sifunc", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 5, name: "oafunc", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 6, name: "rewfunc", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
     ]);
   }
   create(value?: PartialMessage<AgentConfig>): AgentConfig {
     const message = {
       training: false,
-      statesInputsFunc: "",
-      outputsActionsFunc: "",
-      rewardFunc: "",
       type: "",
       hypers: "",
+      sifunc: "",
+      oafunc: "",
+      rewfunc: "",
     };
     globalThis.Object.defineProperty(message, MESSAGE_TYPE, {
       enumerable: false,
@@ -141,20 +126,20 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
         case /* bool training */ 1:
           message.training = reader.bool();
           break;
-        case /* string states_inputs_func */ 2:
-          message.statesInputsFunc = reader.string();
-          break;
-        case /* string outputs_actions_func */ 3:
-          message.outputsActionsFunc = reader.string();
-          break;
-        case /* string reward_func */ 4:
-          message.rewardFunc = reader.string();
-          break;
-        case /* string type */ 5:
+        case /* string type */ 2:
           message.type = reader.string();
           break;
-        case /* string hypers */ 6:
+        case /* string hypers */ 3:
           message.hypers = reader.string();
+          break;
+        case /* string sifunc */ 4:
+          message.sifunc = reader.string();
+          break;
+        case /* string oafunc */ 5:
+          message.oafunc = reader.string();
+          break;
+        case /* string rewfunc */ 6:
+          message.rewfunc = reader.string();
           break;
         default:
           let u = options.readUnknownField;
@@ -183,23 +168,21 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
     /* bool training = 1; */
     if (message.training !== false)
       writer.tag(1, WireType.Varint).bool(message.training);
-    /* string states_inputs_func = 2; */
-    if (message.statesInputsFunc !== "")
-      writer.tag(2, WireType.LengthDelimited).string(message.statesInputsFunc);
-    /* string outputs_actions_func = 3; */
-    if (message.outputsActionsFunc !== "")
-      writer
-        .tag(3, WireType.LengthDelimited)
-        .string(message.outputsActionsFunc);
-    /* string reward_func = 4; */
-    if (message.rewardFunc !== "")
-      writer.tag(4, WireType.LengthDelimited).string(message.rewardFunc);
-    /* string type = 5; */
+    /* string type = 2; */
     if (message.type !== "")
-      writer.tag(5, WireType.LengthDelimited).string(message.type);
-    /* string hypers = 6; */
+      writer.tag(2, WireType.LengthDelimited).string(message.type);
+    /* string hypers = 3; */
     if (message.hypers !== "")
-      writer.tag(6, WireType.LengthDelimited).string(message.hypers);
+      writer.tag(3, WireType.LengthDelimited).string(message.hypers);
+    /* string sifunc = 4; */
+    if (message.sifunc !== "")
+      writer.tag(4, WireType.LengthDelimited).string(message.sifunc);
+    /* string oafunc = 5; */
+    if (message.oafunc !== "")
+      writer.tag(5, WireType.LengthDelimited).string(message.oafunc);
+    /* string rewfunc = 6; */
+    if (message.rewfunc !== "")
+      writer.tag(6, WireType.LengthDelimited).string(message.rewfunc);
     let u = options.writeUnknownFields;
     if (u !== false)
       (u == true ? UnknownFieldHandler.onWrite : u)(

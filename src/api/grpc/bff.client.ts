@@ -15,9 +15,8 @@ import type { SimCmdMap } from "./bff";
 import type { SimenvConfigMap } from "./bff";
 import type { ServiceStateMap } from "./bff";
 import type { RouteConfig } from "./bff";
-import type { ServiceInfoMap } from "./bff";
 import type { ServiceIdList } from "./bff";
-import type { ServiceInfoList } from "./bff";
+import type { ServiceInfoMap } from "./bff";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { CommonResponse } from "./types";
 import type { CommonRequest } from "./types";
@@ -39,12 +38,12 @@ export interface IBFFClient {
   /**
    * register services
    *
-   * @generated from protobuf rpc: RegisterService(game.bff.ServiceInfoList) returns (game.bff.ServiceIdList);
+   * @generated from protobuf rpc: RegisterService(game.bff.ServiceInfoMap) returns (game.types.CommonResponse);
    */
   registerService(
-    input: ServiceInfoList,
+    input: ServiceInfoMap,
     options?: RpcOptions
-  ): UnaryCall<ServiceInfoList, ServiceIdList>;
+  ): UnaryCall<ServiceInfoMap, CommonResponse>;
   /**
    * unregister services
    *
@@ -274,15 +273,15 @@ export class BFFClient implements IBFFClient, ServiceInfo {
   /**
    * register services
    *
-   * @generated from protobuf rpc: RegisterService(game.bff.ServiceInfoList) returns (game.bff.ServiceIdList);
+   * @generated from protobuf rpc: RegisterService(game.bff.ServiceInfoMap) returns (game.types.CommonResponse);
    */
   registerService(
-    input: ServiceInfoList,
+    input: ServiceInfoMap,
     options?: RpcOptions
-  ): UnaryCall<ServiceInfoList, ServiceIdList> {
+  ): UnaryCall<ServiceInfoMap, CommonResponse> {
     const method = this.methods[1],
       opt = this._transport.mergeOptions(options);
-    return stackIntercept<ServiceInfoList, ServiceIdList>(
+    return stackIntercept<ServiceInfoMap, CommonResponse>(
       "unary",
       this._transport,
       method,

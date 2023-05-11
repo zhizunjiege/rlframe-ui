@@ -18,47 +18,21 @@ export interface CommonRequest {}
 /**
  * @generated from protobuf message game.types.CommonResponse
  */
-export interface CommonResponse {
-  /**
-   * @generated from protobuf field: game.types.CommonResponse.Status code = 1;
-   */
-  code: CommonResponse_Status;
-  /**
-   * @generated from protobuf field: string msg = 2;
-   */
-  msg: string;
-}
-/**
- * @generated from protobuf enum game.types.CommonResponse.Status
- */
-export enum CommonResponse_Status {
-  /**
-   * @generated from protobuf enum value: OK = 0;
-   */
-  OK = 0,
-  /**
-   * @generated from protobuf enum value: WARNING = 1;
-   */
-  WARNING = 1,
-  /**
-   * @generated from protobuf enum value: ERROR = 2;
-   */
-  ERROR = 2,
-  /**
-   * @generated from protobuf enum value: FATAL_ERROR = 3;
-   */
-  FATAL_ERROR = 3,
-}
+export interface CommonResponse {}
 /**
  * @generated from protobuf message game.types.CallData
  */
 export interface CallData {
   /**
-   * @generated from protobuf field: string str_data = 1;
+   * @generated from protobuf field: string identity = 1;
+   */
+  identity: string; // identity of call
+  /**
+   * @generated from protobuf field: string str_data = 2;
    */
   strData: string; // string data
   /**
-   * @generated from protobuf field: bytes bin_data = 2;
+   * @generated from protobuf field: bytes bin_data = 3;
    */
   binData: Uint8Array; // binary data
 }
@@ -253,18 +227,10 @@ export const CommonRequest = new CommonRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CommonResponse$Type extends MessageType<CommonResponse> {
   constructor() {
-    super("game.types.CommonResponse", [
-      {
-        no: 1,
-        name: "code",
-        kind: "enum",
-        T: () => ["game.types.CommonResponse.Status", CommonResponse_Status],
-      },
-      { no: 2, name: "msg", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-    ]);
+    super("game.types.CommonResponse", []);
   }
   create(value?: PartialMessage<CommonResponse>): CommonResponse {
-    const message = { code: 0, msg: "" };
+    const message = {};
     globalThis.Object.defineProperty(message, MESSAGE_TYPE, {
       enumerable: false,
       value: this,
@@ -279,46 +245,13 @@ class CommonResponse$Type extends MessageType<CommonResponse> {
     options: BinaryReadOptions,
     target?: CommonResponse
   ): CommonResponse {
-    let message = target ?? this.create(),
-      end = reader.pos + length;
-    while (reader.pos < end) {
-      let [fieldNo, wireType] = reader.tag();
-      switch (fieldNo) {
-        case /* game.types.CommonResponse.Status code */ 1:
-          message.code = reader.int32();
-          break;
-        case /* string msg */ 2:
-          message.msg = reader.string();
-          break;
-        default:
-          let u = options.readUnknownField;
-          if (u === "throw")
-            throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
-            );
-          let d = reader.skip(wireType);
-          if (u !== false)
-            (u === true ? UnknownFieldHandler.onRead : u)(
-              this.typeName,
-              message,
-              fieldNo,
-              wireType,
-              d
-            );
-      }
-    }
-    return message;
+    return target ?? this.create();
   }
   internalBinaryWrite(
     message: CommonResponse,
     writer: IBinaryWriter,
     options: BinaryWriteOptions
   ): IBinaryWriter {
-    /* game.types.CommonResponse.Status code = 1; */
-    if (message.code !== 0) writer.tag(1, WireType.Varint).int32(message.code);
-    /* string msg = 2; */
-    if (message.msg !== "")
-      writer.tag(2, WireType.LengthDelimited).string(message.msg);
     let u = options.writeUnknownFields;
     if (u !== false)
       (u == true ? UnknownFieldHandler.onWrite : u)(
@@ -337,12 +270,13 @@ export const CommonResponse = new CommonResponse$Type();
 class CallData$Type extends MessageType<CallData> {
   constructor() {
     super("game.types.CallData", [
-      { no: 1, name: "str_data", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-      { no: 2, name: "bin_data", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
+      { no: 1, name: "identity", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 2, name: "str_data", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 3, name: "bin_data", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
     ]);
   }
   create(value?: PartialMessage<CallData>): CallData {
-    const message = { strData: "", binData: new Uint8Array(0) };
+    const message = { identity: "", strData: "", binData: new Uint8Array(0) };
     globalThis.Object.defineProperty(message, MESSAGE_TYPE, {
       enumerable: false,
       value: this,
@@ -362,10 +296,13 @@ class CallData$Type extends MessageType<CallData> {
     while (reader.pos < end) {
       let [fieldNo, wireType] = reader.tag();
       switch (fieldNo) {
-        case /* string str_data */ 1:
+        case /* string identity */ 1:
+          message.identity = reader.string();
+          break;
+        case /* string str_data */ 2:
           message.strData = reader.string();
           break;
-        case /* bytes bin_data */ 2:
+        case /* bytes bin_data */ 3:
           message.binData = reader.bytes();
           break;
         default:
@@ -392,12 +329,15 @@ class CallData$Type extends MessageType<CallData> {
     writer: IBinaryWriter,
     options: BinaryWriteOptions
   ): IBinaryWriter {
-    /* string str_data = 1; */
+    /* string identity = 1; */
+    if (message.identity !== "")
+      writer.tag(1, WireType.LengthDelimited).string(message.identity);
+    /* string str_data = 2; */
     if (message.strData !== "")
-      writer.tag(1, WireType.LengthDelimited).string(message.strData);
-    /* bytes bin_data = 2; */
+      writer.tag(2, WireType.LengthDelimited).string(message.strData);
+    /* bytes bin_data = 3; */
     if (message.binData.length)
-      writer.tag(2, WireType.LengthDelimited).bytes(message.binData);
+      writer.tag(3, WireType.LengthDelimited).bytes(message.binData);
     let u = options.writeUnknownFields;
     if (u !== false)
       (u == true ? UnknownFieldHandler.onWrite : u)(

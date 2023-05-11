@@ -1,30 +1,35 @@
-import { createGrpcClient, createRestClient } from "api";
+import { createGrpcClient, createRestClient } from "~/api";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
-    maxTerminalMsgs: 200, // max number of terminal messages
-    localDataExpire: 365, // local storage expire time in days
-    bffAddr: "localhost:10000", // address of bff server
-    grpcAddr: "", // last used address of grpc server
-    grpcClient: null as Nullable<ReturnType<typeof createGrpcClient>>, // grpc client
-    webAddr: "localhost:8080", // address of web server
-    restAddr: "", // last used address of rest server
-    restClient: null as Nullable<ReturnType<typeof createRestClient>>, // rest client
-  }),
-  getters: {
-    grpc: (state) => {
-      if (!state.grpcClient || state.bffAddr !== state.grpcAddr) {
-        state.grpcAddr = state.bffAddr;
-        state.grpcClient = createGrpcClient(state.bffAddr);
-      }
-      return state.grpcClient;
+    systemSettings: {
+      bffAddr: "localhost:9999", // address of bff server
+      webAddr: window.location.host, // address of web server
+      maxTerminalMessages: 100, // max number of terminal messages
+      detailsRefreshInterval: 1000, // interval of refreshing details
     },
-    rest: (state) => {
-      if (!state.restClient || state.webAddr !== state.restAddr) {
-        state.restAddr = state.webAddr;
-        state.restClient = createRestClient(state.webAddr);
+    grpc: null as Nullable<ReturnType<typeof createGrpcClient>>, // grpc client
+    rest: null as Nullable<ReturnType<typeof createRestClient>>, // rest client
+  }),
+  actions: {
+    loadSystemSettings() {
+      const jsonStr = localStorage.getItem("systemSettings");
+      if (jsonStr) {
+        this.systemSettings = JSON.parse(jsonStr);
       }
-      return state.restClient;
+    },
+    saveSystemSettings() {
+      localStorage.setItem(
+        "systemSettings",
+        JSON.stringify(this.systemSettings)
+      );
+    },
+
+    setGrpcClient() {
+      this.grpc = createGrpcClient(this.systemSettings.bffAddr);
+    },
+    setRestClient() {
+      this.rest = createRestClient(this.systemSettings.webAddr);
     },
   },
 });

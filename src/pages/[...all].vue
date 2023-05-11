@@ -1,8 +1,12 @@
 <template>
-  <h3 class="text-primary">404</h3>
+  <h2 class="text-secondary text-weight-bold">404</h2>
 </template>
+
+<script setup lang="ts"></script>
+
+<style scoped lang="scss"></style>
 
 <route lang="yaml">
 meta:
-  layout: helloworld
+  layout: center
 </route>

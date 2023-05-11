@@ -39,7 +39,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "~": resolve(__dirname, "src"),
-      api: resolve(__dirname, "src/api/index"),
     },
   },
   server: {
@@ -48,19 +47,19 @@ export default defineConfig({
     fs: {
       strict: true,
     },
-    // proxy: {
-    //   "^/(?:api)": {
-    //     target: "http://localhost:5000",
-    //     changeOrigin: true,
-    //   },
-    // },
+    proxy: {
+      "^/(?:api)": {
+        target: "http://127.0.0.1:8888",
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes("/node_modules/")) {
-            const modules = ["vue", "quasar"];
+            const modules = ["quasar"];
             const chunk = modules.find((module) =>
               id.includes(`/node_modules/${module}`)
             );

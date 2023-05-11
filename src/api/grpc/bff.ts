@@ -37,9 +37,9 @@ export interface ServiceInfo {
    */
   name: string;
   /**
-   * @generated from protobuf field: string ip = 3;
+   * @generated from protobuf field: string host = 3;
    */
-  ip: string;
+  host: string;
   /**
    * @generated from protobuf field: uint32 port = 4;
    */
@@ -57,15 +57,6 @@ export interface ServiceIdList {
    * @generated from protobuf field: repeated string ids = 1;
    */
   ids: string[]; // id list of services
-}
-/**
- * @generated from protobuf message game.bff.ServiceInfoList
- */
-export interface ServiceInfoList {
-  /**
-   * @generated from protobuf field: repeated game.bff.ServiceInfo services = 1;
-   */
-  services: ServiceInfo[]; // info list of services
 }
 /**
  * @generated from protobuf message game.bff.ServiceInfoMap
@@ -225,13 +216,13 @@ class ServiceInfo$Type extends MessageType<ServiceInfo> {
     super("game.bff.ServiceInfo", [
       { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-      { no: 3, name: "ip", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 3, name: "host", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       { no: 4, name: "port", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
       { no: 5, name: "desc", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
     ]);
   }
   create(value?: PartialMessage<ServiceInfo>): ServiceInfo {
-    const message = { type: "", name: "", ip: "", port: 0, desc: "" };
+    const message = { type: "", name: "", host: "", port: 0, desc: "" };
     globalThis.Object.defineProperty(message, MESSAGE_TYPE, {
       enumerable: false,
       value: this,
@@ -257,8 +248,8 @@ class ServiceInfo$Type extends MessageType<ServiceInfo> {
         case /* string name */ 2:
           message.name = reader.string();
           break;
-        case /* string ip */ 3:
-          message.ip = reader.string();
+        case /* string host */ 3:
+          message.host = reader.string();
           break;
         case /* uint32 port */ 4:
           message.port = reader.uint32();
@@ -296,9 +287,9 @@ class ServiceInfo$Type extends MessageType<ServiceInfo> {
     /* string name = 2; */
     if (message.name !== "")
       writer.tag(2, WireType.LengthDelimited).string(message.name);
-    /* string ip = 3; */
-    if (message.ip !== "")
-      writer.tag(3, WireType.LengthDelimited).string(message.ip);
+    /* string host = 3; */
+    if (message.host !== "")
+      writer.tag(3, WireType.LengthDelimited).string(message.host);
     /* uint32 port = 4; */
     if (message.port !== 0) writer.tag(4, WireType.Varint).uint32(message.port);
     /* string desc = 5; */
@@ -396,90 +387,6 @@ class ServiceIdList$Type extends MessageType<ServiceIdList> {
  * @generated MessageType for protobuf message game.bff.ServiceIdList
  */
 export const ServiceIdList = new ServiceIdList$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class ServiceInfoList$Type extends MessageType<ServiceInfoList> {
-  constructor() {
-    super("game.bff.ServiceInfoList", [
-      {
-        no: 1,
-        name: "services",
-        kind: "message",
-        repeat: 1 /*RepeatType.PACKED*/,
-        T: () => ServiceInfo,
-      },
-    ]);
-  }
-  create(value?: PartialMessage<ServiceInfoList>): ServiceInfoList {
-    const message = { services: [] };
-    globalThis.Object.defineProperty(message, MESSAGE_TYPE, {
-      enumerable: false,
-      value: this,
-    });
-    if (value !== undefined)
-      reflectionMergePartial<ServiceInfoList>(this, message, value);
-    return message;
-  }
-  internalBinaryRead(
-    reader: IBinaryReader,
-    length: number,
-    options: BinaryReadOptions,
-    target?: ServiceInfoList
-  ): ServiceInfoList {
-    let message = target ?? this.create(),
-      end = reader.pos + length;
-    while (reader.pos < end) {
-      let [fieldNo, wireType] = reader.tag();
-      switch (fieldNo) {
-        case /* repeated game.bff.ServiceInfo services */ 1:
-          message.services.push(
-            ServiceInfo.internalBinaryRead(reader, reader.uint32(), options)
-          );
-          break;
-        default:
-          let u = options.readUnknownField;
-          if (u === "throw")
-            throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
-            );
-          let d = reader.skip(wireType);
-          if (u !== false)
-            (u === true ? UnknownFieldHandler.onRead : u)(
-              this.typeName,
-              message,
-              fieldNo,
-              wireType,
-              d
-            );
-      }
-    }
-    return message;
-  }
-  internalBinaryWrite(
-    message: ServiceInfoList,
-    writer: IBinaryWriter,
-    options: BinaryWriteOptions
-  ): IBinaryWriter {
-    /* repeated game.bff.ServiceInfo services = 1; */
-    for (let i = 0; i < message.services.length; i++)
-      ServiceInfo.internalBinaryWrite(
-        message.services[i],
-        writer.tag(1, WireType.LengthDelimited).fork(),
-        options
-      ).join();
-    let u = options.writeUnknownFields;
-    if (u !== false)
-      (u == true ? UnknownFieldHandler.onWrite : u)(
-        this.typeName,
-        message,
-        writer
-      );
-    return writer;
-  }
-}
-/**
- * @generated MessageType for protobuf message game.bff.ServiceInfoList
- */
-export const ServiceInfoList = new ServiceInfoList$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ServiceInfoMap$Type extends MessageType<ServiceInfoMap> {
   constructor() {
@@ -2062,8 +1969,8 @@ export const BFF = new ServiceType("game.bff.BFF", [
   {
     name: "RegisterService",
     options: {},
-    I: ServiceInfoList,
-    O: ServiceIdList,
+    I: ServiceInfoMap,
+    O: CommonResponse,
   },
   {
     name: "UnRegisterService",

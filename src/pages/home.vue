@@ -4,7 +4,7 @@
       <q-toolbar>
         <q-img :src="Logo" width="2rem" alt="Logo" class="q-mr-md" />
         <q-img :src="Brand" width="12rem" alt="Brand" class="q-mr-xl" />
-        <q-toolbar-title class="q-px-lg row items-center bg-secondary ui-menu">
+        <q-toolbar-title class="q-px-lg row items-center ui-menu">
           <q-btn flat label="任务" class="ui-menu-item">
             <q-menu
               fit

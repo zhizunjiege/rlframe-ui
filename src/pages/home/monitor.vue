@@ -172,16 +172,16 @@
             toggle-text-color="accent"
           />
           <q-btn-group spread>
-            <q-btn color="primary" label="加载权重" @click="loadWeights" />
-            <q-btn color="primary" label="保存权重" @click="saveWeights" />
+            <q-btn label="加载权重" @click="loadWeights" />
+            <q-btn label="保存权重" @click="saveWeights" />
           </q-btn-group>
           <q-btn-group spread>
-            <q-btn color="primary" label="加载经验" @click="loadBuffer" />
-            <q-btn color="primary" label="保存经验" @click="saveBuffer" />
+            <q-btn label="加载经验" @click="loadBuffer" />
+            <q-btn label="保存经验" @click="saveBuffer" />
           </q-btn-group>
           <q-btn-group spread>
-            <q-btn color="primary" label="加载状态" @click="loadStatus" />
-            <q-btn color="primary" label="保存状态" @click="saveStatus" />
+            <q-btn label="加载状态" @click="loadStatus" />
+            <q-btn label="保存状态" @click="saveStatus" />
           </q-btn-group>
           <q-input
             v-model="tensorboardPort"

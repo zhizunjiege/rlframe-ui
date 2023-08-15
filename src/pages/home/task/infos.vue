@@ -1,9 +1,5 @@
 <template>
-  <q-card
-    v-if="taskStore.task"
-    flat
-    class="q-mx-auto q-pt-xl transparent ui-card"
-  >
+  <q-card flat class="q-pt-xl transparent t-card">
     <q-card-section>
       <q-markup-table flat separator="horizontal" class="ui-table">
         <tbody>
@@ -11,7 +7,7 @@
             <td>任务名称</td>
             <td>
               <q-input
-                v-model="taskStore.task.name"
+                v-model="taskStore.task!.infos.name"
                 dense
                 standout="bg-ignore"
                 input-class="text-foreground"
@@ -23,7 +19,7 @@
             <td>任务描述</td>
             <td>
               <q-input
-                v-model="taskStore.task.description"
+                v-model="taskStore.task!.infos.desc"
                 dense
                 autogrow
                 clearable
@@ -38,7 +34,7 @@
             <td>创建时间</td>
             <td>
               <q-input
-                v-model="taskStore.task.create_time"
+                v-model="taskStore.task!.infos.create_time"
                 dense
                 disable
                 standout="bg-ignore"
@@ -48,10 +44,10 @@
             </td>
           </tr>
           <tr>
-            <td>修改时间</td>
+            <td>更新时间</td>
             <td>
               <q-input
-                v-model.lazy="taskStore.task.update_time"
+                v-model.lazy="taskStore.task!.infos.update_time"
                 dense
                 disable
                 standout="bg-ignore"
@@ -69,17 +65,7 @@
 <script setup lang="ts">
 import { useTaskStore } from "~/stores";
 
-const $q = useQuasar();
-const router = useRouter();
 const taskStore = useTaskStore();
-
-if (!taskStore.task) {
-  $q.notify({
-    type: "warning",
-    message: "暂无任务",
-  });
-  router.push("/home");
-}
 </script>
 
 <style scoped lang="scss"></style>

@@ -33,7 +33,6 @@ export default defineConfig({
     }),
     Layouts({
       layoutsDirs: ["src/layouts"],
-      defaultLayout: "home",
     }),
   ],
   resolve: {

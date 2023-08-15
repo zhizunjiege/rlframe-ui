@@ -25,11 +25,11 @@ export interface AgentConfig {
   /**
    * @generated from protobuf field: bool training = 1;
    */
-  training: boolean;
+  training: boolean; // whether agent is used for `train` or `infer`
   /**
-   * @generated from protobuf field: string type = 2;
+   * @generated from protobuf field: string name = 2;
    */
-  type: string; // type of rl algorithm
+  name: string; // name of reinforcement learning algorithm
   /**
    * @generated from protobuf field: string hypers = 3;
    */
@@ -46,6 +46,23 @@ export interface AgentConfig {
    * @generated from protobuf field: string rewfunc = 6;
    */
   rewfunc: string; // reward function, format: python code
+  /**
+   * @generated from protobuf field: repeated game.agent.AgentConfig.Hook hooks = 7;
+   */
+  hooks: AgentConfig_Hook[]; // agent hooks
+}
+/**
+ * @generated from protobuf message game.agent.AgentConfig.Hook
+ */
+export interface AgentConfig_Hook {
+  /**
+   * @generated from protobuf field: string name = 1;
+   */
+  name: string; // name of hook
+  /**
+   * @generated from protobuf field: string args = 2;
+   */
+  args: string; // args of hook, format: json string of struct
 }
 /**
  * @generated from protobuf message game.agent.AgentMode
@@ -54,7 +71,7 @@ export interface AgentMode {
   /**
    * @generated from protobuf field: bool training = 1;
    */
-  training: boolean;
+  training: boolean; // whether agent is in `train` or `infer` mode
 }
 /**
  * @generated from protobuf message game.agent.ModelWeights
@@ -88,21 +105,29 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
   constructor() {
     super("game.agent.AgentConfig", [
       { no: 1, name: "training", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-      { no: 2, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       { no: 3, name: "hypers", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       { no: 4, name: "sifunc", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       { no: 5, name: "oafunc", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       { no: 6, name: "rewfunc", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      {
+        no: 7,
+        name: "hooks",
+        kind: "message",
+        repeat: 1 /*RepeatType.PACKED*/,
+        T: () => AgentConfig_Hook,
+      },
     ]);
   }
   create(value?: PartialMessage<AgentConfig>): AgentConfig {
     const message = {
       training: false,
-      type: "",
+      name: "",
       hypers: "",
       sifunc: "",
       oafunc: "",
       rewfunc: "",
+      hooks: [],
     };
     globalThis.Object.defineProperty(message, MESSAGE_TYPE, {
       enumerable: false,
@@ -126,8 +151,8 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
         case /* bool training */ 1:
           message.training = reader.bool();
           break;
-        case /* string type */ 2:
-          message.type = reader.string();
+        case /* string name */ 2:
+          message.name = reader.string();
           break;
         case /* string hypers */ 3:
           message.hypers = reader.string();
@@ -140,6 +165,15 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
           break;
         case /* string rewfunc */ 6:
           message.rewfunc = reader.string();
+          break;
+        case /* repeated game.agent.AgentConfig.Hook hooks */ 7:
+          message.hooks.push(
+            AgentConfig_Hook.internalBinaryRead(
+              reader,
+              reader.uint32(),
+              options
+            )
+          );
           break;
         default:
           let u = options.readUnknownField;
@@ -168,9 +202,9 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
     /* bool training = 1; */
     if (message.training !== false)
       writer.tag(1, WireType.Varint).bool(message.training);
-    /* string type = 2; */
-    if (message.type !== "")
-      writer.tag(2, WireType.LengthDelimited).string(message.type);
+    /* string name = 2; */
+    if (message.name !== "")
+      writer.tag(2, WireType.LengthDelimited).string(message.name);
     /* string hypers = 3; */
     if (message.hypers !== "")
       writer.tag(3, WireType.LengthDelimited).string(message.hypers);
@@ -183,6 +217,13 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
     /* string rewfunc = 6; */
     if (message.rewfunc !== "")
       writer.tag(6, WireType.LengthDelimited).string(message.rewfunc);
+    /* repeated game.agent.AgentConfig.Hook hooks = 7; */
+    for (let i = 0; i < message.hooks.length; i++)
+      AgentConfig_Hook.internalBinaryWrite(
+        message.hooks[i],
+        writer.tag(7, WireType.LengthDelimited).fork(),
+        options
+      ).join();
     let u = options.writeUnknownFields;
     if (u !== false)
       (u == true ? UnknownFieldHandler.onWrite : u)(
@@ -197,6 +238,85 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
  * @generated MessageType for protobuf message game.agent.AgentConfig
  */
 export const AgentConfig = new AgentConfig$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AgentConfig_Hook$Type extends MessageType<AgentConfig_Hook> {
+  constructor() {
+    super("game.agent.AgentConfig.Hook", [
+      { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 2, name: "args", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+    ]);
+  }
+  create(value?: PartialMessage<AgentConfig_Hook>): AgentConfig_Hook {
+    const message = { name: "", args: "" };
+    globalThis.Object.defineProperty(message, MESSAGE_TYPE, {
+      enumerable: false,
+      value: this,
+    });
+    if (value !== undefined)
+      reflectionMergePartial<AgentConfig_Hook>(this, message, value);
+    return message;
+  }
+  internalBinaryRead(
+    reader: IBinaryReader,
+    length: number,
+    options: BinaryReadOptions,
+    target?: AgentConfig_Hook
+  ): AgentConfig_Hook {
+    let message = target ?? this.create(),
+      end = reader.pos + length;
+    while (reader.pos < end) {
+      let [fieldNo, wireType] = reader.tag();
+      switch (fieldNo) {
+        case /* string name */ 1:
+          message.name = reader.string();
+          break;
+        case /* string args */ 2:
+          message.args = reader.string();
+          break;
+        default:
+          let u = options.readUnknownField;
+          if (u === "throw")
+            throw new globalThis.Error(
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+            );
+          let d = reader.skip(wireType);
+          if (u !== false)
+            (u === true ? UnknownFieldHandler.onRead : u)(
+              this.typeName,
+              message,
+              fieldNo,
+              wireType,
+              d
+            );
+      }
+    }
+    return message;
+  }
+  internalBinaryWrite(
+    message: AgentConfig_Hook,
+    writer: IBinaryWriter,
+    options: BinaryWriteOptions
+  ): IBinaryWriter {
+    /* string name = 1; */
+    if (message.name !== "")
+      writer.tag(1, WireType.LengthDelimited).string(message.name);
+    /* string args = 2; */
+    if (message.args !== "")
+      writer.tag(2, WireType.LengthDelimited).string(message.args);
+    let u = options.writeUnknownFields;
+    if (u !== false)
+      (u == true ? UnknownFieldHandler.onWrite : u)(
+        this.typeName,
+        message,
+        writer
+      );
+    return writer;
+  }
+}
+/**
+ * @generated MessageType for protobuf message game.agent.AgentConfig.Hook
+ */
+export const AgentConfig_Hook = new AgentConfig_Hook$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AgentMode$Type extends MessageType<AgentMode> {
   constructor() {

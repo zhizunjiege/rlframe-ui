@@ -1,135 +1,90 @@
-import { base64decode, base64encode } from "@protobuf-ts/runtime";
-
-// dictionary
-export type AnyDict = {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  [key: string]: any;
-};
-
-// simenv table struct
-export type SimenvTable = {
+// task table struct
+export type TaskTable = {
   id: number;
   name: string;
-  description: string;
+  desc?: string;
   create_time?: string;
   update_time?: string;
-  type: string;
-  args: AnyDict;
-  params?: AnyDict;
 };
 
 // agent table struct
 export type AgentTable = {
   id: number;
-  name: string;
-  description: string;
+  desc?: string;
   create_time?: string;
   update_time?: string;
-  training: boolean;
-  type: string;
-  hypers: AnyDict;
-  sifunc: string;
-  oafunc: string;
-  rewfunc: string;
-  weights?: Uint8Array;
-  buffer?: Uint8Array;
-  status?: AnyDict;
+  training: number; // boolean
+  name: string;
+  hypers: string; // json
+  sifunc: string; // python
+  oafunc: string; // python
+  rewfunc: string; // python
+  hooks: string; // json
 };
 
-// task table struct
-export type TaskTable = {
+// simenv table struct
+export type SimenvTable = {
   id: number;
-  name: string;
-  description: string;
+  desc?: string;
   create_time?: string;
   update_time?: string;
-  services: {
-    [key: string]: {
-      infos: {
-        type: string;
-        name: string;
-        host: string;
-        port: number;
-        desc: string;
-      };
-      configs: number;
-    };
-  };
-  routes?: {
-    [key: string]: {
-      [key: string]: string[];
-    };
-  };
+  name: string;
+  args: string; // json
+};
+
+// service table struct
+export type ServiceTable = {
+  id: number;
+  desc?: string;
+  create_time?: string;
+  update_time?: string;
+  task_id: number; // foreign key
+  server_id: string;
+  agent_id?: number; // foreign key
+  simenv_id?: number; // foreign key
 };
 
 // database tables full structs
 export type DBTables = {
+  task: TaskTable;
   agent: AgentTable;
   simenv: SimenvTable;
-  task: TaskTable;
-};
-
-// database tables meta infos
-export type DBTablesMeta = {
-  [table in keyof DBTables]: {
-    [column in keyof DBTables[table]]: {
-      type: string;
-      notnull: boolean;
-    };
-  };
-};
-
-// select options
-export type SelectOptions = {
-  id?: number;
-  limit?: number;
-  offset?: number;
+  service: ServiceTable;
 };
 
 // RestClient class used to communicate with the database
 class RestClient {
   private addr: string;
 
-  private tables: Nullable<DBTablesMeta>;
-
   constructor(addr: string) {
     this.addr = `http://${addr}/api/db`;
-    this.tables = null;
   }
 
-  public async meta() {
-    const response = await fetch(this.addr, { method: "GET" });
-    this.tables = (await response.json()) as DBTablesMeta;
-  }
-
-  public async select<T extends keyof DBTables>(
+  async select<T extends keyof DBTables>(
     table: T,
     columns: (keyof DBTables[T])[] = [],
-    options: SelectOptions = {}
+    options: { [key in keyof DBTables[T]]?: DBTables[T][key] } = {},
+    conjunc: "AND" | "OR" = "AND"
   ): Promise<DBTables[T][]> {
     const colArgs = columns.map((v) => `columns=${v as string}`);
     const optArgs = Object.entries(options).map(([k, v]) => `${k}=${v}`);
-    const args = [...colArgs, ...optArgs].join("&");
+    const args = [...colArgs, ...optArgs, `conjunc=${conjunc}`].join("&");
     const response = await fetch(`${this.addr}/${table}?${args}`, {
       method: "GET",
     });
     if (response.ok) {
       const rows = (await response.json()) as DBTables[T][];
-      for (const row of rows) {
-        this.decode(table, row);
-      }
       return rows;
     } else {
       throw new Error(response.statusText);
     }
   }
 
-  public async insert<T extends keyof DBTables>(
+  async insert<T extends keyof DBTables>(
     table: T,
-    data: DBTables[T]
+    data: Modified<DBTables[T], { id?: number }>
   ): Promise<{ lastrowid: number }> {
     const row = { ...data } as DBTables[T];
-    this.encode(table, row);
     const response = await fetch(`${this.addr}/${table}`, {
       method: "POST",
       headers: {
@@ -144,12 +99,11 @@ class RestClient {
     }
   }
 
-  public async update<T extends keyof DBTables>(
+  async update<T extends keyof DBTables>(
     table: T,
-    data: Partial<DBTables[T]>
+    data: Modified<Partial<DBTables[T]>, { id: number }>
   ): Promise<{ rowcount: number }> {
     const row = { ...data } as DBTables[T];
-    this.encode(table, row);
     const response = await fetch(`${this.addr}/${table}`, {
       method: "PUT",
       headers: {
@@ -164,19 +118,25 @@ class RestClient {
     }
   }
 
-  public async replace<T extends keyof DBTables>(
+  async replace<T extends keyof DBTables>(
     table: T,
     data: Partial<DBTables[T]>
   ): Promise<{ lastrowid: number; rowcount: number }> {
     const id = data.id ?? -1;
     if (id < 0) {
-      const rst = await this.insert(table, data as DBTables[T]);
+      const rst = await this.insert(
+        table,
+        data as Modified<DBTables[T], { id?: number }>
+      );
       return {
         lastrowid: rst.lastrowid,
         rowcount: 1,
       };
     } else {
-      const rst = await this.update(table, data);
+      const rst = await this.update(
+        table,
+        data as Modified<Partial<DBTables[T]>, { id: number }>
+      );
       return {
         lastrowid: id,
         rowcount: rst.rowcount,
@@ -184,7 +144,7 @@ class RestClient {
     }
   }
 
-  public async delete<T extends keyof DBTables>(
+  async delete<T extends keyof DBTables>(
     table: T,
     ids: number[]
   ): Promise<{ rowcount: number }> {
@@ -199,38 +159,6 @@ class RestClient {
       return response.json();
     } else {
       throw new Error(response.statusText);
-    }
-  }
-
-  /*
-   * decode base64 to binary and json to object inplace
-   */
-  private decode<T extends keyof DBTables>(table: T, row: DBTables[T]) {
-    const meta = this.tables?.[table];
-    for (const key in row) {
-      if (meta?.[key].type === "BLOB" && row[key]) {
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        row[key] = base64decode(row[key] as string) as any;
-      } else if (meta?.[key].type === "JSON" && row[key]) {
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        row[key] = JSON.parse(row[key] as string);
-      }
-    }
-  }
-
-  /*
-   * encode binary to base64 and object to json inplace
-   */
-  private encode<T extends keyof DBTables>(table: T, row: DBTables[T]) {
-    const meta = this.tables?.[table];
-    for (const key in row) {
-      if (meta?.[key].type === "BLOB" && row[key]) {
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        row[key] = base64encode(row[key] as Uint8Array) as any;
-      } else if (meta?.[key].type === "JSON" && row[key]) {
-        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-        row[key] = JSON.stringify(row[key]) as any;
-      }
     }
   }
 }

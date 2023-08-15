@@ -1,4 +1,5 @@
-import { createGrpcClient, createRestClient } from "~/api";
+import { ServiceInfo, createGrpcClient, createRestClient } from "~/api";
+import { isEmpty } from "~/utils";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
@@ -10,6 +11,7 @@ export const useAppStore = defineStore("app", {
     },
     grpc: null as Nullable<ReturnType<typeof createGrpcClient>>, // grpc client
     rest: null as Nullable<ReturnType<typeof createRestClient>>, // rest client
+    registeredServices: [] as ServiceInfo[], // registered services
   }),
   actions: {
     loadSystemSettings() {
@@ -25,11 +27,31 @@ export const useAppStore = defineStore("app", {
       );
     },
 
-    setGrpcClient() {
-      this.grpc = createGrpcClient(this.systemSettings.bffAddr);
+    async setGrpcClient(addr: string) {
+      this.systemSettings.bffAddr = addr;
+      this.grpc = createGrpcClient(addr);
+      const { response } = await this.grpc.getServiceInfo({ ids: [] });
+      if (!isEmpty(response.services)) {
+        this.registeredServices = Object.values(response.services);
+      }
     },
-    setRestClient() {
-      this.rest = createRestClient(this.systemSettings.webAddr);
+    async setRestClient(addr: string) {
+      this.systemSettings.webAddr = addr;
+      this.rest = createRestClient(addr);
+      await this.rest.select("task", [], { id: -1 });
+    },
+
+    async addService(service: ServiceInfo) {
+      await this.grpc!.registerService({
+        services: { [service.name]: service },
+      });
+      this.registeredServices.unshift(service);
+    },
+    async delService(index: number) {
+      await this.grpc!.unRegisterService({
+        ids: [this.registeredServices[index].name],
+      });
+      this.registeredServices.splice(index, 1);
     },
   },
 });

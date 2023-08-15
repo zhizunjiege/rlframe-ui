@@ -1,9 +1,15 @@
 <template>
-  <div class="fit flex flex-center">
-    <h3 class="text-secondary text-weight-bold">开发中</h3>
-  </div>
+  <q-circular-progress indeterminate rounded size="4rem" color="accent" />
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const router = useRouter();
+router.push("/home/task/infos");
+</script>
 
 <style scoped lang="scss"></style>
+
+<route lang="yaml">
+meta:
+  layout: center
+</route>

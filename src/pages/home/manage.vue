@@ -133,11 +133,13 @@
 <script setup lang="ts">
 import { QTableProps } from "quasar";
 import { TaskTable } from "~/api";
+import { saveDialog } from "~/configs/dialog";
 import { useAppStore, useTaskStore } from "~/stores";
 
 const $q = useQuasar();
 const route = useRoute();
 const router = useRouter();
+
 const appStore = useAppStore();
 const taskStore = useTaskStore();
 
@@ -178,16 +180,9 @@ const columns = [
     sortable: true,
   },
   {
-    name: "services",
-    label: "服务数量",
-    field: (r: TaskTable) => Object.keys(r.services).length,
-    align: "center",
-    sortable: true,
-  },
-  {
     name: "description",
     label: "任务描述",
-    field: "description",
+    field: "desc",
     align: "center",
   },
   {
@@ -215,48 +210,49 @@ const openOnly = computed(() => route.query.openonly === "true");
 // open task
 async function openTask(id: number) {
   if (!taskStore.saved) {
-    $q.dialog({
-      title: "提示",
-      message: "是否保存当前任务？",
-      cancel: true,
-      persistent: true,
-      options: {
-        type: "radio",
-        model: "save",
-        inline: true,
-        items: [
-          { label: "保存", value: "save" },
-          { label: "不保存", value: "dont" },
-        ],
-      },
-    }).onOk(async (data: string) => {
-      if (data === "save") {
+    $q.dialog(saveDialog).onOk(async (save: string) => {
+      if (save === "yes") {
         await taskStore.saveTask();
       }
       await taskStore.openTask(id);
-      router.push("/home/task/basic");
+      router.push("/home/task");
     });
   } else {
     await taskStore.openTask(id);
-    router.push("/home/task/basic");
+    router.push("/home/task");
   }
 }
 // copy task
 async function copyTask(id: number) {
   const task = await taskStore.getTask(id);
-  task.id = -1;
-  task.name = `${task.name}-副本`;
-  for (const k of Object.keys(task.services)) {
-    task.services[k].configs.id = -1;
+  task.infos.id = -1;
+  task.infos.name = `${task.infos.name} - 副本`;
+  for (const agent of task.agents) {
+    agent.service.id = -1;
+    agent.service.task_id = -1;
+    agent.service.agent_id = -1;
+    agent.configs.id = -1;
+  }
+  for (const simenv of task.simenvs) {
+    simenv.service.id = -1;
+    simenv.service.task_id = -1;
+    simenv.service.simenv_id = -1;
+    simenv.configs.id = -1;
   }
   await taskStore.setTask(task);
-  rows.value.unshift(task as unknown as TaskTable);
+  rows.value.unshift({
+    id: task.infos.id,
+    name: task.infos.name,
+    desc: task.infos.desc,
+    create_time: task.infos.create_time,
+    update_time: task.infos.update_time,
+  });
 }
 // delete selected tasks
 async function deleteTasks() {
   if (
     taskStore.task &&
-    selected.value.find((item) => item.id === taskStore.task!.id)
+    selected.value.find((item) => item.id === taskStore.task!.infos.id)
   ) {
     $q.notify({
       type: "warning",
@@ -270,23 +266,17 @@ async function deleteTasks() {
       persistent: true,
       class: "bg-secondary",
     }).onOk(async () => {
-      const tasks = [];
-      const simenvs = [];
-      const agents = [];
+      const tasks = [] as number[];
+      const agents = [] as number[];
+      const simenvs = [] as number[];
       for (const task of selected.value) {
         tasks.push(task.id);
-        for (const srv of Object.values(task.services)) {
-          if (srv.infos.type === "simenv") {
-            simenvs.push(srv.configs);
-          } else if (srv.infos.type === "agent") {
-            agents.push(srv.configs);
-          }
-        }
+        // TODO: delete agents and simenvs
       }
       await Promise.all([
-        appStore.rest!.delete("simenv", simenvs),
-        appStore.rest!.delete("agent", agents),
         appStore.rest!.delete("task", tasks),
+        appStore.rest!.delete("agent", agents),
+        appStore.rest!.delete("simenv", simenvs),
       ]);
       rows.value = rows.value.filter(
         (item) => !selected.value.find((i) => i.id === item.id)

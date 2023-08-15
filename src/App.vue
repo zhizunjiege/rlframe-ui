@@ -3,49 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from "~/stores";
-
 const $q = useQuasar();
 
 $q.dark.set("auto");
-
-const appStore = useAppStore();
-
-appStore.loadSystemSettings();
-onBeforeUnmount(appStore.saveSystemSettings);
-
-watch(
-  () => appStore.systemSettings.bffAddr,
-  async () => {
-    try {
-      appStore.setGrpcClient();
-      await appStore.grpc!.queryService({ ids: [] });
-    } catch (e) {
-      $q.notify({
-        type: "negative",
-        message: "连接BFF服务失败，请检查地址是否正确",
-      });
-      console.error(e);
-    }
-  },
-  { immediate: true }
-);
-watch(
-  () => appStore.systemSettings.webAddr,
-  async () => {
-    try {
-      appStore.setRestClient();
-      await appStore.rest!.meta();
-    } catch (e) {
-      $q.notify({
-        type: "negative",
-        message: "连接WEB服务失败，请检查地址是否正确",
-      });
-      console.error(e);
-    }
-  },
-  { immediate: true }
-);
 </script>
 
 <style lang="scss">
@@ -65,10 +25,6 @@ body {
   width: 0.5rem;
   height: 0.5rem;
   background-color: var(--ui-primary);
-}
-::-webkit-scrollbar-track,
-::-webkit-scrollbar-corner {
-  background-color: var(--ui-secondary);
 }
 ::-webkit-scrollbar-thumb {
   border-radius: 0.25rem;

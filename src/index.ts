@@ -12,6 +12,8 @@ import "~/styles/index.scss";
 
 import App from "~/App.vue";
 
+import { createEditor } from "./editor";
+
 // config quasar
 const quasarConfig = {
   config: {},
@@ -29,9 +31,13 @@ const router = createRouter({
   routes: setupLayouts(generatedRoutes),
 });
 
+// config editor
+const editor = createEditor();
+
 // create app instance
 createApp(App)
   .use(Quasar, quasarConfig)
   .use(router)
   .use(createPinia())
+  .use(editor)
   .mount("#app");

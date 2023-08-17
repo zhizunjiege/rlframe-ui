@@ -1,171 +1,165 @@
 <template>
   <q-card flat class="q-pt-xl transparent t-card">
-    <q-card-section
-      v-if="taskStore.task!.agents.length > 0"
-      class="flex justify-between q-py-none"
-    >
+    <q-card-section>
       <q-btn
         flat
-        size="sm"
-        round
-        :icon="deling ? 'bi-check-circle' : 'bi-trash'"
-        class="ui-clickable"
-        @click="delService(-1)"
-      >
-        <q-tooltip anchor="top middle" self="bottom middle">
-          {{ deling ? "确认" : "删除" }}
-        </q-tooltip>
-      </q-btn>
-      <q-btn
-        :disable="deling"
-        flat
-        size="sm"
-        round
+        dense
         icon="bi-plus-circle"
-        class="ui-clickable"
+        class="full-width bg-secondary ui-clickable"
         @click="addService"
       >
         <q-tooltip anchor="top middle" self="bottom middle"> 添加 </q-tooltip>
       </q-btn>
     </q-card-section>
-    <q-card-section v-else>
-      <q-btn
-        flat
-        class="full-width bg-secondary ui-clickable"
-        @click="addService"
-      >
-        <q-icon size="xs" name="bi-plus-circle" class="q-mr-sm" />
-        添加
-      </q-btn>
-    </q-card-section>
 
-    <draggable
-      v-model="taskStore.task!.agents"
-      group="agents"
-      :item-key="itemKeyFunc"
+    <q-card-section
+      v-for="(item, index) in taskStore.task!.agents"
+      :key="index"
     >
-      <template #item="{ element, index }">
-        <q-card-section
-          :class="{ 'a-todel': deling }"
-          @click="delService(index)"
-        >
-          <q-markup-table flat separator="horizontal" class="ui-table">
-            <tbody>
-              <tr>
-                <td>服务标识</td>
-                <td>
-                  <q-select
-                    v-model="element.service.server_id"
-                    :options="agentServices"
-                    dense
-                    options-dense
-                    standout="bg-ignore"
-                    input-class="text-foreground"
-                    popup-content-class="shadow-0 bg-secondary"
-                    options-selected-class="text-accent"
-                    class="a-input"
-                  />
-                </td>
-                <td>服务配置</td>
-                <td>
-                  <q-btn
-                    flat
-                    square
-                    label="配置界面"
-                    size="1rem"
-                    :to="`/home/task/agents/${index}`"
-                    class="full-width bg-secondary text-accent"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>创建时间</td>
-                <td>
-                  <q-input
-                    v-model="element.configs.create_time"
-                    disable
-                    dense
-                    standout="bg-ignore"
-                    input-class="text-foreground"
-                    class="a-input"
-                  />
-                </td>
-                <td>更新时间</td>
-                <td>
-                  <q-input
-                    v-model="element.configs.update_time"
-                    disable
-                    dense
-                    standout="bg-ignore"
-                    input-class="text-foreground"
-                    class="a-input"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>服务描述</td>
-                <td colspan="3">
-                  <q-input
-                    v-model="element.configs.desc"
-                    dense
-                    autogrow
-                    clearable
-                    type="textarea"
-                    standout="bg-ignore"
-                    input-class="text-foreground"
-                    class="a-input"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </q-markup-table>
-        </q-card-section>
-      </template>
-    </draggable>
+      <q-markup-table flat separator="horizontal" class="ui-table">
+        <tbody>
+          <tr>
+            <td>服务标识</td>
+            <td>
+              <q-select
+                v-model="item.service.server_id"
+                :options="agentServices"
+                dense
+                filled
+                options-dense
+                popup-content-class="bg-secondary"
+                class="full-width"
+              />
+            </td>
+            <td>服务描述</td>
+            <td>
+              <q-input
+                v-model="item.service.desc"
+                dense
+                filled
+                autogrow
+                clearable
+                type="textarea"
+                class="full-width"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>创建时间</td>
+            <td>
+              <q-input
+                v-model="item.service.create_time"
+                dense
+                filled
+                disable
+                class="full-width"
+              />
+            </td>
+            <td>更新时间</td>
+            <td>
+              <q-input
+                v-model="item.service.update_time"
+                dense
+                filled
+                disable
+                class="full-width"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <q-btn
+                flat
+                dense
+                class="full-width bg-secondary ui-clickable"
+                @click="delService(index)"
+              >
+                <q-icon name="bi-trash" size="xs" />
+                <q-tooltip anchor="top middle" self="bottom middle">
+                  删除
+                </q-tooltip>
+              </q-btn>
+            </td>
+            <td>
+              <q-btn
+                flat
+                dense
+                class="full-width bg-secondary ui-clickable"
+                @click="copyService(index)"
+              >
+                <q-icon name="bi-clipboard" size="xs" />
+                <q-tooltip anchor="top middle" self="bottom middle">
+                  复制
+                </q-tooltip>
+              </q-btn>
+            </td>
+            <td>
+              <q-btn
+                flat
+                dense
+                class="full-width bg-secondary ui-clickable"
+                @click="pasteService(index)"
+              >
+                <q-icon name="bi-clipboard-plus" size="xs" />
+                <q-tooltip anchor="top middle" self="bottom middle">
+                  粘贴
+                </q-tooltip>
+              </q-btn>
+            </td>
+            <td>
+              <q-btn
+                flat
+                dense
+                class="full-width bg-secondary ui-clickable"
+                @click="editService(index)"
+              >
+                <q-icon name="bi-pencil" size="xs" />
+                <q-tooltip anchor="top middle" self="bottom middle">
+                  配置
+                </q-tooltip>
+              </q-btn>
+            </td>
+          </tr>
+        </tbody>
+      </q-markup-table>
+    </q-card-section>
   </q-card>
 </template>
 
 <script setup lang="ts">
-import draggable from "vuedraggable";
-import { Task, useAppStore, useTaskStore } from "~/stores";
+import { useAppStore, useTaskStore } from "~/stores";
+
+const router = useRouter();
 
 const appStore = useAppStore();
 const taskStore = useTaskStore();
 
-const itemKeyFunc = (item: Task["agents"][number]) => item.service.server_id;
-
 const agentServices = computed(() =>
-  appStore.registeredServices.filter((v) => v.type === "agent")
+  appStore.registeredServices
+    .filter((v) => v.type === "agent")
+    .map((v) => v.name)
 );
 
-// add or del service
 function addService() {
   taskStore.addService("agent");
 }
-
-const deling = ref(false);
 function delService(index: number) {
-  if (index >= 0) {
-    if (deling.value) {
-      taskStore.delService("agent", index);
-      if (taskStore.task!.agents.length === 0) {
-        deling.value = false;
-      }
-    }
-  } else {
-    deling.value = !deling.value;
-  }
+  taskStore.delService("agent", index);
+}
+async function copyService(index: number) {
+  await navigator.clipboard.writeText(
+    JSON.stringify(taskStore.task!.agents[index].configs)
+  );
+}
+async function pasteService(index: number) {
+  const configs = JSON.parse(await navigator.clipboard.readText());
+  const id = taskStore.task!.agents[index].configs.id;
+  taskStore.task!.agents[index].configs = configs;
+  taskStore.task!.agents[index].configs.id = id;
+}
+function editService(index: number) {
+  router.push(`/home/task/agents/${index}`);
 }
 </script>
 
-<style scoped lang="scss">
-.a-input {
-  float: right;
-  width: 100%;
-}
-.a-todel {
-  :hover {
-    background-color: var(--ui-disable) !important;
-  }
-}
-</style>
+<style scoped lang="scss"></style>

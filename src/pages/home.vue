@@ -208,6 +208,9 @@ function clsTask() {
   float: right;
   width: 75%;
 }
+.ui-editor {
+  height: 50vh;
+}
 .ui-clickable:not([disabled]) {
   cursor: pointer;
   &:hover {

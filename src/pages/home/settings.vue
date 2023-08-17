@@ -11,8 +11,7 @@
               <q-input
                 v-model.lazy="bffAddr"
                 dense
-                standout="bg-ignore"
-                input-class="text-foreground"
+                filled
                 class="ui-input"
                 @blur="setGrpc"
               />
@@ -24,8 +23,7 @@
               <q-input
                 v-model.lazy="webAddr"
                 dense
-                standout="bg-ignore"
-                input-class="text-foreground"
+                filled
                 class="ui-input"
                 @blur="setRest"
               />
@@ -44,9 +42,8 @@
               <q-input
                 v-model.number="appStore.systemSettings.maxTerminalMessages"
                 dense
+                filled
                 type="number"
-                standout="bg-ignore"
-                input-class="text-foreground"
                 class="ui-input"
               />
             </td>
@@ -57,9 +54,8 @@
               <q-input
                 v-model.number="appStore.systemSettings.detailsRefreshInterval"
                 dense
+                filled
                 type="number"
-                standout="bg-ignore"
-                input-class="text-foreground"
                 class="ui-input"
               />
             </td>
@@ -71,210 +67,134 @@
 
   <q-card flat class="q-mx-auto q-pt-lg transparent ui-card">
     <q-card-section class="text-center text-h6">服务集群</q-card-section>
-    <q-card-section
-      v-if="appStore.registeredServices.length > 0"
-      class="flex justify-between q-py-none"
-    >
+    <q-card-section>
       <q-btn
         flat
-        size="sm"
-        round
-        :icon="deling ? 'bi-check-circle' : adding ? 'bi-x-circle' : 'bi-trash'"
-        class="ui-clickable"
-        @click="delService(-1)"
-      >
-        <q-tooltip anchor="top middle" self="bottom middle">
-          {{ deling ? "确认" : adding ? "取消" : "删除" }}
-        </q-tooltip>
-      </q-btn>
-      <q-btn
-        :disable="deling"
-        flat
-        size="sm"
-        round
-        :icon="adding ? 'bi-check-circle' : 'bi-plus-circle'"
-        class="ui-clickable"
-        @click="addService"
-      >
-        <q-tooltip anchor="top middle" self="bottom middle">
-          {{ adding ? "确认" : "添加" }}
-        </q-tooltip>
-      </q-btn>
-    </q-card-section>
-    <q-card-section v-else>
-      <q-btn
-        flat
+        dense
+        icon="bi-plus-circle"
         class="full-width bg-secondary ui-clickable"
-        @click="addService"
+        @click="
+          appStore.registeredServices.unshift({
+            name: '',
+            type: 'agent',
+            host: 'localhost',
+            port: 0,
+            desc: '',
+          })
+        "
       >
-        <q-icon
-          size="xs"
-          :name="adding ? 'bi-check-circle' : 'bi-plus-circle'"
-          class="q-mr-sm"
-        />
-        {{ adding ? "确认" : "添加" }}
+        <q-tooltip anchor="top middle" self="bottom middle"> 添加 </q-tooltip>
       </q-btn>
     </q-card-section>
-
-    <q-card-section v-if="adding">
+    <q-card-section
+      v-for="(item, index) in appStore.registeredServices"
+      :key="index"
+    >
       <q-markup-table flat separator="horizontal" class="ui-table">
         <tbody>
           <tr>
             <td>服务标识</td>
             <td>
-              <q-input
-                v-model="service.name"
-                dense
-                standout="bg-ignore"
-                input-class="text-foreground"
-                class="s-input"
-              />
+              <q-input v-model="item.name" dense filled class="full-width" />
             </td>
             <td>服务类型</td>
             <td>
               <q-select
-                v-model="service.type"
+                v-model="item.type"
                 :options="['agent', 'simenv']"
                 dense
+                filled
                 options-dense
-                standout="bg-ignore"
-                input-class="text-foreground"
-                popup-content-class="shadow-0 bg-secondary"
-                options-selected-class="text-accent"
-                class="s-input"
+                popup-content-class="bg-secondary"
+                class="full-width"
               />
             </td>
           </tr>
           <tr>
             <td>服务主机</td>
             <td>
-              <q-input
-                v-model="service.host"
-                dense
-                standout="bg-ignore"
-                input-class="text-foreground"
-                class="s-input"
-              />
+              <q-input v-model="item.host" dense filled class="full-width" />
             </td>
             <td>服务端口</td>
             <td>
-              <q-input
-                v-model="service.port"
-                dense
-                standout="bg-ignore"
-                input-class="text-foreground"
-                class="s-input"
-              />
+              <q-input v-model="item.port" dense filled class="full-width" />
             </td>
           </tr>
           <tr>
             <td>服务描述</td>
             <td colspan="3">
               <q-input
-                v-model="service.desc"
+                v-model="item.desc"
                 dense
+                filled
                 autogrow
-                clearable
                 type="textarea"
-                standout="bg-ignore"
-                input-class="text-foreground"
-                class="s-input"
+                class="full-width"
               />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <q-btn
+                flat
+                dense
+                class="full-width bg-secondary ui-clickable"
+                @click="delService(index)"
+              >
+                <q-icon name="bi-trash" size="xs" />
+                <q-tooltip anchor="top middle" self="bottom middle">
+                  注销
+                </q-tooltip>
+              </q-btn>
+            </td>
+            <td>
+              <q-btn
+                flat
+                dense
+                class="full-width bg-secondary ui-clickable"
+                @click="copyService(index)"
+              >
+                <q-icon name="bi-clipboard" size="xs" />
+                <q-tooltip anchor="top middle" self="bottom middle">
+                  复制
+                </q-tooltip>
+              </q-btn>
+            </td>
+            <td>
+              <q-btn
+                flat
+                dense
+                class="full-width bg-secondary ui-clickable"
+                @click="pasteService(index)"
+              >
+                <q-icon name="bi-clipboard-plus" size="xs" />
+                <q-tooltip anchor="top middle" self="bottom middle">
+                  粘贴
+                </q-tooltip>
+              </q-btn>
+            </td>
+            <td>
+              <q-btn
+                flat
+                dense
+                class="full-width bg-secondary ui-clickable"
+                @click="addService(index)"
+              >
+                <q-icon name="bi-play-circle" size="xs" />
+                <q-tooltip anchor="top middle" self="bottom middle">
+                  注册
+                </q-tooltip>
+              </q-btn>
             </td>
           </tr>
         </tbody>
       </q-markup-table>
     </q-card-section>
-
-    <draggable
-      v-model="appStore.registeredServices"
-      item-key="name"
-      group="services"
-    >
-      <template #item="{ element, index }">
-        <q-card-section
-          :class="{ 's-todel': deling }"
-          @click="delService(index)"
-        >
-          <q-markup-table flat separator="horizontal" class="ui-table">
-            <tbody>
-              <tr>
-                <td>服务标识</td>
-                <td>
-                  <q-input
-                    :model-value="element.name"
-                    disable
-                    dense
-                    standout="bg-ignore"
-                    input-class="text-foreground"
-                    class="s-input"
-                  />
-                </td>
-                <td>服务类型</td>
-                <td>
-                  <q-input
-                    :model-value="element.type"
-                    disable
-                    dense
-                    standout="bg-ignore"
-                    input-class="text-foreground"
-                    class="s-input"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>服务主机</td>
-                <td>
-                  <q-input
-                    :model-value="element.host"
-                    disable
-                    dense
-                    standout="bg-ignore"
-                    input-class="text-foreground"
-                    class="s-input"
-                  />
-                </td>
-                <td>服务端口</td>
-                <td>
-                  <q-input
-                    :model-value="element.port"
-                    disable
-                    dense
-                    standout="bg-ignore"
-                    input-class="text-foreground"
-                    class="s-input"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>服务描述</td>
-                <td colspan="3">
-                  <q-input
-                    :model-value="element.desc"
-                    disable
-                    dense
-                    autogrow
-                    type="textarea"
-                    standout="bg-ignore"
-                    input-class="text-foreground"
-                    class="s-input"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </q-markup-table>
-        </q-card-section>
-      </template>
-    </draggable>
   </q-card>
 </template>
 
 <script setup lang="ts">
-import draggable from "vuedraggable";
-import { ServiceInfo } from "~/api";
-
 import { useAppStore } from "~/stores";
-import { deepCopy } from "~/utils";
 
 const $q = useQuasar();
 
@@ -295,7 +215,6 @@ async function setGrpc() {
     console.error(e);
   }
 }
-
 async function setRest() {
   try {
     await appStore.setRestClient(webAddr.value);
@@ -308,49 +227,25 @@ async function setRest() {
   }
 }
 
-// add or del service
-const service = ref<ServiceInfo>({
-  type: "agent",
-  name: "agent",
-  host: "localhost",
-  port: 10002,
-  desc: "",
-});
-const adding = ref(false);
-async function addService() {
-  if (adding.value) {
-    await appStore.addService(deepCopy(service.value));
-  }
-  adding.value = !adding.value;
+async function addService(index: number) {
+  await appStore.addService(index);
 }
-
-const deling = ref(false);
 async function delService(index: number) {
-  if (index >= 0) {
-    if (deling.value) {
-      await appStore.delService(index);
-      if (appStore.registeredServices.length === 0) {
-        deling.value = false;
-      }
-    }
-  } else {
-    if (adding.value) {
-      adding.value = false;
-    } else {
-      deling.value = !deling.value;
-    }
-  }
+  await appStore.delService(index);
+  appStore.registeredServices.splice(index, 1);
+}
+async function copyService(index: number) {
+  await navigator.clipboard.writeText(
+    JSON.stringify(appStore.registeredServices[index])
+  );
+}
+async function pasteService(index: number) {
+  appStore.registeredServices.splice(
+    index,
+    1,
+    JSON.parse(await navigator.clipboard.readText())
+  );
 }
 </script>
 
-<style scoped lang="scss">
-.s-input {
-  float: right;
-  width: 100%;
-}
-.s-todel {
-  :hover {
-    background-color: var(--ui-disable) !important;
-  }
-}
-</style>
+<style scoped lang="scss"></style>

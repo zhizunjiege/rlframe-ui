@@ -21,10 +21,9 @@
                 v-model="agent.name"
                 :options="rlModels"
                 dense
-                standout="bg-ignore"
-                input-class="text-foreground"
-                popup-content-class="shadow-0 bg-secondary"
-                options-selected-class="text-accent"
+                filled
+                options-dense
+                popup-content-class="bg-secondary"
                 class="ui-input"
               />
             </td>
@@ -38,10 +37,7 @@
         label="算法参数"
         header-class="q-px-lg bg-secondary text-subtitle2"
       >
-        <component
-          :is="getAsyncComp(agent.name)"
-          v-model:configs="agent.hypers"
-        />
+        <component :is="getAsyncComp(agent.name)" v-model="agent.hypers" />
       </q-expansion-item>
       <q-item-section class="q-my-sm" />
       <q-expansion-item
@@ -49,7 +45,7 @@
         label="状态-输入预处理函数"
         header-class="q-px-lg bg-secondary text-subtitle2"
       >
-        <div class="full-width a-container">
+        <div class="full-width ui-editor">
           <monaco-editor v-model="agent.sifunc" language="python" />
         </div>
       </q-expansion-item>
@@ -59,7 +55,7 @@
         label="输出-动作后处理函数"
         header-class="q-px-lg bg-secondary text-subtitle2"
       >
-        <div class="full-width a-container">
+        <div class="full-width ui-editor">
           <monaco-editor v-model="agent.oafunc" language="python" />
         </div>
       </q-expansion-item>
@@ -69,7 +65,7 @@
         label="奖励函数"
         header-class="q-px-lg bg-secondary text-subtitle2"
       >
-        <div class="full-width a-container">
+        <div class="full-width ui-editor">
           <monaco-editor v-model="agent.rewfunc" language="python" />
         </div>
       </q-expansion-item>
@@ -92,13 +88,9 @@ const agent = taskStore.task!.agents[index.value].configs;
 
 function getAsyncComp(name: string) {
   return defineAsyncComponent(
-    () => import(`../../../../plugins/agnets/${name.toLowerCase()}/configs.vue`)
+    () => import(`../../../../plugins/agents/${name.toLowerCase()}/configs.vue`)
   );
 }
 </script>
 
-<style scoped lang="scss">
-.a-container {
-  height: 50vh;
-}
-</style>
+<style scoped lang="scss"></style>

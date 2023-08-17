@@ -9,8 +9,7 @@
               <q-input
                 v-model="taskStore.task!.infos.name"
                 dense
-                standout="bg-ignore"
-                input-class="text-foreground"
+                filled
                 class="ui-input"
               />
             </td>
@@ -21,11 +20,10 @@
               <q-input
                 v-model="taskStore.task!.infos.desc"
                 dense
+                filled
                 autogrow
                 clearable
                 type="textarea"
-                standout="bg-ignore"
-                input-class="text-foreground"
                 class="ui-input"
               />
             </td>
@@ -36,9 +34,8 @@
               <q-input
                 v-model="taskStore.task!.infos.create_time"
                 dense
+                filled
                 disable
-                standout="bg-ignore"
-                input-class="text-foreground"
                 class="ui-input"
               />
             </td>
@@ -49,9 +46,8 @@
               <q-input
                 v-model.lazy="taskStore.task!.infos.update_time"
                 dense
+                filled
                 disable
-                standout="bg-ignore"
-                input-class="text-foreground"
                 class="ui-input"
               />
             </td>

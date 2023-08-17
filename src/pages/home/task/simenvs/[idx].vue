@@ -10,10 +10,9 @@
                 v-model="simenv.name"
                 :options="simEngines"
                 dense
-                standout="bg-ignore"
-                input-class="text-foreground"
-                popup-content-class="shadow-0 bg-secondary"
-                options-selected-class="text-accent"
+                filled
+                options-dense
+                popup-content-class="bg-secondary"
                 class="ui-input"
               />
             </td>
@@ -27,10 +26,7 @@
         label="引擎参数"
         header-class="q-px-lg bg-secondary text-subtitle2"
       >
-        <component
-          :is="getAsyncComp(simenv.name)"
-          v-model:configs="simenv.args"
-        />
+        <component :is="getAsyncComp(simenv.name)" v-model="simenv.args" />
       </q-expansion-item>
     </q-card-section>
   </q-card>
@@ -57,8 +53,4 @@ function getAsyncComp(name: string) {
 }
 </script>
 
-<style scoped lang="scss">
-.ui-services-btn {
-  width: 25%;
-}
-</style>
+<style scoped lang="scss"></style>

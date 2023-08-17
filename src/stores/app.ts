@@ -41,17 +41,17 @@ export const useAppStore = defineStore("app", {
       await this.rest.select("task", [], { id: -1 });
     },
 
-    async addService(service: ServiceInfo) {
+    async addService(index: number) {
+      const service = this.registeredServices[index];
       await this.grpc!.registerService({
         services: { [service.name]: service },
       });
-      this.registeredServices.unshift(service);
     },
     async delService(index: number) {
+      const service = this.registeredServices[index];
       await this.grpc!.unRegisterService({
-        ids: [this.registeredServices[index].name],
+        ids: [service.name],
       });
-      this.registeredServices.splice(index, 1);
     },
   },
 });

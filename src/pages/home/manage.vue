@@ -8,9 +8,8 @@
             v-model="filter"
             dense
             rounded
+            outlined
             debounce="500"
-            standout="bg-ignore"
-            input-class="text-foreground"
             placeholder="搜索"
           >
             <template #prepend>

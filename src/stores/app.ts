@@ -1,5 +1,4 @@
 import { ServiceInfo, createGrpcClient, createRestClient } from "~/api";
-import { isEmpty } from "~/utils";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
@@ -11,7 +10,7 @@ export const useAppStore = defineStore("app", {
     },
     grpc: null as Nullable<ReturnType<typeof createGrpcClient>>, // grpc client
     rest: null as Nullable<ReturnType<typeof createRestClient>>, // rest client
-    registeredServices: [] as ServiceInfo[], // registered services
+    services: [] as (ServiceInfo & { registered: boolean })[], // registered services
   }),
   actions: {
     loadSystemSettings() {
@@ -27,31 +26,34 @@ export const useAppStore = defineStore("app", {
       );
     },
 
-    async setGrpcClient(addr: string) {
-      this.systemSettings.bffAddr = addr;
-      this.grpc = createGrpcClient(addr);
+    async setGrpcClient() {
+      this.grpc = createGrpcClient(this.systemSettings.bffAddr);
       const { response } = await this.grpc.getServiceInfo({ ids: [] });
-      if (!isEmpty(response.services)) {
-        this.registeredServices = Object.values(response.services);
-      }
+      this.services = Object.values(response.services).map((service) => ({
+        ...service,
+        registered: true,
+      }));
     },
-    async setRestClient(addr: string) {
-      this.systemSettings.webAddr = addr;
-      this.rest = createRestClient(addr);
+    async setRestClient() {
+      this.rest = createRestClient(this.systemSettings.webAddr);
       await this.rest.select("task", [], { id: -1 });
     },
 
-    async addService(index: number) {
-      const service = this.registeredServices[index];
+    async registerService(index: number) {
+      const service = this.services[index];
       await this.grpc!.registerService({
-        services: { [service.name]: service },
+        services: {
+          [service.name]: service,
+        },
       });
+      service.registered = true;
     },
-    async delService(index: number) {
-      const service = this.registeredServices[index];
+    async unregisterService(index: number) {
+      const service = this.services[index];
       await this.grpc!.unRegisterService({
         ids: [service.name],
       });
+      service.registered = false;
     },
   },
 });

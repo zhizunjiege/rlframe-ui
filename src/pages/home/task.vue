@@ -7,68 +7,33 @@
   >
     <template #before>
       <q-card flat class="q-mx-auto transparent q-pa-xl t-card">
-        <q-card-section horizontal class="flex justify-center q-py-md">
+        <q-card-section
+          v-for="(item, index) in steps"
+          :key="index"
+          horizontal
+          class="flex justify-center q-py-md q-mb-xl"
+        >
           <q-separator
+            :color="step === item.name ? 'accent' : 'transparent'"
             vertical
             size="4px"
-            :color="step === 'infos' ? 'accent' : 'transparent'"
           />
           <q-btn
+            :to="`/home/task/${item.name}`"
+            :text-color="step === item.name ? 'accent' : 'foreground'"
             flat
             square
-            :text-color="step === 'infos' ? 'accent' : 'foreground'"
             size="1rem"
-            to="/home/task/infos"
             class="full-width bg-secondary"
-            @click="step = 'infos'"
+            @click="step = item.name"
           >
-            任务信息
-          </q-btn>
-        </q-card-section>
-        <q-separator color="transparent" class="q-my-lg" />
-        <q-card-section horizontal class="flex justify-center q-py-md">
-          <q-separator
-            vertical
-            size="4px"
-            :color="step === 'agents' ? 'accent' : 'transparent'"
-          />
-          <q-btn
-            flat
-            square
-            :text-color="step === 'agents' ? 'accent' : 'foreground'"
-            size="1rem"
-            to="/home/task/agents"
-            class="full-width bg-secondary"
-            @click="step = 'agents'"
-          >
-            智能服务
-          </q-btn>
-        </q-card-section>
-        <q-separator color="transparent" class="q-my-lg" />
-        <q-card-section horizontal class="flex justify-center q-py-md">
-          <q-separator
-            vertical
-            size="4px"
-            :color="step === 'simenvs' ? 'accent' : 'transparent'"
-          />
-          <q-btn
-            flat
-            square
-            :text-color="step === 'simenvs' ? 'accent' : 'foreground'"
-            size="1rem"
-            to="/home/task/simenvs"
-            class="full-width bg-secondary"
-            @click="step = 'simenvs'"
-          >
-            仿真服务
+            {{ item.title }}
           </q-btn>
         </q-card-section>
       </q-card>
     </template>
     <template #after>
-      <div class="flex flex-center">
-        <router-view />
-      </div>
+      <router-view />
     </template>
   </q-splitter>
 </template>
@@ -89,7 +54,13 @@ if (!taskStore.task) {
   router.push("/home");
 }
 
-const step = ref("infos");
+const step = ref("");
+
+const steps = [
+  { name: "", title: "任务信息" },
+  { name: "agents", title: "智能服务" },
+  { name: "simenvs", title: "仿真服务" },
+];
 
 // watch for task change
 watch(

@@ -20,7 +20,7 @@
         <q-space />
         <q-card-section class="q-py-none">
           <q-btn
-            :disable="openOnly || selected.length === 0"
+            :disable="selected.length === 0"
             flat
             round
             size="sm"
@@ -77,7 +77,6 @@
                 </q-tooltip>
               </q-btn>
               <q-btn
-                :disable="openOnly"
                 flat
                 round
                 size="sm"
@@ -134,9 +133,9 @@ import { QTableProps } from "quasar";
 import { TaskTable } from "~/api";
 import { saveDialog } from "~/configs/dialog";
 import { useAppStore, useTaskStore } from "~/stores";
+import { getTimestampString } from "~/utils";
 
 const $q = useQuasar();
-const route = useRoute();
 const router = useRouter();
 
 const appStore = useAppStore();
@@ -203,9 +202,6 @@ const pagination = ref({
   rowsPerPage: 12,
 });
 
-// if open only
-const openOnly = computed(() => route.query.openonly === "true");
-
 // open task
 async function openTask(id: number) {
   if (!taskStore.saved) {
@@ -223,35 +219,32 @@ async function openTask(id: number) {
 }
 // copy task
 async function copyTask(id: number) {
-  const task = await taskStore.getTask(id);
-  task.infos.id = -1;
-  task.infos.name = `${task.infos.name} - 副本`;
+  const task = await appStore.rest!.getTask(id);
+  task.task.id = -1;
+  task.task.name = `${task.task.name} - 副本`;
   for (const agent of task.agents) {
-    agent.service.id = -1;
-    agent.service.task_id = -1;
-    agent.service.agent_id = -1;
-    agent.configs.id = -1;
+    agent.id = -1;
+    agent.task = -1;
   }
   for (const simenv of task.simenvs) {
-    simenv.service.id = -1;
-    simenv.service.task_id = -1;
-    simenv.service.simenv_id = -1;
-    simenv.configs.id = -1;
+    simenv.id = -1;
+    simenv.task = -1;
   }
-  await taskStore.setTask(task);
+  const ids = await appStore.rest!.setTask(task);
+  const timestamp = getTimestampString();
   rows.value.unshift({
-    id: task.infos.id,
-    name: task.infos.name,
-    desc: task.infos.desc,
-    create_time: task.infos.create_time,
-    update_time: task.infos.update_time,
+    id: ids.task,
+    name: task.task.name,
+    desc: task.task.desc,
+    create_time: timestamp,
+    update_time: timestamp,
   });
 }
 // delete selected tasks
 async function deleteTasks() {
   if (
     taskStore.task &&
-    selected.value.find((item) => item.id === taskStore.task!.infos.id)
+    selected.value.find((item) => item.id === taskStore.task!.task.id)
   ) {
     $q.notify({
       type: "warning",
@@ -265,30 +258,28 @@ async function deleteTasks() {
       persistent: true,
       class: "bg-secondary",
     }).onOk(async () => {
-      const tasks = [] as number[];
-      const agents = [] as number[];
-      const simenvs = [] as number[];
-      for (const task of selected.value) {
-        tasks.push(task.id);
-        // TODO: delete agents and simenvs
-      }
-      await Promise.all([
-        appStore.rest!.delete("task", tasks),
-        appStore.rest!.delete("agent", agents),
-        appStore.rest!.delete("simenv", simenvs),
-      ]);
+      const tasks = selected.value.map((item) => item.id);
+      await appStore.rest!.delTask(tasks);
       rows.value = rows.value.filter(
-        (item) => !selected.value.find((i) => i.id === item.id)
+        (item) => !tasks.find((id) => id === item.id)
       );
-      selected.value.splice(0);
+      selected.value = [];
     });
   }
 }
 
 // initialize
-(async () => {
-  rows.value = await appStore.rest!.select("task", [], {});
-})();
+watch(
+  () => appStore.rest,
+  async (value) => {
+    if (value) {
+      rows.value = await appStore.rest!.select("task", [], {});
+    }
+  },
+  {
+    immediate: true,
+  }
+);
 </script>
 
 <style scoped lang="scss">

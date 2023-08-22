@@ -13,6 +13,8 @@ export type AgentTable = {
   desc?: string;
   create_time?: string;
   update_time?: string;
+  task: number; // foreign key
+  server: string;
   training: number; // boolean
   name: string;
   hypers: string; // json
@@ -28,20 +30,10 @@ export type SimenvTable = {
   desc?: string;
   create_time?: string;
   update_time?: string;
+  task: number; // foreign key
+  server: string;
   name: string;
   args: string; // json
-};
-
-// service table struct
-export type ServiceTable = {
-  id: number;
-  desc?: string;
-  create_time?: string;
-  update_time?: string;
-  task_id: number; // foreign key
-  server_id: string;
-  agent_id?: number; // foreign key
-  simenv_id?: number; // foreign key
 };
 
 // database tables full structs
@@ -49,7 +41,18 @@ export type DBTables = {
   task: TaskTable;
   agent: AgentTable;
   simenv: SimenvTable;
-  service: ServiceTable;
+};
+
+export type Task = {
+  task: TaskTable;
+  agents: AgentTable[];
+  simenvs: SimenvTable[];
+};
+
+export type TaskIds = {
+  task: number;
+  agents: number[];
+  simenvs: number[];
 };
 
 // RestClient class used to communicate with the database
@@ -148,16 +151,49 @@ class RestClient {
     table: T,
     ids: number[]
   ): Promise<{ rowcount: number }> {
-    const response = await fetch(`${this.addr}/${table}`, {
+    const args = ids.map((v) => `ids=${v}`).join("&");
+    const response = await fetch(`${this.addr}/${table}?${args}`, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ids }),
     });
     if (response.ok) {
       return response.json();
     } else {
+      throw new Error(response.statusText);
+    }
+  }
+
+  async setTask(task: Task): Promise<TaskIds> {
+    const response = await fetch(`${this.addr}/task/set`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(task),
+    });
+    if (response.ok) {
+      return await response.json();
+    } else {
+      throw new Error(response.statusText);
+    }
+  }
+
+  async getTask(id: number): Promise<Task> {
+    const response = await fetch(`${this.addr}/task/${id}`, {
+      method: "GET",
+    });
+    if (response.ok) {
+      return await response.json();
+    } else {
+      throw new Error(response.statusText);
+    }
+  }
+
+  async delTask(ids: number[]): Promise<void> {
+    const args = ids.map((v) => `ids=${v}`).join("&");
+    const response = await fetch(`${this.addr}/task/del?${args}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
       throw new Error(response.statusText);
     }
   }

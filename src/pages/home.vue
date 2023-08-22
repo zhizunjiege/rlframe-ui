@@ -24,7 +24,7 @@
                   v-ripple
                   v-close-popup
                   clickable
-                  to="/home/manage?openonly=true"
+                  to="/home/manage"
                   active-class=""
                 >
                   <q-item-section>打开任务</q-item-section>
@@ -52,7 +52,7 @@
                   v-ripple
                   v-close-popup
                   clickable
-                  to="/home/manage?openonly=false"
+                  to="/home/manage"
                   active-class=""
                 >
                   <q-item-section class="q-px-sm">任务管理</q-item-section>
@@ -68,7 +68,7 @@
         <q-toolbar-title shrink class="text-subtitle2">
           {{
             taskStore.task
-              ? taskStore.task.infos.name + (taskStore.saved ? "" : "*")
+              ? taskStore.task.task.name + (taskStore.saved ? "" : "*")
               : ""
           }}
         </q-toolbar-title>
@@ -122,8 +122,8 @@ onBeforeUnmount(appStore.saveSystemSettings);
 // init grpc and rest client
 (async () => {
   try {
-    await appStore.setGrpcClient(appStore.systemSettings.bffAddr);
-    await appStore.setRestClient(appStore.systemSettings.webAddr);
+    await appStore.setGrpcClient();
+    await appStore.setRestClient();
   } catch (e) {
     $q.notify({
       type: "negative",

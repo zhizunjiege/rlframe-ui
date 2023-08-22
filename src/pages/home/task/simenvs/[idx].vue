@@ -1,5 +1,5 @@
 <template>
-  <q-card flat class="q-pt-xl transparent t-card">
+  <q-card flat class="q-mx-auto q-pt-xl transparent t-card">
     <q-card-section>
       <q-markup-table flat separator="horizontal" class="ui-table">
         <tbody>
@@ -11,6 +11,7 @@
                 :options="simEngines"
                 dense
                 filled
+                required
                 options-dense
                 popup-content-class="bg-secondary"
                 class="ui-input"
@@ -19,7 +20,8 @@
           </tr>
         </tbody>
       </q-markup-table>
-      <q-item-section class="q-my-sm" />
+    </q-card-section>
+    <q-card-section>
       <q-expansion-item
         v-if="simenv.name"
         group="simenv"
@@ -34,7 +36,7 @@
 
 <script setup lang="ts">
 import { useTaskStore } from "~/stores";
-import simEngines from "~/plugins/simenvs/index.json";
+import simEngines from "~/plugins/engines/index.json";
 
 const taskStore = useTaskStore();
 
@@ -43,12 +45,12 @@ const props = defineProps<{
 }>();
 const index = computed(() => Number(props.idx));
 
-const simenv = taskStore.task!.simenvs[index.value].configs;
+const simenv = taskStore.task!.simenvs[index.value];
 
 function getAsyncComp(name: string) {
   return defineAsyncComponent(
     () =>
-      import(`../../../../plugins/simenvs/${name.toLowerCase()}/configs.vue`)
+      import(`../../../../plugins/engines/${name.toLowerCase()}/configs.vue`)
   );
 }
 </script>

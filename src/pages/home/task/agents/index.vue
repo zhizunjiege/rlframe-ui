@@ -1,5 +1,5 @@
 <template>
-  <q-card flat class="q-pt-xl transparent t-card">
+  <q-card flat class="q-mx-auto q-pt-xl transparent t-card">
     <q-card-section>
       <q-btn
         flat
@@ -11,7 +11,6 @@
         <q-tooltip anchor="top middle" self="bottom middle"> 添加 </q-tooltip>
       </q-btn>
     </q-card-section>
-
     <q-card-section
       v-for="(item, index) in taskStore.task!.agents"
       :key="index"
@@ -22,10 +21,11 @@
             <td>服务标识</td>
             <td>
               <q-select
-                v-model="item.service.server_id"
+                v-model="item.server"
                 :options="agentServices"
                 dense
                 filled
+                required
                 options-dense
                 popup-content-class="bg-secondary"
                 class="full-width"
@@ -34,11 +34,12 @@
             <td>服务描述</td>
             <td>
               <q-input
-                v-model="item.service.desc"
+                v-model="item.desc"
                 dense
                 filled
                 autogrow
                 clearable
+                maxlength="256"
                 type="textarea"
                 class="full-width"
               />
@@ -48,7 +49,7 @@
             <td>创建时间</td>
             <td>
               <q-input
-                v-model="item.service.create_time"
+                v-model="item.create_time"
                 dense
                 filled
                 disable
@@ -58,7 +59,7 @@
             <td>更新时间</td>
             <td>
               <q-input
-                v-model="item.service.update_time"
+                v-model="item.update_time"
                 dense
                 filled
                 disable
@@ -129,15 +130,14 @@
 <script setup lang="ts">
 import { useAppStore, useTaskStore } from "~/stores";
 
+const $q = useQuasar();
 const router = useRouter();
 
 const appStore = useAppStore();
 const taskStore = useTaskStore();
 
 const agentServices = computed(() =>
-  appStore.registeredServices
-    .filter((v) => v.type === "agent")
-    .map((v) => v.name)
+  appStore.services.filter((v) => v.type === "agent").map((v) => v.name)
 );
 
 function addService() {
@@ -148,14 +148,22 @@ function delService(index: number) {
 }
 async function copyService(index: number) {
   await navigator.clipboard.writeText(
-    JSON.stringify(taskStore.task!.agents[index].configs)
+    JSON.stringify(taskStore.task!.agents[index])
   );
+  $q.notify({
+    type: "positive",
+    message: "已复制到剪贴板",
+  });
 }
 async function pasteService(index: number) {
   const configs = JSON.parse(await navigator.clipboard.readText());
-  const id = taskStore.task!.agents[index].configs.id;
-  taskStore.task!.agents[index].configs = configs;
-  taskStore.task!.agents[index].configs.id = id;
+  configs.id = taskStore.task!.agents[index].id;
+  configs.server = taskStore.task!.agents[index].server;
+  taskStore.task!.agents.splice(index, 1, configs);
+  $q.notify({
+    type: "positive",
+    message: "已从剪贴板粘贴",
+  });
 }
 function editService(index: number) {
   router.push(`/home/task/agents/${index}`);

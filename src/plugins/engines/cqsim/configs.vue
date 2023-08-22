@@ -1,5 +1,5 @@
 <template>
-  <q-form @submit="update">
+  <form ref="form" @change.capture="submit">
     <q-card flat class="full-width transparent">
       <q-card-section>
         <q-markup-table flat separator="horizontal" class="ui-table">
@@ -402,23 +402,19 @@
             <tr>
               <td colspan="2">
                 <div class="full-width ui-editor">
-                  <monaco-editor v-model="args.sim_term_func" language="cpp" />
+                  <monaco-editor
+                    v-model="args.sim_term_func"
+                    language="cpp"
+                    @update:model-value="submit"
+                  />
                 </div>
               </td>
             </tr>
           </tbody>
         </q-markup-table>
       </q-card-section>
-      <q-card-section>
-        <q-btn
-          flat
-          type="submit"
-          label="保存"
-          class="full-width bg-secondary ui-clickable"
-        />
-      </q-card-section>
     </q-card>
-  </q-form>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -480,52 +476,19 @@ const args = ref<CQSIMArgs>({
   x_token:
     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhc2NvcGUiOiIiLCJleHAiOjQ4MTAxOTcxNTQsImlkZW50aXR5IjoxLCJuaWNlIjoiYWRtaW4iLCJvcmlnX2lhdCI6MTY1NjU2MTE1NCwicm9sZWlkIjoxLCJyb2xla2V5IjoiYWRtaW4iLCJyb2xlbmFtZSI6Iuezu-e7n-euoeeQhuWRmCJ9.BvjGw26L1vbWHwl0n8Y1_yTF-fiFNZNmIw20iYe7ToU",
   proxy_id: "",
-  scenario_id: 17,
+  scenario_id: 0,
   exp_design_id: 0,
   repeat_times: 1,
   sim_start_time: Date.now() - offset,
   sim_duration: 60,
   time_step: 50,
   speed_ratio: 1,
-  data: [
-    {
-      name: "example_uav",
-      modelid: "7a06fc01-ca09-4d1a-95e8-63ebacc859ef",
-      inputs: [
-        "azimuth",
-        "example_struct",
-        "example_array",
-        "example_combine",
-        "example_nest",
-      ],
-      outputs: ["longitude", "latitude", "altitude", "speed", "azimuth"],
-    },
-    {
-      name: "example_sub",
-      modelid: "0436c1f9-be91-423d-bea8-571fbc9ae2df",
-      inputs: [],
-      outputs: [
-        "longitude",
-        "latitude",
-        "altitude",
-        "speed",
-        "azimuth",
-        "example_struct",
-        "example_array",
-        "example_combine",
-        "example_nest",
-      ],
-    },
-  ],
-  routes: [
-    {
-      addr: "localhost:10002",
-      models: ["example_uav", "example_sub"],
-    },
-  ],
+  data: [],
+  routes: [],
   simenv_addr: "localhost:10001",
   sim_step_ratio: 1,
-  sim_term_func: "",
+  sim_term_func:
+    "#include <any>\r\n#include <cmath>\r\n#include <string>\r\n#include <unordered_map>\r\n#include <vector>\r\n\r\n/*\r\n * This function is called in every simulation step with a map of states, where the key is the name of the model and the value is a vector of entities.\r\n * Each entity in the vector represents a sets of output params, and the key is the name of the param and the value is wrapped in std::any.\r\n * The function should return `true` if the simulation should be terminated.\r\n */\r\nbool func(std::unordered_map<std::string, std::vector<std::unordered_map<std::string, std::any>>> &states)\r\n{\r\n  // write your code here\r\n  return false;\r\n}\r\n",
 });
 
 const $q = useQuasar();
@@ -540,9 +503,9 @@ const modelOptions = computed(() => Object.values(models.value));
 
 function reset(value: boolean) {
   if (value) {
-    args.value.scenario_id = 0;
-  } else {
     args.value.exp_design_id = 0;
+  } else {
+    args.value.scenario_id = 0;
   }
   models.value = {};
   args.value.data = [];
@@ -602,6 +565,13 @@ async function parseModels(id: number) {
   }
 }
 
+const form = ref<Nullable<HTMLFormElement>>(null);
+function submit() {
+  if (!form.value!.reportValidity()) {
+    return;
+  }
+  update();
+}
 function update() {
   emits("update:modelValue", JSON.stringify(args.value));
 }

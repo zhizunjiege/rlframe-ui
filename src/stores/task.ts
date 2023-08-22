@@ -1,27 +1,13 @@
-import { TaskTable, AgentTable, SimenvTable, ServiceTable } from "~/api";
+import { Task } from "~/api";
 import { getTimestampString } from "~/utils";
 import { useAppStore } from "./app";
-
-export type Task = {
-  infos: TaskTable;
-  agents: {
-    service: ServiceTable;
-    configs: AgentTable;
-  }[];
-  toDelAgentIds: number[];
-  simenvs: {
-    service: ServiceTable;
-    configs: SimenvTable;
-  }[];
-  toDelSimenvIds: number[];
-};
 
 export const useTaskStore = defineStore("task", {
   state: () => ({
     saved: true, // task is saved
     direct: false, // saved is directly edited
     task: null as Nullable<Task>, // current task
-    recent: [] as TaskTable[], // recent tasks
+    recent: [] as Task["task"][], // recent tasks
   }),
   actions: {
     loadRecentTasks() {
@@ -34,7 +20,7 @@ export const useTaskStore = defineStore("task", {
       localStorage.setItem("recentTasks", JSON.stringify(this.recent));
     },
 
-    addRecentTask(task: TaskTable) {
+    addRecentTask(task: Task["task"]) {
       const index = this.recent.findIndex((t) => t.id === task.id);
       if (index >= 0) {
         this.delRecentTask(index);
@@ -53,7 +39,7 @@ export const useTaskStore = defineStore("task", {
     newTask() {
       const timestamp = getTimestampString();
       this.task = {
-        infos: {
+        task: {
           id: -1,
           name: "未命名任务",
           desc: "未命名任务",
@@ -61,9 +47,7 @@ export const useTaskStore = defineStore("task", {
           update_time: timestamp,
         },
         agents: [],
-        toDelAgentIds: [],
         simenvs: [],
-        toDelSimenvIds: [],
       };
       this.setSaved(false);
     },
@@ -73,124 +57,77 @@ export const useTaskStore = defineStore("task", {
     },
 
     async openTask(id: number) {
-      this.task = await this.getTask(id);
-      this.addRecentTask(this.task.infos);
+      const appStore = useAppStore();
+      this.task = await appStore.rest!.getTask(id);
+      this.addRecentTask(this.task.task);
       this.setSaved(true);
     },
     async saveTask() {
-      this.task = await this.setTask(this.task!);
-      this.addRecentTask(this.task.infos);
-      this.setSaved(true);
-    },
+      if (this.task) {
+        const appStore = useAppStore();
+        const ids = await appStore.rest!.setTask(this.task);
+        const timestamp = getTimestampString();
 
-    async getTask(id: number) {
-      const appStore = useAppStore();
-      const tasks = await appStore.rest!.select("task", [], { id });
-      if (tasks.length == 0) {
-        throw new Error(`Task ${id} not found`);
-      }
-      const task = { infos: tasks[0] } as Task;
-      const services = await appStore.rest!.select("service", [], {
-        task_id: id,
-      });
-      for (const service of services) {
-        if (service.agent_id && service.agent_id >= 0) {
-          const res = await appStore.rest!.select("agent", [], {
-            id: service.agent_id,
-          });
-          task.agents.push({ service, configs: res[0] });
-        } else if (service.simenv_id && service.simenv_id >= 0) {
-          const res = await appStore.rest!.select("simenv", [], {
-            id: service.simenv_id,
-          });
-          task.simenvs.push({ service, configs: res[0] });
-        } else {
-          throw new Error(`Service ${service.id} has no bound agent or simenv`);
+        if (this.task.task.id < 0) {
+          this.task.task.id = ids.task;
+          this.task.task.create_time = timestamp;
         }
-      }
-      return task;
-    },
-    async setTask(task: Task) {
-      const appStore = useAppStore();
-      const timestamp = getTimestampString();
-      const { lastrowid } = await appStore.rest!.replace("task", task.infos);
-      if (task.infos.id < 0) {
-        task.infos.create_time = timestamp;
-      }
-      task.infos.update_time = timestamp;
-      task.infos.id = lastrowid;
-      for (const agent of task.agents) {
-        const { lastrowid } = await appStore.rest!.replace(
-          "agent",
-          agent.configs
-        );
-        if (agent.configs.id < 0) {
-          agent.configs.create_time = timestamp;
+        this.task.task.update_time = timestamp;
+
+        for (let i = 0; i < this.task.agents.length; i++) {
+          const agent = this.task.agents[i];
+          if (agent.id < 0) {
+            agent.id = ids.agents[i];
+            agent.create_time = timestamp;
+          }
+          agent.update_time = timestamp;
         }
-        agent.configs.update_time = timestamp;
-        agent.configs.id = lastrowid;
-        agent.service.task_id = task.infos.id;
-        agent.service.agent_id = agent.configs.id;
-        await appStore.rest!.replace("service", agent.service);
-      }
-      await appStore.rest!.delete("agent", task.toDelAgentIds);
-      for (const simenv of task.simenvs) {
-        const { lastrowid } = await appStore.rest!.replace(
-          "simenv",
-          simenv.configs
-        );
-        if (simenv.configs.id < 0) {
-          simenv.configs.create_time = timestamp;
+
+        for (let i = 0; i < this.task.simenvs.length; i++) {
+          const simenv = this.task.simenvs[i];
+          if (simenv.id < 0) {
+            simenv.id = ids.simenvs[i];
+            simenv.create_time = timestamp;
+          }
+          simenv.update_time = timestamp;
         }
-        simenv.configs.update_time = timestamp;
-        simenv.configs.id = lastrowid;
-        simenv.service.task_id = task.infos.id;
-        simenv.service.agent_id = simenv.configs.id;
-        await appStore.rest!.replace("service", simenv.service);
+
+        this.addRecentTask(this.task.task);
+        this.setSaved(true);
       }
-      await appStore.rest!.delete("simenv", task.toDelSimenvIds);
-      return task;
     },
 
     addService(type: "agent" | "simenv") {
       const timestamp = getTimestampString();
-      const service = {
-        id: -1,
-        create_time: timestamp,
-        update_time: timestamp,
-        task_id: this.task!.infos.id,
-        server_id: "",
-      } as ServiceTable;
       if (type === "agent") {
-        service.agent_id = -1;
         this.task!.agents.unshift({
-          service,
-          configs: {
-            id: -1,
-            desc: "",
-            create_time: timestamp,
-            update_time: timestamp,
-            training: 1,
-            name: "",
-            hypers: "{}",
-            sifunc: "",
-            oafunc: "",
-            rewfunc: "",
-            hooks: "{}",
-          },
+          id: -1,
+          desc: "",
+          create_time: timestamp,
+          update_time: timestamp,
+          task: this.task!.task.id,
+          server: "",
+          training: 1,
+          name: "",
+          hypers: "{}",
+          sifunc:
+            '# Python 3.8.10\r\nimport math\r\nfrom typing import Any, Dict, List, Union\r\n\r\nimport numpy as np\r\n\r\n\r\ndef func(states: Dict[str, List[Dict[str, Any]]]) -> Union[np.ndarray, Dict[Union[str, int], np.ndarray]]:\r\n    """Convert `states` to `inputs` for model inferecing."""\r\n    global caches\r\n    # write your code here\r\n    return np.array([0])',
+          oafunc:
+            "# Python 3.8.10\r\nfrom typing import Any, Dict, List, Union\r\n\r\nimport numpy as np\r\n\r\n\r\ndef func(outputs: Union[np.ndarray, Dict[Union[str, int], np.ndarray]]) -> Dict[str, List[Dict[str, Any]]]:\r\n    \"\"\"Convert `outputs` to `actions` for model simulation.\"\"\"\r\n    global caches\r\n    # write your code here\r\n    return {\r\n        'model1': [{\r\n            'param1': int(0),\r\n            'param2': float(1.0),\r\n        }],\r\n        'model2': [{\r\n            'param3': str('Helloworld'),\r\n        }],\r\n    }\r\n",
+          rewfunc:
+            '# Python 3.8.10\r\nfrom typing import Any, Dict, List, Union\r\n\r\nimport numpy as np\r\n\r\n\r\ndef func(\r\n    states: Dict[str, List[Dict[str, Any]]],\r\n    inputs: Union[np.ndarray, Dict[Union[str, int], np.ndarray]],\r\n    actions: Dict[str, List[Dict[str, Any]]],\r\n    outputs: Union[np.ndarray, Dict[Union[str, int], np.ndarray]],\r\n    next_states: Dict[str, List[Dict[str, Any]]],\r\n    next_inputs: Union[np.ndarray, Dict[Union[str, int], np.ndarray]],\r\n    terminated: bool,\r\n    truncated: bool,\r\n    reward: Union[float, Dict[Union[str, int], float]],\r\n) -> Union[float, Dict[Union[str, int], float]]:\r\n    """Calculate the reward for the current step."""\r\n    global caches\r\n    # write your code here\r\n    if terminated:\r\n        return reward + 1\r\n    else:\r\n        return reward + 0\r\n',
+          hooks: "[]",
         });
       } else if (type === "simenv") {
-        service.simenv_id = -1;
         this.task!.simenvs.unshift({
-          service,
-          configs: {
-            id: -1,
-            desc: "",
-            create_time: timestamp,
-            update_time: timestamp,
-            name: "",
-            args: "{}",
-          },
+          id: -1,
+          desc: "",
+          create_time: timestamp,
+          update_time: timestamp,
+          task: this.task!.task.id,
+          server: "",
+          name: "",
+          args: "{}",
         });
       } else {
         throw new Error(`Unknown service type ${type}`);
@@ -199,16 +136,8 @@ export const useTaskStore = defineStore("task", {
     },
     delService(type: "agent" | "simenv", index: number) {
       if (type === "agent") {
-        const id = this.task!.agents[index].configs.id;
-        if (id >= 0) {
-          this.task!.toDelAgentIds.push(id);
-        }
         this.task!.agents.splice(index, 1);
       } else if (type === "simenv") {
-        const id = this.task!.simenvs[index].configs.id;
-        if (id >= 0) {
-          this.task!.toDelSimenvIds.push(id);
-        }
         this.task!.simenvs.splice(index, 1);
       } else {
         throw new Error(`Unknown service type ${type}`);

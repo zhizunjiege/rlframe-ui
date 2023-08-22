@@ -1,5 +1,5 @@
 <template>
-  <q-form @submit="update">
+  <form ref="form" @change.capture="submit">
     <q-card flat class="full-width transparent">
       <q-card-section>
         <q-markup-table flat separator="horizontal" class="ui-table">
@@ -264,16 +264,8 @@
           </tbody>
         </q-markup-table>
       </q-card-section>
-      <q-card-section>
-        <q-btn
-          flat
-          type="submit"
-          label="保存"
-          class="full-width bg-secondary ui-clickable"
-        />
-      </q-card-section>
     </q-card>
-  </q-form>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -322,6 +314,13 @@ const hypers = ref<DQNHypers>({
   seed: null,
 });
 
+const form = ref<Nullable<HTMLFormElement>>(null);
+function submit() {
+  if (!form.value!.reportValidity()) {
+    return;
+  }
+  update();
+}
 function update() {
   if (hypers.value.seed === "") {
     hypers.value.seed = null;

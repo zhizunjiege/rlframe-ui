@@ -33,7 +33,7 @@
                   v-ripple
                   v-close-popup
                   clickable
-                  :disable="!taskStore.task || taskStore.saved"
+                  :disable="!taskStore.task"
                   @click="taskStore.saveTask"
                 >
                   <q-item-section>保存任务</q-item-section>
@@ -170,12 +170,12 @@ function clsTask() {
       if (save === "yes") {
         await taskStore.saveTask();
       }
-      taskStore.clsTask();
       router.push("/home");
+      taskStore.clsTask();
     });
   } else {
-    taskStore.clsTask();
     router.push("/home");
+    taskStore.clsTask();
   }
 }
 </script>

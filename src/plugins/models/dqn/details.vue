@@ -1,22 +1,22 @@
 <template>
-  <q-scroll-area v-if="valid" class="fit">
+  <q-scroll-area v-if="!isEmpty(props.details)" class="fit">
     <q-markup-table flat separator="horizontal" class="overflow-auto ui-table">
       <tbody>
         <tr>
-          <td>训练局数</td>
-          <td>{{ props.details.status.episode }}</td>
-          <td>单局奖励</td>
-          <td>{{ props.details.status.episode_rewards }}</td>
-        </tr>
-        <tr>
-          <td>推理次数</td>
-          <td>{{ props.details.status.react_steps }}</td>
-          <td>训练次数</td>
-          <td>{{ props.details.status.train_steps }}</td>
+          <td>是否训练</td>
+          <td class="ellipsis">{{ props.details.training }}</td>
         </tr>
         <tr>
           <td>随机概率</td>
-          <td>{{ props.details.status.epsilon }}</td>
+          <td class="ellipsis">{{ props.details.epsilon }}</td>
+        </tr>
+        <tr>
+          <td>推理次数</td>
+          <td class="ellipsis">{{ props.details.react_steps }}</td>
+        </tr>
+        <tr>
+          <td>训练次数</td>
+          <td class="ellipsis">{{ props.details.train_steps }}</td>
         </tr>
       </tbody>
     </q-markup-table>
@@ -31,21 +31,12 @@ import { isEmpty } from "~/utils";
 
 const props = defineProps<{
   details: {
-    status: {
-      training: boolean;
-      episode: number;
-      episode_rewards: number;
-      epsilon: number;
-      react_steps: number;
-      train_steps: number;
-      graph_exported: boolean;
-    };
+    training: boolean;
+    epsilon: number;
+    react_steps: number;
+    train_steps: number;
   };
 }>();
-
-const valid = computed(
-  () => !isEmpty(props.details) && props.details.status.training
-);
 </script>
 
 <style scoped lang="scss"></style>

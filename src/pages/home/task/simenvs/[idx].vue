@@ -28,7 +28,11 @@
         label="引擎参数"
         header-class="q-px-lg bg-secondary text-subtitle2"
       >
-        <component :is="getAsyncComp(simenv.name)" v-model="simenv.args" />
+        <component
+          :is="getAsyncComp(simenv.name)"
+          v-once
+          v-model="simenv.args"
+        />
       </q-expansion-item>
     </q-card-section>
   </q-card>

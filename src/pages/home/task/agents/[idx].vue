@@ -39,7 +39,11 @@
         label="算法参数"
         header-class="q-px-lg bg-secondary text-subtitle2"
       >
-        <component :is="getModelAsyncComp(agent.name)" v-model="agent.hypers" />
+        <component
+          :is="getModelAsyncComp(agent.name)"
+          v-once
+          v-model="agent.hypers"
+        />
       </q-expansion-item>
     </q-card-section>
     <q-card-section>

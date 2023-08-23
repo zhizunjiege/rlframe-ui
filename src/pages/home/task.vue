@@ -71,6 +71,10 @@ watch(
     } else {
       taskStore.saved = false;
     }
+  },
+  {
+    immediate: true,
+    deep: true,
   }
 );
 </script>

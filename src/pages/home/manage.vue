@@ -232,7 +232,7 @@ async function copyTask(id: number) {
   }
   const ids = await appStore.rest!.setTask(task);
   const timestamp = getTimestampString();
-  rows.value.unshift({
+  rows.value.push({
     id: ids.task,
     name: task.task.name,
     desc: task.task.desc,

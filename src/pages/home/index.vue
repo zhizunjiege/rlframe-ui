@@ -60,7 +60,7 @@
         v-else
         class="absolute-center text-secondary text-h3 text-weight-bold"
       >
-        空 空 如 也
+        暂 无 任 务
       </q-card-section>
     </q-card>
   </div>

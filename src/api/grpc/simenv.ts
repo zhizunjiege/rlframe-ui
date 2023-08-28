@@ -21,13 +21,13 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface SimenvConfig {
   /**
-   * @generated from protobuf field: string type = 1;
+   * @generated from protobuf field: string name = 1;
    */
-  type: string; // type of simenv
+  name: string; // name of simulation engine
   /**
    * @generated from protobuf field: string args = 2;
    */
-  args: string; // args of the simenv, format: json string of struct
+  args: string; // args of the engine, format: json string of struct
 }
 /**
  * @generated from protobuf message game.simenv.SimCmd
@@ -36,11 +36,11 @@ export interface SimCmd {
   /**
    * @generated from protobuf field: string type = 1;
    */
-  type: string; // cmd: init/start/pause/step/resume/stop/episode/param
+  type: string; // type: init/start/pause/step/resume/stop/episode/param
   /**
    * @generated from protobuf field: string params = 2;
    */
-  params: string; // params of the cmd, format: json string of struct
+  params: string; // params of the command, format: json string of struct
 }
 /**
  * @generated from protobuf message game.simenv.SimInfo
@@ -63,12 +63,12 @@ export interface SimInfo {
 class SimenvConfig$Type extends MessageType<SimenvConfig> {
   constructor() {
     super("game.simenv.SimenvConfig", [
-      { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       { no: 2, name: "args", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
     ]);
   }
   create(value?: PartialMessage<SimenvConfig>): SimenvConfig {
-    const message = { type: "", args: "" };
+    const message = { name: "", args: "" };
     globalThis.Object.defineProperty(message, MESSAGE_TYPE, {
       enumerable: false,
       value: this,
@@ -88,8 +88,8 @@ class SimenvConfig$Type extends MessageType<SimenvConfig> {
     while (reader.pos < end) {
       let [fieldNo, wireType] = reader.tag();
       switch (fieldNo) {
-        case /* string type */ 1:
-          message.type = reader.string();
+        case /* string name */ 1:
+          message.name = reader.string();
           break;
         case /* string args */ 2:
           message.args = reader.string();
@@ -118,9 +118,9 @@ class SimenvConfig$Type extends MessageType<SimenvConfig> {
     writer: IBinaryWriter,
     options: BinaryWriteOptions
   ): IBinaryWriter {
-    /* string type = 1; */
-    if (message.type !== "")
-      writer.tag(1, WireType.LengthDelimited).string(message.type);
+    /* string name = 1; */
+    if (message.name !== "")
+      writer.tag(1, WireType.LengthDelimited).string(message.name);
     /* string args = 2; */
     if (message.args !== "")
       writer.tag(2, WireType.LengthDelimited).string(message.args);

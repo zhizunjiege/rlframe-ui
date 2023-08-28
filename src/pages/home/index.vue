@@ -21,10 +21,10 @@
         </thead>
         <tbody>
           <tr
-            v-for="task in taskStore.recent"
+            v-for="(task, index) in taskStore.recent"
             :key="task.id"
             class="cursor-pointer ui-index-row"
-            @click="openTask(task.id)"
+            @click="openTask(index)"
           >
             <td>{{ task.id }}</td>
             <td class="ellipsis">
@@ -36,9 +36,9 @@
             <td>{{ task.create_time }}</td>
             <td>{{ task.update_time }}</td>
             <td class="ellipsis">
-              {{ task.description }}
+              {{ task.desc }}
               <q-tooltip anchor="top right" self="top middle">
-                {{ task.description }}
+                {{ task.desc }}
               </q-tooltip>
             </td>
             <td>
@@ -46,7 +46,7 @@
                 name="bi-x-circle"
                 size="xs"
                 class="ui-icon"
-                @click.stop="taskStore.delRecentTask(task)"
+                @click.stop="taskStore.delRecentTask(index)"
               >
                 <q-tooltip anchor="top right" self="top left">
                   清除记录
@@ -60,50 +60,39 @@
         v-else
         class="absolute-center text-secondary text-h3 text-weight-bold"
       >
-        空 空 如 也
+        暂 无 任 务
       </q-card-section>
     </q-card>
   </div>
 </template>
 
 <script setup lang="ts">
+import { saveDialog } from "~/configs/dialog";
 import { useTaskStore } from "~/stores";
 
 const $q = useQuasar();
 const router = useRouter();
+
 const taskStore = useTaskStore();
 
 // open task
-async function openTask(id: number) {
+async function openTask(index: number) {
+  const task = taskStore.recent[index];
   try {
     if (!taskStore.saved) {
-      $q.dialog({
-        title: "提示",
-        message: "是否保存当前任务？",
-        cancel: true,
-        persistent: true,
-        class: "bg-secondary",
-        options: {
-          type: "radio",
-          model: "save",
-          inline: true,
-          items: [
-            { label: "保存", value: "save" },
-            { label: "不保存", value: "dont" },
-          ],
-        },
-      }).onOk(async (data: string) => {
-        if (data === "save") {
+      $q.dialog(saveDialog).onOk(async (save: string) => {
+        if (save === "yes") {
           await taskStore.saveTask();
         }
-        await taskStore.openTask(id);
-        router.push("/home/task/basic");
+        await taskStore.openTask(task.id);
+        router.push("/home/task");
       });
     } else {
-      await taskStore.openTask(id);
-      router.push("/home/task/basic");
+      await taskStore.openTask(task.id);
+      router.push("/home/task");
     }
   } catch (e) {
+    taskStore.delRecentTask(index);
     $q.notify({
       type: "negative",
       message: "打开任务失败，该任务可能已失效",

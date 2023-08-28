@@ -4,7 +4,8 @@
       <q-toolbar>
         <q-img :src="Logo" width="2rem" alt="Logo" class="q-mr-md" />
         <q-img :src="Brand" width="12rem" alt="Brand" class="q-mr-xl" />
-        <q-toolbar-title class="q-px-lg row items-center bg-secondary ui-menu">
+        <q-toolbar-title class="q-px-lg row items-center ui-menu">
+          <q-btn flat label="首页" to="/home" class="ui-menu-item" />
           <q-btn flat label="任务" class="ui-menu-item">
             <q-menu
               fit
@@ -23,7 +24,7 @@
                   v-ripple
                   v-close-popup
                   clickable
-                  to="/home/task/manage?openonly=true"
+                  to="/home/manage"
                   active-class=""
                 >
                   <q-item-section>打开任务</q-item-section>
@@ -32,7 +33,7 @@
                   v-ripple
                   v-close-popup
                   clickable
-                  :disable="!taskStore.task || taskStore.saved"
+                  :disable="!taskStore.task"
                   @click="taskStore.saveTask"
                 >
                   <q-item-section>保存任务</q-item-section>
@@ -42,7 +43,7 @@
                   v-close-popup
                   clickable
                   :disable="!taskStore.task"
-                  @click="closeTask"
+                  @click="clsTask"
                 >
                   <q-item-section>关闭任务</q-item-section>
                 </q-item>
@@ -51,7 +52,7 @@
                   v-ripple
                   v-close-popup
                   clickable
-                  to="/home/task/manage?openonly=false"
+                  to="/home/manage"
                   active-class=""
                 >
                   <q-item-section class="q-px-sm">任务管理</q-item-section>
@@ -61,13 +62,13 @@
           </q-btn>
           <q-btn flat label="监控" to="/home/monitor" class="ui-menu-item" />
           <q-btn flat label="设置" to="/home/settings" class="ui-menu-item" />
-          <q-btn flat label="关于" to="/home/about" class="ui-menu-item" />
+          <q-btn flat label="帮助" to="/home/helper" class="ui-menu-item" />
         </q-toolbar-title>
         <q-space />
         <q-toolbar-title shrink class="text-subtitle2">
           {{
             taskStore.task
-              ? taskStore.task!.name + (taskStore.saved ? "" : "*")
+              ? taskStore.task.task.name + (taskStore.saved ? "" : "*")
               : ""
           }}
         </q-toolbar-title>
@@ -75,60 +76,11 @@
         <q-icon
           :name="$q.dark.isActive ? 'bi-moon' : 'bi-sun'"
           size="1rem"
-          class="ui-icon"
+          class="ui-clickable"
           @click="$q.dark.toggle"
         />
       </q-toolbar>
     </q-header>
-
-    <q-drawer
-      :model-value="taskStore.task !== null"
-      :show-if-above="false"
-      :mini="mini"
-      :width="200"
-      side="left"
-      @mouseover="mini = false"
-      @mouseout="mini = true"
-    >
-      <q-list class="full-height column">
-        <q-item
-          v-ripple
-          clickable
-          :disable="!taskStore.task"
-          to="/home/task/basic"
-          active-class="bg-secondary text-accent"
-        >
-          <q-item-section avatar>
-            <q-icon name="bi-info-circle" />
-          </q-item-section>
-          <q-item-section class="text-subtitle1"> 基本信息 </q-item-section>
-        </q-item>
-        <q-item
-          v-ripple
-          clickable
-          :disable="!taskStore.task"
-          to="/home/task/services"
-          active-class="bg-secondary text-accent"
-        >
-          <q-item-section avatar>
-            <q-icon name="bi-cpu" />
-          </q-item-section>
-          <q-item-section class="text-subtitle1"> 服务配置 </q-item-section>
-        </q-item>
-        <q-item
-          v-ripple
-          clickable
-          :disable="!taskStore.task"
-          to="/home/task/routes"
-          active-class="bg-secondary text-accent"
-        >
-          <q-item-section avatar>
-            <q-icon name="bi-router" />
-          </q-item-section>
-          <q-item-section class="text-subtitle1"> 路由配置 </q-item-section>
-        </q-item>
-      </q-list>
-    </q-drawer>
 
     <q-page-container>
       <q-page :style-fn="pageStyle">
@@ -137,39 +89,54 @@
             <component :is="Component" />
           </keep-alive>
         </router-view>
+        <q-page-sticky
+          v-if="taskStore.task"
+          position="bottom-right"
+          :offset="[48, 48]"
+        >
+          <q-btn fab icon="bi-list-ul" to="/home/task" class="bg-secondary">
+            <q-tooltip>任务配置</q-tooltip>
+          </q-btn>
+        </q-page-sticky>
       </q-page>
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { QDialogOptions } from "quasar";
 import Brand from "~/assets/brand.png";
 import Logo from "~/assets/logo.png";
-import { useTaskStore } from "~/stores";
+import { saveDialog } from "~/configs/dialog";
+import { useAppStore, useTaskStore } from "~/stores";
 
 const $q = useQuasar();
 const router = useRouter();
+
+const appStore = useAppStore();
 const taskStore = useTaskStore();
 
+// load system settings and set callback for saving
+appStore.loadSystemSettings();
+onBeforeUnmount(appStore.saveSystemSettings);
+
+// init grpc and rest client
+(async () => {
+  try {
+    await appStore.setGrpcClient();
+    await appStore.setRestClient();
+  } catch (e) {
+    $q.notify({
+      type: "negative",
+      message: "连接BFF或WEB服务失败，请检查地址是否正确",
+    });
+    router.push("/home/settings");
+    console.error(e);
+  }
+})();
+
+// load recent tasks and set callback for saving
 taskStore.loadRecentTasks();
 onBeforeUnmount(taskStore.saveRecentTasks);
-
-// watch for task change
-watch(
-  () => taskStore.task,
-  () => {
-    if (taskStore.direct) {
-      taskStore.direct = false;
-    } else {
-      taskStore.saved = false;
-    }
-  },
-  { deep: true }
-);
-
-// mini drawer
-const mini = ref(false);
 
 // page style
 function pageStyle(offset: number, height: number) {
@@ -181,51 +148,34 @@ function pageStyle(offset: number, height: number) {
   };
 }
 
-const saveDialog: QDialogOptions = {
-  title: "提示",
-  message: "是否保存当前任务？",
-  cancel: true,
-  persistent: true,
-  class: "bg-secondary",
-  options: {
-    type: "radio",
-    model: "save",
-    inline: true,
-    items: [
-      { label: "保存", value: "save" },
-      { label: "不保存", value: "dont" },
-    ],
-  },
-};
-
 // new task
 function newTask() {
   if (!taskStore.saved) {
-    $q.dialog(saveDialog).onOk(async (data: string) => {
-      if (data === "save") {
+    $q.dialog(saveDialog).onOk(async (save: string) => {
+      if (save === "yes") {
         await taskStore.saveTask();
       }
       taskStore.newTask();
-      router.push("/home/task/basic");
+      router.push("/home/task");
     });
   } else {
     taskStore.newTask();
-    router.push("/home/task/basic");
+    router.push("/home/task");
   }
 }
 // close task
-function closeTask() {
+function clsTask() {
   if (!taskStore.saved) {
-    $q.dialog(saveDialog).onOk(async (data: string) => {
-      if (data === "save") {
+    $q.dialog(saveDialog).onOk(async (save: string) => {
+      if (save === "yes") {
         await taskStore.saveTask();
       }
-      taskStore.closeTask();
       router.push("/home");
+      taskStore.clsTask();
     });
   } else {
-    taskStore.closeTask();
     router.push("/home");
+    taskStore.clsTask();
   }
 }
 </script>
@@ -258,7 +208,10 @@ function closeTask() {
   float: right;
   width: 75%;
 }
-.ui-icon {
+.ui-editor {
+  height: 50vh;
+}
+.ui-clickable:not([disabled]) {
   cursor: pointer;
   &:hover {
     color: var(--ui-accent);

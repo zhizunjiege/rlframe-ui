@@ -1,18 +1,21 @@
-import { date } from "quasar";
+export const offset = new Date().getTimezoneOffset() * 60 * 1000;
 
-export function getTimeString(timestamp = Date.now()) {
-  return date.formatDate(timestamp, "YYYY/MM/DD HH:mm:ss");
+export function getTimestampString(timestamp = Date.now(), local = true) {
+  const d = new Date(timestamp - (local ? offset : 0));
+  return d.toISOString().slice(0, 19).replace("T", " ");
 }
 
-export function getDurationString(duration: number) {
-  if (duration > 0) {
-    const s = Math.floor(duration);
-    const m = Math.floor(s / 60);
-    const h = Math.floor(m / 60);
-    return `${h > 9 ? "" : "0"}${h} : ${m % 60 > 9 ? "" : "0"}${m % 60} : ${
-      s % 60 > 9 ? "" : "0"
-    }${s % 60}`;
-  } else {
-    return "00 : 00 : 00";
-  }
+export function getTimestampNumber(timestamp = "", local = true) {
+  const d = new Date(timestamp || "1970-01-01");
+  return d.valueOf() - (local ? 0 : offset);
+}
+
+export function getDurationString(duration = 0, trunc = true) {
+  const d = new Date(duration);
+  return d.toISOString().slice(11, trunc ? 19 : 24);
+}
+
+export function getDurationNumber(duration = "", trunc = true) {
+  const d = new Date(`1970-01-01 ${trunc ? duration.slice(0, 8) : duration}`);
+  return d.valueOf() - offset;
 }

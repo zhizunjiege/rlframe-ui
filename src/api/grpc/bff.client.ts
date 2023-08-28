@@ -14,7 +14,6 @@ import type { SimInfoMap } from "./bff";
 import type { SimCmdMap } from "./bff";
 import type { SimenvConfigMap } from "./bff";
 import type { ServiceStateMap } from "./bff";
-import type { RouteConfig } from "./bff";
 import type { ServiceIdList } from "./bff";
 import type { ServiceInfoMap } from "./bff";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
@@ -71,24 +70,6 @@ export interface IBFFClient {
     input: ServiceInfoMap,
     options?: RpcOptions
   ): UnaryCall<ServiceInfoMap, CommonResponse>;
-  /**
-   * get route config
-   *
-   * @generated from protobuf rpc: GetRouteConfig(game.types.CommonRequest) returns (game.bff.RouteConfig);
-   */
-  getRouteConfig(
-    input: CommonRequest,
-    options?: RpcOptions
-  ): UnaryCall<CommonRequest, RouteConfig>;
-  /**
-   * set route config
-   *
-   * @generated from protobuf rpc: SetRouteConfig(game.bff.RouteConfig) returns (game.types.CommonResponse);
-   */
-  setRouteConfig(
-    input: RouteConfig,
-    options?: RpcOptions
-  ): UnaryCall<RouteConfig, CommonResponse>;
   /**
    * reset simenv/agent services state
    *
@@ -347,44 +328,6 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     );
   }
   /**
-   * get route config
-   *
-   * @generated from protobuf rpc: GetRouteConfig(game.types.CommonRequest) returns (game.bff.RouteConfig);
-   */
-  getRouteConfig(
-    input: CommonRequest,
-    options?: RpcOptions
-  ): UnaryCall<CommonRequest, RouteConfig> {
-    const method = this.methods[5],
-      opt = this._transport.mergeOptions(options);
-    return stackIntercept<CommonRequest, RouteConfig>(
-      "unary",
-      this._transport,
-      method,
-      opt,
-      input
-    );
-  }
-  /**
-   * set route config
-   *
-   * @generated from protobuf rpc: SetRouteConfig(game.bff.RouteConfig) returns (game.types.CommonResponse);
-   */
-  setRouteConfig(
-    input: RouteConfig,
-    options?: RpcOptions
-  ): UnaryCall<RouteConfig, CommonResponse> {
-    const method = this.methods[6],
-      opt = this._transport.mergeOptions(options);
-    return stackIntercept<RouteConfig, CommonResponse>(
-      "unary",
-      this._transport,
-      method,
-      opt,
-      input
-    );
-  }
-  /**
    * reset simenv/agent services state
    *
    * @generated from protobuf rpc: ResetService(game.bff.ServiceIdList) returns (game.types.CommonResponse);
@@ -393,7 +336,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: ServiceIdList,
     options?: RpcOptions
   ): UnaryCall<ServiceIdList, CommonResponse> {
-    const method = this.methods[7],
+    const method = this.methods[5],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<ServiceIdList, CommonResponse>(
       "unary",
@@ -412,7 +355,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: ServiceIdList,
     options?: RpcOptions
   ): UnaryCall<ServiceIdList, ServiceStateMap> {
-    const method = this.methods[8],
+    const method = this.methods[6],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<ServiceIdList, ServiceStateMap>(
       "unary",
@@ -431,7 +374,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: ServiceIdList,
     options?: RpcOptions
   ): UnaryCall<ServiceIdList, SimenvConfigMap> {
-    const method = this.methods[9],
+    const method = this.methods[7],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<ServiceIdList, SimenvConfigMap>(
       "unary",
@@ -450,7 +393,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: SimenvConfigMap,
     options?: RpcOptions
   ): UnaryCall<SimenvConfigMap, CommonResponse> {
-    const method = this.methods[10],
+    const method = this.methods[8],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<SimenvConfigMap, CommonResponse>(
       "unary",
@@ -469,7 +412,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: SimCmdMap,
     options?: RpcOptions
   ): UnaryCall<SimCmdMap, CommonResponse> {
-    const method = this.methods[11],
+    const method = this.methods[9],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<SimCmdMap, CommonResponse>(
       "unary",
@@ -488,7 +431,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: ServiceIdList,
     options?: RpcOptions
   ): UnaryCall<ServiceIdList, SimInfoMap> {
-    const method = this.methods[12],
+    const method = this.methods[10],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<ServiceIdList, SimInfoMap>(
       "unary",
@@ -507,7 +450,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: ServiceIdList,
     options?: RpcOptions
   ): UnaryCall<ServiceIdList, AgentConfigMap> {
-    const method = this.methods[13],
+    const method = this.methods[11],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<ServiceIdList, AgentConfigMap>(
       "unary",
@@ -526,7 +469,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: AgentConfigMap,
     options?: RpcOptions
   ): UnaryCall<AgentConfigMap, CommonResponse> {
-    const method = this.methods[14],
+    const method = this.methods[12],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<AgentConfigMap, CommonResponse>(
       "unary",
@@ -545,7 +488,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: ServiceIdList,
     options?: RpcOptions
   ): UnaryCall<ServiceIdList, AgentModeMap> {
-    const method = this.methods[15],
+    const method = this.methods[13],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<ServiceIdList, AgentModeMap>(
       "unary",
@@ -564,7 +507,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: AgentModeMap,
     options?: RpcOptions
   ): UnaryCall<AgentModeMap, CommonResponse> {
-    const method = this.methods[16],
+    const method = this.methods[14],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<AgentModeMap, CommonResponse>(
       "unary",
@@ -583,7 +526,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: ServiceIdList,
     options?: RpcOptions
   ): UnaryCall<ServiceIdList, ModelWeightsMap> {
-    const method = this.methods[17],
+    const method = this.methods[15],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<ServiceIdList, ModelWeightsMap>(
       "unary",
@@ -602,7 +545,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: ModelWeightsMap,
     options?: RpcOptions
   ): UnaryCall<ModelWeightsMap, CommonResponse> {
-    const method = this.methods[18],
+    const method = this.methods[16],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<ModelWeightsMap, CommonResponse>(
       "unary",
@@ -621,7 +564,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: ServiceIdList,
     options?: RpcOptions
   ): UnaryCall<ServiceIdList, ModelBufferMap> {
-    const method = this.methods[19],
+    const method = this.methods[17],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<ServiceIdList, ModelBufferMap>(
       "unary",
@@ -640,7 +583,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: ModelBufferMap,
     options?: RpcOptions
   ): UnaryCall<ModelBufferMap, CommonResponse> {
-    const method = this.methods[20],
+    const method = this.methods[18],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<ModelBufferMap, CommonResponse>(
       "unary",
@@ -659,7 +602,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: ServiceIdList,
     options?: RpcOptions
   ): UnaryCall<ServiceIdList, ModelStatusMap> {
-    const method = this.methods[21],
+    const method = this.methods[19],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<ServiceIdList, ModelStatusMap>(
       "unary",
@@ -678,7 +621,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: ModelStatusMap,
     options?: RpcOptions
   ): UnaryCall<ModelStatusMap, CommonResponse> {
-    const method = this.methods[22],
+    const method = this.methods[20],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<ModelStatusMap, CommonResponse>(
       "unary",
@@ -697,7 +640,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
     input: CallDataMap,
     options?: RpcOptions
   ): UnaryCall<CallDataMap, CallDataMap> {
-    const method = this.methods[23],
+    const method = this.methods[21],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<CallDataMap, CallDataMap>(
       "unary",

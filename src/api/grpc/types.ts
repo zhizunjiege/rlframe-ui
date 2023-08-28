@@ -24,17 +24,17 @@ export interface CommonResponse {}
  */
 export interface CallData {
   /**
-   * @generated from protobuf field: string identity = 1;
+   * @generated from protobuf field: string name = 1;
    */
-  identity: string; // identity of call
+  name: string; // name of call
   /**
-   * @generated from protobuf field: string str_data = 2;
+   * @generated from protobuf field: string dstr = 2;
    */
-  strData: string; // string data
+  dstr: string; // string data
   /**
-   * @generated from protobuf field: bytes bin_data = 3;
+   * @generated from protobuf field: bytes dbin = 3;
    */
-  binData: Uint8Array; // binary data
+  dbin: Uint8Array; // binary data
 }
 /**
  * @generated from protobuf message game.types.ServiceState
@@ -43,17 +43,21 @@ export interface ServiceState {
   /**
    * @generated from protobuf field: game.types.ServiceState.State state = 1;
    */
-  state: ServiceState_State;
+  state: ServiceState_State; // state of service
 }
 /**
  * @generated from protobuf enum game.types.ServiceState.State
  */
 export enum ServiceState_State {
   /**
+   * service is not inited
+   *
    * @generated from protobuf enum value: UNINITED = 0;
    */
   UNINITED = 0,
   /**
+   * service is inited
+   *
    * @generated from protobuf enum value: INITED = 1;
    */
   INITED = 1,
@@ -67,46 +71,46 @@ export interface SimParam {
    */
   value:
     | {
-        oneofKind: "doubleValue";
+        oneofKind: "vdouble";
         /**
-         * @generated from protobuf field: double double_value = 1;
+         * @generated from protobuf field: double vdouble = 1;
          */
-        doubleValue: number;
+        vdouble: number; // double value
       }
     | {
-        oneofKind: "int32Value";
+        oneofKind: "vint32";
         /**
-         * @generated from protobuf field: int32 int32_value = 2;
+         * @generated from protobuf field: int32 vint32 = 2;
          */
-        int32Value: number;
+        vint32: number; // int32 value
       }
     | {
-        oneofKind: "boolValue";
+        oneofKind: "vbool";
         /**
-         * @generated from protobuf field: bool bool_value = 3;
+         * @generated from protobuf field: bool vbool = 3;
          */
-        boolValue: boolean;
+        vbool: boolean; // bool value
       }
     | {
-        oneofKind: "stringValue";
+        oneofKind: "vstring";
         /**
-         * @generated from protobuf field: string string_value = 4;
+         * @generated from protobuf field: string vstring = 4;
          */
-        stringValue: string;
+        vstring: string; // string value
       }
     | {
-        oneofKind: "arrayValue";
+        oneofKind: "varray";
         /**
-         * @generated from protobuf field: game.types.SimParam.Array array_value = 5;
+         * @generated from protobuf field: game.types.SimParam.Array varray = 5;
          */
-        arrayValue: SimParam_Array;
+        varray: SimParam_Array; // array value
       }
     | {
-        oneofKind: "structValue";
+        oneofKind: "vstruct";
         /**
-         * @generated from protobuf field: game.types.SimParam.Struct struct_value = 6;
+         * @generated from protobuf field: game.types.SimParam.Struct vstruct = 6;
          */
-        structValue: SimParam_Struct;
+        vstruct: SimParam_Struct; // struct value
       }
     | {
         oneofKind: undefined;
@@ -165,11 +169,15 @@ export interface SimState {
   /**
    * @generated from protobuf field: bool terminated = 2;
    */
-  terminated: boolean;
+  terminated: boolean; // whether `terminal state` is reached
   /**
    * @generated from protobuf field: bool truncated = 3;
    */
-  truncated: boolean;
+  truncated: boolean; // whether `truncation condition` is satisfied.
+  /**
+   * @generated from protobuf field: double reward = 4;
+   */
+  reward: number; // reward of this state
 }
 /**
  * @generated from protobuf message game.types.SimAction
@@ -270,13 +278,13 @@ export const CommonResponse = new CommonResponse$Type();
 class CallData$Type extends MessageType<CallData> {
   constructor() {
     super("game.types.CallData", [
-      { no: 1, name: "identity", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-      { no: 2, name: "str_data", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-      { no: 3, name: "bin_data", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
+      { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 2, name: "dstr", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 3, name: "dbin", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
     ]);
   }
   create(value?: PartialMessage<CallData>): CallData {
-    const message = { identity: "", strData: "", binData: new Uint8Array(0) };
+    const message = { name: "", dstr: "", dbin: new Uint8Array(0) };
     globalThis.Object.defineProperty(message, MESSAGE_TYPE, {
       enumerable: false,
       value: this,
@@ -296,14 +304,14 @@ class CallData$Type extends MessageType<CallData> {
     while (reader.pos < end) {
       let [fieldNo, wireType] = reader.tag();
       switch (fieldNo) {
-        case /* string identity */ 1:
-          message.identity = reader.string();
+        case /* string name */ 1:
+          message.name = reader.string();
           break;
-        case /* string str_data */ 2:
-          message.strData = reader.string();
+        case /* string dstr */ 2:
+          message.dstr = reader.string();
           break;
-        case /* bytes bin_data */ 3:
-          message.binData = reader.bytes();
+        case /* bytes dbin */ 3:
+          message.dbin = reader.bytes();
           break;
         default:
           let u = options.readUnknownField;
@@ -329,15 +337,15 @@ class CallData$Type extends MessageType<CallData> {
     writer: IBinaryWriter,
     options: BinaryWriteOptions
   ): IBinaryWriter {
-    /* string identity = 1; */
-    if (message.identity !== "")
-      writer.tag(1, WireType.LengthDelimited).string(message.identity);
-    /* string str_data = 2; */
-    if (message.strData !== "")
-      writer.tag(2, WireType.LengthDelimited).string(message.strData);
-    /* bytes bin_data = 3; */
-    if (message.binData.length)
-      writer.tag(3, WireType.LengthDelimited).bytes(message.binData);
+    /* string name = 1; */
+    if (message.name !== "")
+      writer.tag(1, WireType.LengthDelimited).string(message.name);
+    /* string dstr = 2; */
+    if (message.dstr !== "")
+      writer.tag(2, WireType.LengthDelimited).string(message.dstr);
+    /* bytes dbin = 3; */
+    if (message.dbin.length)
+      writer.tag(3, WireType.LengthDelimited).bytes(message.dbin);
     let u = options.writeUnknownFields;
     if (u !== false)
       (u == true ? UnknownFieldHandler.onWrite : u)(
@@ -435,42 +443,42 @@ class SimParam$Type extends MessageType<SimParam> {
     super("game.types.SimParam", [
       {
         no: 1,
-        name: "double_value",
+        name: "vdouble",
         kind: "scalar",
         oneof: "value",
         T: 1 /*ScalarType.DOUBLE*/,
       },
       {
         no: 2,
-        name: "int32_value",
+        name: "vint32",
         kind: "scalar",
         oneof: "value",
         T: 5 /*ScalarType.INT32*/,
       },
       {
         no: 3,
-        name: "bool_value",
+        name: "vbool",
         kind: "scalar",
         oneof: "value",
         T: 8 /*ScalarType.BOOL*/,
       },
       {
         no: 4,
-        name: "string_value",
+        name: "vstring",
         kind: "scalar",
         oneof: "value",
         T: 9 /*ScalarType.STRING*/,
       },
       {
         no: 5,
-        name: "array_value",
+        name: "varray",
         kind: "message",
         oneof: "value",
         T: () => SimParam_Array,
       },
       {
         no: 6,
-        name: "struct_value",
+        name: "vstruct",
         kind: "message",
         oneof: "value",
         T: () => SimParam_Struct,
@@ -498,49 +506,49 @@ class SimParam$Type extends MessageType<SimParam> {
     while (reader.pos < end) {
       let [fieldNo, wireType] = reader.tag();
       switch (fieldNo) {
-        case /* double double_value */ 1:
+        case /* double vdouble */ 1:
           message.value = {
-            oneofKind: "doubleValue",
-            doubleValue: reader.double(),
+            oneofKind: "vdouble",
+            vdouble: reader.double(),
           };
           break;
-        case /* int32 int32_value */ 2:
+        case /* int32 vint32 */ 2:
           message.value = {
-            oneofKind: "int32Value",
-            int32Value: reader.int32(),
+            oneofKind: "vint32",
+            vint32: reader.int32(),
           };
           break;
-        case /* bool bool_value */ 3:
+        case /* bool vbool */ 3:
           message.value = {
-            oneofKind: "boolValue",
-            boolValue: reader.bool(),
+            oneofKind: "vbool",
+            vbool: reader.bool(),
           };
           break;
-        case /* string string_value */ 4:
+        case /* string vstring */ 4:
           message.value = {
-            oneofKind: "stringValue",
-            stringValue: reader.string(),
+            oneofKind: "vstring",
+            vstring: reader.string(),
           };
           break;
-        case /* game.types.SimParam.Array array_value */ 5:
+        case /* game.types.SimParam.Array varray */ 5:
           message.value = {
-            oneofKind: "arrayValue",
-            arrayValue: SimParam_Array.internalBinaryRead(
+            oneofKind: "varray",
+            varray: SimParam_Array.internalBinaryRead(
               reader,
               reader.uint32(),
               options,
-              (message.value as any).arrayValue
+              (message.value as any).varray
             ),
           };
           break;
-        case /* game.types.SimParam.Struct struct_value */ 6:
+        case /* game.types.SimParam.Struct vstruct */ 6:
           message.value = {
-            oneofKind: "structValue",
-            structValue: SimParam_Struct.internalBinaryRead(
+            oneofKind: "vstruct",
+            vstruct: SimParam_Struct.internalBinaryRead(
               reader,
               reader.uint32(),
               options,
-              (message.value as any).structValue
+              (message.value as any).vstruct
             ),
           };
           break;
@@ -568,29 +576,29 @@ class SimParam$Type extends MessageType<SimParam> {
     writer: IBinaryWriter,
     options: BinaryWriteOptions
   ): IBinaryWriter {
-    /* double double_value = 1; */
-    if (message.value.oneofKind === "doubleValue")
-      writer.tag(1, WireType.Bit64).double(message.value.doubleValue);
-    /* int32 int32_value = 2; */
-    if (message.value.oneofKind === "int32Value")
-      writer.tag(2, WireType.Varint).int32(message.value.int32Value);
-    /* bool bool_value = 3; */
-    if (message.value.oneofKind === "boolValue")
-      writer.tag(3, WireType.Varint).bool(message.value.boolValue);
-    /* string string_value = 4; */
-    if (message.value.oneofKind === "stringValue")
-      writer.tag(4, WireType.LengthDelimited).string(message.value.stringValue);
-    /* game.types.SimParam.Array array_value = 5; */
-    if (message.value.oneofKind === "arrayValue")
+    /* double vdouble = 1; */
+    if (message.value.oneofKind === "vdouble")
+      writer.tag(1, WireType.Bit64).double(message.value.vdouble);
+    /* int32 vint32 = 2; */
+    if (message.value.oneofKind === "vint32")
+      writer.tag(2, WireType.Varint).int32(message.value.vint32);
+    /* bool vbool = 3; */
+    if (message.value.oneofKind === "vbool")
+      writer.tag(3, WireType.Varint).bool(message.value.vbool);
+    /* string vstring = 4; */
+    if (message.value.oneofKind === "vstring")
+      writer.tag(4, WireType.LengthDelimited).string(message.value.vstring);
+    /* game.types.SimParam.Array varray = 5; */
+    if (message.value.oneofKind === "varray")
       SimParam_Array.internalBinaryWrite(
-        message.value.arrayValue,
+        message.value.varray,
         writer.tag(5, WireType.LengthDelimited).fork(),
         options
       ).join();
-    /* game.types.SimParam.Struct struct_value = 6; */
-    if (message.value.oneofKind === "structValue")
+    /* game.types.SimParam.Struct vstruct = 6; */
+    if (message.value.oneofKind === "vstruct")
       SimParam_Struct.internalBinaryWrite(
-        message.value.structValue,
+        message.value.vstruct,
         writer.tag(6, WireType.LengthDelimited).fork(),
         options
       ).join();
@@ -1013,10 +1021,16 @@ class SimState$Type extends MessageType<SimState> {
       },
       { no: 2, name: "terminated", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
       { no: 3, name: "truncated", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+      { no: 4, name: "reward", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
     ]);
   }
   create(value?: PartialMessage<SimState>): SimState {
-    const message = { states: {}, terminated: false, truncated: false };
+    const message = {
+      states: {},
+      terminated: false,
+      truncated: false,
+      reward: 0,
+    };
     globalThis.Object.defineProperty(message, MESSAGE_TYPE, {
       enumerable: false,
       value: this,
@@ -1044,6 +1058,9 @@ class SimState$Type extends MessageType<SimState> {
           break;
         case /* bool truncated */ 3:
           message.truncated = reader.bool();
+          break;
+        case /* double reward */ 4:
+          message.reward = reader.double();
           break;
         default:
           let u = options.readUnknownField;
@@ -1112,6 +1129,9 @@ class SimState$Type extends MessageType<SimState> {
     /* bool truncated = 3; */
     if (message.truncated !== false)
       writer.tag(3, WireType.Varint).bool(message.truncated);
+    /* double reward = 4; */
+    if (message.reward !== 0)
+      writer.tag(4, WireType.Bit64).double(message.reward);
     let u = options.writeUnknownFields;
     if (u !== false)
       (u == true ? UnknownFieldHandler.onWrite : u)(

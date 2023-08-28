@@ -1,6 +1,6 @@
 <template>
   <div class="fit flex flex-center">
-    <h3 class="text-secondary text-weight-bold">开发中</h3>
+    <q-circular-progress indeterminate rounded size="4rem" color="accent" />
   </div>
 </template>
 

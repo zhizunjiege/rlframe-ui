@@ -31,23 +31,23 @@ export interface ServiceInfo {
   /**
    * @generated from protobuf field: string type = 1;
    */
-  type: string; // type of service, predefine: simenv/agent
+  type: string; // type of service: simenv/agent
   /**
    * @generated from protobuf field: string name = 2;
    */
-  name: string;
+  name: string; // name of service, optional
   /**
    * @generated from protobuf field: string host = 3;
    */
-  host: string;
+  host: string; // host of service: ip address or domain name
   /**
    * @generated from protobuf field: uint32 port = 4;
    */
-  port: number;
+  port: number; // port of service: 0 for random port
   /**
    * @generated from protobuf field: string desc = 5;
    */
-  desc: string;
+  desc: string; // description of service
 }
 /**
  * @generated from protobuf message game.bff.ServiceIdList
@@ -68,37 +68,6 @@ export interface ServiceInfoMap {
   services: {
     [key: string]: ServiceInfo;
   }; // <service id, service info>
-}
-/**
- * @generated from protobuf message game.bff.RouteConfig
- */
-export interface RouteConfig {
-  /**
-   * @generated from protobuf field: map<string, game.bff.RouteConfig.Route> routes = 1;
-   */
-  routes: {
-    [key: string]: RouteConfig_Route;
-  }; // <simenv id, route>
-}
-/**
- * @generated from protobuf message game.bff.RouteConfig.Config
- */
-export interface RouteConfig_Config {
-  /**
-   * @generated from protobuf field: repeated string models = 1;
-   */
-  models: string[]; // name list of models
-}
-/**
- * @generated from protobuf message game.bff.RouteConfig.Route
- */
-export interface RouteConfig_Route {
-  /**
-   * @generated from protobuf field: map<string, game.bff.RouteConfig.Config> configs = 1;
-   */
-  configs: {
-    [key: string]: RouteConfig_Config;
-  }; // <agent id, config>
 }
 /**
  * @generated from protobuf message game.bff.ServiceStateMap
@@ -503,320 +472,6 @@ class ServiceInfoMap$Type extends MessageType<ServiceInfoMap> {
  * @generated MessageType for protobuf message game.bff.ServiceInfoMap
  */
 export const ServiceInfoMap = new ServiceInfoMap$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class RouteConfig$Type extends MessageType<RouteConfig> {
-  constructor() {
-    super("game.bff.RouteConfig", [
-      {
-        no: 1,
-        name: "routes",
-        kind: "map",
-        K: 9 /*ScalarType.STRING*/,
-        V: { kind: "message", T: () => RouteConfig_Route },
-      },
-    ]);
-  }
-  create(value?: PartialMessage<RouteConfig>): RouteConfig {
-    const message = { routes: {} };
-    globalThis.Object.defineProperty(message, MESSAGE_TYPE, {
-      enumerable: false,
-      value: this,
-    });
-    if (value !== undefined)
-      reflectionMergePartial<RouteConfig>(this, message, value);
-    return message;
-  }
-  internalBinaryRead(
-    reader: IBinaryReader,
-    length: number,
-    options: BinaryReadOptions,
-    target?: RouteConfig
-  ): RouteConfig {
-    let message = target ?? this.create(),
-      end = reader.pos + length;
-    while (reader.pos < end) {
-      let [fieldNo, wireType] = reader.tag();
-      switch (fieldNo) {
-        case /* map<string, game.bff.RouteConfig.Route> routes */ 1:
-          this.binaryReadMap1(message.routes, reader, options);
-          break;
-        default:
-          let u = options.readUnknownField;
-          if (u === "throw")
-            throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
-            );
-          let d = reader.skip(wireType);
-          if (u !== false)
-            (u === true ? UnknownFieldHandler.onRead : u)(
-              this.typeName,
-              message,
-              fieldNo,
-              wireType,
-              d
-            );
-      }
-    }
-    return message;
-  }
-  private binaryReadMap1(
-    map: RouteConfig["routes"],
-    reader: IBinaryReader,
-    options: BinaryReadOptions
-  ): void {
-    let len = reader.uint32(),
-      end = reader.pos + len,
-      key: keyof RouteConfig["routes"] | undefined,
-      val: RouteConfig["routes"][any] | undefined;
-    while (reader.pos < end) {
-      let [fieldNo, wireType] = reader.tag();
-      switch (fieldNo) {
-        case 1:
-          key = reader.string();
-          break;
-        case 2:
-          val = RouteConfig_Route.internalBinaryRead(
-            reader,
-            reader.uint32(),
-            options
-          );
-          break;
-        default:
-          throw new globalThis.Error(
-            "unknown map entry field for field game.bff.RouteConfig.routes"
-          );
-      }
-    }
-    map[key ?? ""] = val ?? RouteConfig_Route.create();
-  }
-  internalBinaryWrite(
-    message: RouteConfig,
-    writer: IBinaryWriter,
-    options: BinaryWriteOptions
-  ): IBinaryWriter {
-    /* map<string, game.bff.RouteConfig.Route> routes = 1; */
-    for (let k of Object.keys(message.routes)) {
-      writer
-        .tag(1, WireType.LengthDelimited)
-        .fork()
-        .tag(1, WireType.LengthDelimited)
-        .string(k);
-      writer.tag(2, WireType.LengthDelimited).fork();
-      RouteConfig_Route.internalBinaryWrite(message.routes[k], writer, options);
-      writer.join().join();
-    }
-    let u = options.writeUnknownFields;
-    if (u !== false)
-      (u == true ? UnknownFieldHandler.onWrite : u)(
-        this.typeName,
-        message,
-        writer
-      );
-    return writer;
-  }
-}
-/**
- * @generated MessageType for protobuf message game.bff.RouteConfig
- */
-export const RouteConfig = new RouteConfig$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class RouteConfig_Config$Type extends MessageType<RouteConfig_Config> {
-  constructor() {
-    super("game.bff.RouteConfig.Config", [
-      {
-        no: 1,
-        name: "models",
-        kind: "scalar",
-        repeat: 2 /*RepeatType.UNPACKED*/,
-        T: 9 /*ScalarType.STRING*/,
-      },
-    ]);
-  }
-  create(value?: PartialMessage<RouteConfig_Config>): RouteConfig_Config {
-    const message = { models: [] };
-    globalThis.Object.defineProperty(message, MESSAGE_TYPE, {
-      enumerable: false,
-      value: this,
-    });
-    if (value !== undefined)
-      reflectionMergePartial<RouteConfig_Config>(this, message, value);
-    return message;
-  }
-  internalBinaryRead(
-    reader: IBinaryReader,
-    length: number,
-    options: BinaryReadOptions,
-    target?: RouteConfig_Config
-  ): RouteConfig_Config {
-    let message = target ?? this.create(),
-      end = reader.pos + length;
-    while (reader.pos < end) {
-      let [fieldNo, wireType] = reader.tag();
-      switch (fieldNo) {
-        case /* repeated string models */ 1:
-          message.models.push(reader.string());
-          break;
-        default:
-          let u = options.readUnknownField;
-          if (u === "throw")
-            throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
-            );
-          let d = reader.skip(wireType);
-          if (u !== false)
-            (u === true ? UnknownFieldHandler.onRead : u)(
-              this.typeName,
-              message,
-              fieldNo,
-              wireType,
-              d
-            );
-      }
-    }
-    return message;
-  }
-  internalBinaryWrite(
-    message: RouteConfig_Config,
-    writer: IBinaryWriter,
-    options: BinaryWriteOptions
-  ): IBinaryWriter {
-    /* repeated string models = 1; */
-    for (let i = 0; i < message.models.length; i++)
-      writer.tag(1, WireType.LengthDelimited).string(message.models[i]);
-    let u = options.writeUnknownFields;
-    if (u !== false)
-      (u == true ? UnknownFieldHandler.onWrite : u)(
-        this.typeName,
-        message,
-        writer
-      );
-    return writer;
-  }
-}
-/**
- * @generated MessageType for protobuf message game.bff.RouteConfig.Config
- */
-export const RouteConfig_Config = new RouteConfig_Config$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class RouteConfig_Route$Type extends MessageType<RouteConfig_Route> {
-  constructor() {
-    super("game.bff.RouteConfig.Route", [
-      {
-        no: 1,
-        name: "configs",
-        kind: "map",
-        K: 9 /*ScalarType.STRING*/,
-        V: { kind: "message", T: () => RouteConfig_Config },
-      },
-    ]);
-  }
-  create(value?: PartialMessage<RouteConfig_Route>): RouteConfig_Route {
-    const message = { configs: {} };
-    globalThis.Object.defineProperty(message, MESSAGE_TYPE, {
-      enumerable: false,
-      value: this,
-    });
-    if (value !== undefined)
-      reflectionMergePartial<RouteConfig_Route>(this, message, value);
-    return message;
-  }
-  internalBinaryRead(
-    reader: IBinaryReader,
-    length: number,
-    options: BinaryReadOptions,
-    target?: RouteConfig_Route
-  ): RouteConfig_Route {
-    let message = target ?? this.create(),
-      end = reader.pos + length;
-    while (reader.pos < end) {
-      let [fieldNo, wireType] = reader.tag();
-      switch (fieldNo) {
-        case /* map<string, game.bff.RouteConfig.Config> configs */ 1:
-          this.binaryReadMap1(message.configs, reader, options);
-          break;
-        default:
-          let u = options.readUnknownField;
-          if (u === "throw")
-            throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
-            );
-          let d = reader.skip(wireType);
-          if (u !== false)
-            (u === true ? UnknownFieldHandler.onRead : u)(
-              this.typeName,
-              message,
-              fieldNo,
-              wireType,
-              d
-            );
-      }
-    }
-    return message;
-  }
-  private binaryReadMap1(
-    map: RouteConfig_Route["configs"],
-    reader: IBinaryReader,
-    options: BinaryReadOptions
-  ): void {
-    let len = reader.uint32(),
-      end = reader.pos + len,
-      key: keyof RouteConfig_Route["configs"] | undefined,
-      val: RouteConfig_Route["configs"][any] | undefined;
-    while (reader.pos < end) {
-      let [fieldNo, wireType] = reader.tag();
-      switch (fieldNo) {
-        case 1:
-          key = reader.string();
-          break;
-        case 2:
-          val = RouteConfig_Config.internalBinaryRead(
-            reader,
-            reader.uint32(),
-            options
-          );
-          break;
-        default:
-          throw new globalThis.Error(
-            "unknown map entry field for field game.bff.RouteConfig.Route.configs"
-          );
-      }
-    }
-    map[key ?? ""] = val ?? RouteConfig_Config.create();
-  }
-  internalBinaryWrite(
-    message: RouteConfig_Route,
-    writer: IBinaryWriter,
-    options: BinaryWriteOptions
-  ): IBinaryWriter {
-    /* map<string, game.bff.RouteConfig.Config> configs = 1; */
-    for (let k of Object.keys(message.configs)) {
-      writer
-        .tag(1, WireType.LengthDelimited)
-        .fork()
-        .tag(1, WireType.LengthDelimited)
-        .string(k);
-      writer.tag(2, WireType.LengthDelimited).fork();
-      RouteConfig_Config.internalBinaryWrite(
-        message.configs[k],
-        writer,
-        options
-      );
-      writer.join().join();
-    }
-    let u = options.writeUnknownFields;
-    if (u !== false)
-      (u == true ? UnknownFieldHandler.onWrite : u)(
-        this.typeName,
-        message,
-        writer
-      );
-    return writer;
-  }
-}
-/**
- * @generated MessageType for protobuf message game.bff.RouteConfig.Route
- */
-export const RouteConfig_Route = new RouteConfig_Route$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ServiceStateMap$Type extends MessageType<ServiceStateMap> {
   constructor() {
@@ -1980,8 +1635,6 @@ export const BFF = new ServiceType("game.bff.BFF", [
   },
   { name: "GetServiceInfo", options: {}, I: ServiceIdList, O: ServiceInfoMap },
   { name: "SetServiceInfo", options: {}, I: ServiceInfoMap, O: CommonResponse },
-  { name: "GetRouteConfig", options: {}, I: CommonRequest, O: RouteConfig },
-  { name: "SetRouteConfig", options: {}, I: RouteConfig, O: CommonResponse },
   { name: "ResetService", options: {}, I: ServiceIdList, O: CommonResponse },
   { name: "QueryService", options: {}, I: ServiceIdList, O: ServiceStateMap },
   {

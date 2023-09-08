@@ -3,7 +3,7 @@ import { ServiceInfo, createGrpcClient, createRestClient } from "~/api";
 export const useAppStore = defineStore("app", {
   state: () => ({
     systemSettings: {
-      bffAddr: "localhost:9999", // address of bff server
+      bffAddr: `${window.location.hostname}:9999`, // address of bff server
       webAddr: window.location.host, // address of web server
       maxTerminalMessages: 100, // max number of terminal messages
       detailsRefreshInterval: 1000, // interval of refreshing details

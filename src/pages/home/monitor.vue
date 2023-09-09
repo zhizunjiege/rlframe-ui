@@ -84,10 +84,15 @@
       <q-card-section v-if="service" horizontal class="col-grow row">
         <template v-if="type === 'agent'">
           <q-card-section class="col-8">
-            <component
-              :is="getAsyncComp(type, service.name)"
-              :details="details[service.server].status"
-            />
+            <div v-if="rlModels.includes(service.name)" class="fit">
+              <component
+                :is="getAsyncComp(type, service.name)"
+                :details="details[service.server].status"
+              />
+            </div>
+            <div v-else class="fit flex flex-center">
+              <h4 class="text-secondary text-weight-bold">暂无数据</h4>
+            </div>
           </q-card-section>
           <q-card-section class="col-grow column justify-around">
             <q-btn-group spread>
@@ -127,10 +132,15 @@
         </template>
         <template v-if="type === 'simenv'">
           <q-card-section class="col-8">
-            <component
-              :is="getAsyncComp(type, service.name)"
-              :details="details[service.server].data"
-            />
+            <div v-if="simEngines.includes(service.name)" class="fit">
+              <component
+                :is="getAsyncComp(type, service.name)"
+                :details="details[service.server].data"
+              />
+            </div>
+            <div v-else class="fit flex flex-center">
+              <h4 class="text-secondary text-weight-bold">暂无数据</h4>
+            </div>
           </q-card-section>
           <q-card-section class="col-grow full-height column flex-center">
             <div
@@ -284,6 +294,8 @@
 import { fileOpen, fileSave } from "browser-fs-access";
 import { ServiceState_State } from "~/api";
 import { useAppStore, useTaskStore } from "~/stores";
+import rlModels from "~/plugins/models/index.json";
+import simEngines from "~/plugins/engines/index.json";
 import { getTimestampString } from "~/utils";
 
 const $q = useQuasar();

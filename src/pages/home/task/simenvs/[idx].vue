@@ -8,13 +8,15 @@
             <td>
               <q-select
                 v-model="simenv.name"
-                :options="simEngines"
+                :options="currentEngines"
                 dense
                 filled
                 required
+                use-input
                 options-dense
                 popup-content-class="bg-secondary"
                 class="ui-input"
+                @new-value="newvalFunc"
               />
             </td>
           </tr>
@@ -28,11 +30,18 @@
         label="引擎参数"
         header-class="q-px-lg bg-secondary text-subtitle2"
       >
-        <component
-          :is="getAsyncComp(simenv.name)"
-          v-once
-          v-model="simenv.args"
-        />
+        <div v-if="simEngines.includes(simenv.name)" class="full-width">
+          <component
+            :is="getAsyncComp(simenv.name)"
+            v-once
+            v-model="simenv.args"
+          />
+        </div>
+        <div v-else class="full-width">
+          <div class="full-width ui-editor">
+            <monaco-editor v-model="simenv.args" language="json" />
+          </div>
+        </div>
       </q-expansion-item>
     </q-card-section>
   </q-card>
@@ -41,6 +50,7 @@
 <script setup lang="ts">
 import { useTaskStore } from "~/stores";
 import simEngines from "~/plugins/engines/index.json";
+import { deepCopy } from "~/utils";
 
 const taskStore = useTaskStore();
 
@@ -48,8 +58,20 @@ const props = defineProps<{
   idx: string;
 }>();
 const index = computed(() => Number(props.idx));
-
 const simenv = taskStore.task!.simenvs[index.value];
+
+const currentEngines = ref(deepCopy(simEngines));
+async function newvalFunc(
+  val: string,
+  done: (v?: string, m?: "toggle" | "add" | "add-unique") => void
+) {
+  if (val?.length > 0) {
+    if (!currentEngines.value.includes(val)) {
+      currentEngines.value.push(val);
+    }
+    done(val, "add-unique");
+  }
+}
 
 function getAsyncComp(name: string) {
   return defineAsyncComponent(

@@ -19,13 +19,15 @@
             <td>
               <q-select
                 v-model="agent.name"
-                :options="rlModels"
+                :options="currentModels"
                 dense
                 filled
                 required
+                use-input
                 options-dense
                 popup-content-class="bg-secondary"
                 class="ui-input"
+                @new-value="newvalFunc"
               />
             </td>
           </tr>
@@ -39,11 +41,18 @@
         label="算法参数"
         header-class="q-px-lg bg-secondary text-subtitle2"
       >
-        <component
-          :is="getModelAsyncComp(agent.name)"
-          v-once
-          v-model="agent.hypers"
-        />
+        <div v-if="rlModels.includes(agent.name)" class="full-width">
+          <component
+            :is="getModelAsyncComp(agent.name)"
+            v-once
+            v-model="agent.hypers"
+          />
+        </div>
+        <div v-else class="full-width">
+          <div class="full-width ui-editor">
+            <monaco-editor v-model="agent.hypers" language="json" />
+          </div>
+        </div>
       </q-expansion-item>
     </q-card-section>
     <q-card-section>
@@ -152,6 +161,7 @@
 import { useTaskStore } from "~/stores";
 import rlModels from "~/plugins/models/index.json";
 import agentHooks from "~/plugins/hooks/index.json";
+import { deepCopy } from "~/utils";
 
 const taskStore = useTaskStore();
 
@@ -160,6 +170,19 @@ const props = defineProps<{
 }>();
 const index = computed(() => Number(props.idx));
 const agent = taskStore.task!.agents[index.value];
+
+const currentModels = ref(deepCopy(rlModels));
+async function newvalFunc(
+  val: string,
+  done: (v?: string, m?: "toggle" | "add" | "add-unique") => void
+) {
+  if (val?.length > 0) {
+    if (!currentModels.value.includes(val)) {
+      currentModels.value.push(val);
+    }
+    done(val, "add-unique");
+  }
+}
 
 function getModelAsyncComp(name: string) {
   return defineAsyncComponent(

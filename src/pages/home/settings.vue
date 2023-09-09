@@ -72,6 +72,43 @@
             </tr>
           </tbody>
         </q-markup-table>
+        <q-separator class="q-my-sm transparent" />
+        <q-markup-table flat separator="horizontal" class="ui-table">
+          <tbody>
+            <tr>
+              <td>上传自定义模型</td>
+              <td>
+                <q-btn
+                  flat
+                  dense
+                  class="bg-secondary ui-input ui-clickable"
+                  @click="uploadModel"
+                >
+                  <q-icon name="bi-cloud-arrow-up" size="xs" />
+                  <q-tooltip anchor="top middle" self="bottom middle">
+                    选择文件
+                  </q-tooltip>
+                </q-btn>
+              </td>
+            </tr>
+            <tr>
+              <td>上传自定义引擎</td>
+              <td>
+                <q-btn
+                  flat
+                  dense
+                  class="bg-secondary ui-input ui-clickable"
+                  @click="uploadEngine"
+                >
+                  <q-icon name="bi-cloud-arrow-up" size="xs" />
+                  <q-tooltip anchor="top middle" self="bottom middle">
+                    选择文件
+                  </q-tooltip>
+                </q-btn>
+              </td>
+            </tr>
+          </tbody>
+        </q-markup-table>
       </q-card-section>
       <q-card-section class="text-center text-h6">服务集群</q-card-section>
       <q-card-section>
@@ -239,6 +276,8 @@
 </template>
 
 <script setup lang="ts">
+import { fileOpen } from "browser-fs-access";
+import JSZip from "jszip";
 import { useAppStore } from "~/stores";
 import { randomString } from "~/utils";
 
@@ -269,6 +308,83 @@ async function setRest() {
     $q.notify({
       type: "negative",
       message: "连接WEB服务失败，请检查地址是否正确",
+    });
+    console.error(e);
+  }
+}
+
+async function uploadModel() {
+  try {
+    const blob = await fileOpen({
+      description: "",
+      extensions: [".py"],
+      mimeTypes: ["text/plain"],
+      multiple: false,
+    });
+    if (blob.length === 0) {
+      throw new Error("模型文件为空");
+    } else {
+      const zip = new JSZip();
+      zip.file(blob.name, await blob.text());
+      const data = {
+        name: "@custom",
+        dstr: "",
+        dbin: await zip.generateAsync({ type: "uint8array" }),
+      };
+      await appStore.grpc!.call({
+        data: Object.fromEntries(
+          appStore.services
+            .filter((srv) => srv.type === "agent")
+            .map((srv) => [srv.name, data])
+        ),
+      });
+    }
+    $q.notify({
+      type: "positive",
+      message: "上传模型成功",
+    });
+  } catch (e) {
+    $q.notify({
+      type: "negative",
+      message: "上传模型失败",
+    });
+    console.error(e);
+  }
+}
+async function uploadEngine() {
+  try {
+    const blob = await fileOpen({
+      description: "",
+      extensions: [".py"],
+      mimeTypes: ["text/plain"],
+      multiple: false,
+    });
+    if (blob.length === 0) {
+      throw new Error("引擎文件为空");
+    } else {
+      const zip = new JSZip();
+      zip.file(blob.name, await blob.text());
+      const data = {
+        name: "@custom",
+        dstr: "",
+        dbin: await zip.generateAsync({ type: "uint8array" }),
+      };
+      await appStore.grpc!.call({
+        data: Object.fromEntries(
+          appStore.services
+            .filter((srv) => srv.type === "simenv")
+            .map((srv) => [srv.name, data])
+        ),
+      });
+    }
+    $q.notify({
+      type: "positive",
+      message: "上传引擎成功",
+    });
+  } catch (e) {
+    $q.notify({
+      type: "negative",
+      message: "上传引擎失败",
     });
     console.error(e);
   }

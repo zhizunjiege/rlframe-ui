@@ -44,7 +44,6 @@
         <div v-if="rlModels.includes(agent.name)" class="full-width">
           <component
             :is="getModelAsyncComp(agent.name)"
-            v-once
             v-model="agent.hypers"
           />
         </div>

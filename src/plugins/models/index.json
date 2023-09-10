@@ -1,3 +1,6 @@
 [
-  "DQN"
+  "DQN",
+  "DoubleDQN",
+  "DDPG",
+  "MADDPG"
 ]

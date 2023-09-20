@@ -33,8 +33,8 @@
         <div v-if="simEngines.includes(simenv.name)" class="full-width">
           <component
             :is="getAsyncComp(simenv.name)"
-            v-once
             v-model="simenv.args"
+            v-memo="[simenv.name]"
           />
         </div>
         <div v-else class="full-width">
@@ -63,15 +63,16 @@ const simenv = taskStore.task!.simenvs[index.value];
 const currentEngines = ref(deepCopy(simEngines));
 async function newvalFunc(
   val: string,
-  done: (v?: string, m?: "toggle" | "add" | "add-unique") => void
+  done?: (v?: string, m?: "toggle" | "add" | "add-unique") => void
 ) {
   if (val?.length > 0) {
     if (!currentEngines.value.includes(val)) {
       currentEngines.value.push(val);
     }
-    done(val, "add-unique");
+    done?.(val, "add-unique");
   }
 }
+newvalFunc(simenv.name);
 
 function getAsyncComp(name: string) {
   return defineAsyncComponent(

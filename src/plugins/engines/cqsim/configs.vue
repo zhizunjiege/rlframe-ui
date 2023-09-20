@@ -1,5 +1,5 @@
 <template>
-  <form ref="form" @change.capture="submit">
+  <form ref="form">
     <q-card flat class="full-width transparent">
       <q-card-section>
         <q-markup-table flat separator="horizontal" class="ui-table">
@@ -25,6 +25,7 @@
                   filled
                   required
                   class="ui-input"
+                  @update:model-value="getScenariosAndExpDesigns"
                 />
               </td>
             </tr>
@@ -37,6 +38,7 @@
                   filled
                   required
                   class="ui-input"
+                  @update:model-value="getScenariosAndExpDesigns"
                 />
               </td>
             </tr>
@@ -71,7 +73,7 @@
                   ]"
                   toggle-color="secondary"
                   toggle-text-color="accent"
-                  @update:model-value="reset"
+                  @update:model-value="onModeChanged"
                 />
               </td>
               <td>
@@ -79,7 +81,7 @@
                   v-if="inScenario"
                   v-model.number="args.scenario_id"
                   :options="scenarios"
-                  :disable="!args.res_addr || !args.x_token"
+                  :disable="scenarios.length === 0"
                   dense
                   filled
                   required
@@ -91,13 +93,13 @@
                   :display-value="args.scenario_id"
                   popup-content-class="bg-secondary"
                   class="ui-input"
-                  @update:model-value="parseModels"
+                  @update:model-value="onScenarioOrExpDesignChanged"
                 />
                 <q-select
                   v-else
                   v-model.number="args.exp_design_id"
                   :options="expdesigns"
-                  :disable="!args.res_addr || !args.x_token"
+                  :disable="expdesigns.length === 0"
                   dense
                   filled
                   required
@@ -109,7 +111,7 @@
                   :display-value="args.exp_design_id"
                   popup-content-class="bg-secondary"
                   class="ui-input"
-                  @update:model-value="parseModels"
+                  @update:model-value="onScenarioOrExpDesignChanged"
                 />
               </td>
             </tr>
@@ -174,7 +176,7 @@
                   filled
                   type="number"
                   required
-                  min="1"
+                  min="5"
                   class="ui-input"
                 />
               </td>
@@ -188,7 +190,7 @@
                   filled
                   type="number"
                   required
-                  min="0.1"
+                  min="-1"
                   step="0.1"
                   class="ui-input"
                 />
@@ -321,11 +323,15 @@
             <tr>
               <td>路由地址</td>
               <td>
-                <q-input
+                <q-select
                   v-model="item.addr"
+                  :options="agentAddrs"
+                  :disable="agentAddrs.length === 0"
                   dense
                   filled
                   required
+                  options-dense
+                  popup-content-class="bg-secondary"
                   class="ui-input"
                 />
               </td>
@@ -372,11 +378,15 @@
             <tr>
               <td>仿真服务地址</td>
               <td>
-                <q-input
+                <q-select
                   v-model="args.simenv_addr"
+                  :options="simenvAddrs"
+                  :disable="simenvAddrs.length === 0"
                   dense
                   filled
                   required
+                  options-dense
+                  popup-content-class="bg-secondary"
                   class="ui-input"
                 />
               </td>
@@ -418,6 +428,7 @@
 </template>
 
 <script setup lang="ts">
+import { useAppStore } from "~/stores";
 import {
   offset,
   getDurationString,
@@ -493,33 +504,57 @@ const args = ref<CQSIMArgs>({
 
 const $q = useQuasar();
 
+const appStore = useAppStore();
+const agentAddrs = computed(() =>
+  appStore.services
+    .filter((item) => item.type === "agent")
+    .map((item) => `${item.host}:${item.port}`)
+);
+const simenvAddrs = computed(() =>
+  appStore.services
+    .filter((item) => item.type === "simenv")
+    .map((item) => `${item.host}:${item.port}`)
+);
+
 const inScenario = ref(true);
 
 const scenarios = ref([] as Awaited<ReturnType<typeof getScenarioList>>);
 const expdesigns = ref([] as Awaited<ReturnType<typeof getExpDesignList>>);
 
+async function getScenariosAndExpDesigns() {
+  try {
+    scenarios.value = await getScenarioList(
+      args.value.res_addr,
+      args.value.x_token
+    );
+    expdesigns.value = await getExpDesignList(
+      args.value.res_addr,
+      args.value.x_token
+    );
+  } catch (e) {
+    scenarios.value = [];
+    expdesigns.value = [];
+    $q.notify({
+      type: "negative",
+      message: "获取仿真想定和实验设计失败，请检查CQSIM引擎是否正常运行",
+    });
+    console.log(e);
+  }
+}
+
 const models = ref({} as Record<string, Entity>);
 const modelOptions = computed(() => Object.values(models.value));
 
-function reset(value: boolean) {
-  if (value) {
-    args.value.exp_design_id = 0;
-  } else {
-    args.value.scenario_id = 0;
-  }
-  models.value = {};
-  args.value.data = [];
-  args.value.routes = [];
-}
-
 async function parseModels(id: number) {
   try {
-    models.value = {};
-
     if (!inScenario.value) {
       const expdesign = expdesigns.value.find((item) => item.id === id);
-      id = expdesign!.scenarioId;
+      id = expdesign?.scenarioId ?? 0;
     }
+    if (id === 0) {
+      return;
+    }
+
     const scenario = await getScenarioFile(
       args.value.res_addr,
       args.value.x_token,
@@ -550,6 +585,8 @@ async function parseModels(id: number) {
       args.value.x_token,
       Object.keys(record)
     );
+
+    models.value = {};
     for (const item of tmpModels) {
       record[item.id].name = item.name;
       models.value[item.name] = record[item.id];
@@ -565,6 +602,20 @@ async function parseModels(id: number) {
   }
 }
 
+function onModeChanged() {
+  args.value.scenario_id = 0;
+  args.value.exp_design_id = 0;
+  models.value = {};
+  args.value.data = [];
+  args.value.routes = [];
+}
+
+async function onScenarioOrExpDesignChanged(id: number) {
+  args.value.data = [];
+  args.value.routes = [];
+  await parseModels(id);
+}
+
 const form = ref<Nullable<HTMLFormElement>>(null);
 function submit() {
   if (!form.value!.reportValidity()) {
@@ -575,25 +626,10 @@ function submit() {
 function update() {
   emits("update:modelValue", JSON.stringify(args.value));
 }
+watch(() => args.value, submit, { deep: true });
 
 (async () => {
-  try {
-    scenarios.value = await getScenarioList(
-      args.value.res_addr,
-      args.value.x_token
-    );
-    expdesigns.value = await getExpDesignList(
-      args.value.res_addr,
-      args.value.x_token
-    );
-  } catch (e) {
-    $q.notify({
-      type: "negative",
-      message: "获取仿真想定和实验设计失败，请检查CQSIM引擎是否正常运行",
-    });
-    console.log(e);
-  }
-
+  await getScenariosAndExpDesigns();
   if (props.modelValue && props.modelValue !== "{}") {
     args.value = JSON.parse(props.modelValue);
     if (args.value.scenario_id > 0) {

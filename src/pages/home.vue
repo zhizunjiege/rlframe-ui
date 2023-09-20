@@ -117,7 +117,10 @@ const taskStore = useTaskStore();
 
 // load system settings and set callback for saving
 appStore.loadSystemSettings();
-onBeforeUnmount(appStore.saveSystemSettings);
+watch(appStore.systemSettings, appStore.saveSystemSettings, {
+  deep: true,
+  immediate: true,
+});
 
 // init grpc and rest client
 (async () => {
@@ -136,7 +139,10 @@ onBeforeUnmount(appStore.saveSystemSettings);
 
 // load recent tasks and set callback for saving
 taskStore.loadRecentTasks();
-onBeforeUnmount(taskStore.saveRecentTasks);
+watch(taskStore.recent, taskStore.saveRecentTasks, {
+  deep: true,
+  immediate: true,
+});
 
 // page style
 function pageStyle(offset: number, height: number) {

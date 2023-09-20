@@ -344,11 +344,18 @@ async function uploadModel() {
       message: "上传模型成功",
     });
   } catch (e) {
-    $q.notify({
-      type: "negative",
-      message: "上传模型失败",
-    });
-    console.error(e);
+    if (e instanceof DOMException) {
+      $q.notify({
+        type: "warning",
+        message: "取消上传",
+      });
+    } else {
+      $q.notify({
+        type: "negative",
+        message: "上传模型失败",
+      });
+      console.error(e);
+    }
   }
 }
 async function uploadEngine() {
@@ -382,11 +389,18 @@ async function uploadEngine() {
       message: "上传引擎成功",
     });
   } catch (e) {
-    $q.notify({
-      type: "negative",
-      message: "上传引擎失败",
-    });
-    console.error(e);
+    if (e instanceof DOMException) {
+      $q.notify({
+        type: "warning",
+        message: "取消上传",
+      });
+    } else {
+      $q.notify({
+        type: "negative",
+        message: "上传引擎失败",
+      });
+      console.error(e);
+    }
   }
 }
 

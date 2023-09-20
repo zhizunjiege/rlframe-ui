@@ -45,6 +45,7 @@
           <component
             :is="getModelAsyncComp(agent.name)"
             v-model="agent.hypers"
+            v-memo="[agent.name]"
           />
         </div>
         <div v-else class="full-width">
@@ -173,15 +174,16 @@ const agent = taskStore.task!.agents[index.value];
 const currentModels = ref(deepCopy(rlModels));
 async function newvalFunc(
   val: string,
-  done: (v?: string, m?: "toggle" | "add" | "add-unique") => void
+  done?: (v?: string, m?: "toggle" | "add" | "add-unique") => void
 ) {
   if (val?.length > 0) {
     if (!currentModels.value.includes(val)) {
       currentModels.value.push(val);
     }
-    done(val, "add-unique");
+    done?.(val, "add-unique");
   }
 }
+newvalFunc(agent.name);
 
 function getModelAsyncComp(name: string) {
   return defineAsyncComponent(

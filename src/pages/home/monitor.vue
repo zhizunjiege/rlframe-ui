@@ -5,6 +5,7 @@
         class="row justify-around q-mx-auto q-px-md bg-secondary ui-monitor-bar1"
       >
         <q-btn
+          :disable="running"
           flat
           dense
           round
@@ -15,7 +16,7 @@
           <q-tooltip anchor="top middle" self="center middle"> 重置 </q-tooltip>
         </q-btn>
         <q-btn
-          :disable="notask"
+          :disable="running || notask"
           flat
           dense
           round
@@ -26,7 +27,7 @@
           <q-tooltip anchor="top middle" self="center middle"> 推送 </q-tooltip>
         </q-btn>
         <q-btn
-          :disable="notask"
+          :disable="running || notask"
           flat
           dense
           round
@@ -37,7 +38,7 @@
           <q-tooltip anchor="top middle" self="center middle"> 拉取 </q-tooltip>
         </q-btn>
         <q-btn
-          :disable="notask || uninited"
+          :disable="running || notask || uninited"
           flat
           dense
           round
@@ -55,24 +56,12 @@
         <q-space />
         <q-card-section class="q-py-none flex items-center">
           <q-select
-            v-model="type"
-            :options="['agent', 'simenv']"
-            :disable="notask || uninited"
-            dense
-            filled
-            options-dense
-            popup-content-class="bg-secondary"
-            class="q-mr-md ui-monitor-select"
-            @update:model-value="service = null"
-          />
-          <q-select
             v-model="service"
-            :options="
-              type === 'agent' ? agents : type === 'simenv' ? simenvs : []
-            "
-            :disable="notask || uninited"
+            :options="services"
+            :disable="running || notask || uninited"
             dense
             filled
+            clearable
             options-dense
             option-label="server"
             popup-content-class="bg-secondary"
@@ -82,11 +71,11 @@
       </q-card-section>
       <q-separator />
       <q-card-section v-if="service" horizontal class="col-grow row">
-        <template v-if="type === 'agent'">
+        <template v-if="agents.includes(service as AgentTable)">
           <q-card-section class="col-8">
             <div v-if="rlModels.includes(service.name)" class="fit">
               <component
-                :is="getAsyncComp(type, service.name)"
+                :is="getAsyncComp('models', service.name)"
                 :details="details[service.server].status"
               />
             </div>
@@ -96,16 +85,16 @@
           </q-card-section>
           <q-card-section class="col-grow column justify-around">
             <q-btn-group spread>
-              <q-btn label="加载权重" @click="loadWeights" />
-              <q-btn label="保存权重" @click="saveWeights" />
+              <q-btn :disable="running" label="加载权重" @click="loadWeights" />
+              <q-btn :disable="running" label="保存权重" @click="saveWeights" />
             </q-btn-group>
             <q-btn-group spread>
-              <q-btn label="加载经验" @click="loadBuffer" />
-              <q-btn label="保存经验" @click="saveBuffer" />
+              <q-btn :disable="running" label="加载经验" @click="loadBuffer" />
+              <q-btn :disable="running" label="保存经验" @click="saveBuffer" />
             </q-btn-group>
             <q-btn-group spread>
-              <q-btn label="加载状态" @click="loadStatus" />
-              <q-btn label="保存状态" @click="saveStatus" />
+              <q-btn :disable="running" label="加载状态" @click="loadStatus" />
+              <q-btn :disable="running" label="保存状态" @click="saveStatus" />
             </q-btn-group>
             <q-input
               v-model="tensorboardPort"
@@ -130,11 +119,11 @@
             </q-input>
           </q-card-section>
         </template>
-        <template v-if="type === 'simenv'">
+        <template v-if="simenvs.includes(service as SimenvTable)">
           <q-card-section class="col-8">
             <div v-if="simEngines.includes(service.name)" class="fit">
               <component
-                :is="getAsyncComp(type, service.name)"
+                :is="getAsyncComp('engines', service.name)"
                 :details="details[service.server].data"
               />
             </div>
@@ -148,6 +137,7 @@
             >
               <q-btn
                 :disable="
+                  running ||
                   details[service.server].state === 'RUNNING' ||
                   details[service.server].state === 'SUSPENDED'
                 "
@@ -163,7 +153,9 @@
                 </q-tooltip>
               </q-btn>
               <q-btn
-                :disable="details[service.server].state !== 'RUNNING'"
+                :disable="
+                  running || details[service.server].state !== 'RUNNING'
+                "
                 flat
                 dense
                 round
@@ -176,7 +168,9 @@
                 </q-tooltip>
               </q-btn>
               <q-btn
-                :disable="details[service.server].state !== 'SUSPENDED'"
+                :disable="
+                  running || details[service.server].state !== 'SUSPENDED'
+                "
                 flat
                 dense
                 round
@@ -189,7 +183,9 @@
                 </q-tooltip>
               </q-btn>
               <q-btn
-                :disable="details[service.server].state !== 'SUSPENDED'"
+                :disable="
+                  running || details[service.server].state !== 'SUSPENDED'
+                "
                 flat
                 dense
                 round
@@ -203,6 +199,7 @@
               </q-btn>
               <q-btn
                 :disable="
+                  running ||
                   details[service.server].state === 'UNINITED' ||
                   details[service.server].state === 'STOPPED'
                 "
@@ -292,11 +289,11 @@
 
 <script setup lang="ts">
 import { fileOpen, fileSave } from "browser-fs-access";
-import { ServiceState_State } from "~/api";
+import { AgentTable, SimenvTable, ServiceState_State } from "~/api";
 import { useAppStore, useTaskStore } from "~/stores";
+import { getTimestampString } from "~/utils";
 import rlModels from "~/plugins/models/index.json";
 import simEngines from "~/plugins/engines/index.json";
-import { getTimestampString } from "~/utils";
 
 const $q = useQuasar();
 
@@ -305,26 +302,28 @@ const taskStore = useTaskStore();
 
 // -----------------------------------------------
 
+type Service = AgentTable | SimenvTable;
+
 const notask = computed(() => taskStore.task === null);
 const agents = computed(() => taskStore.task?.agents ?? []);
 const simenvs = computed(() => taskStore.task?.simenvs ?? []);
+const services = computed(() => [...agents.value, ...simenvs.value]);
+const agentIds = computed(() => agents.value.map((item) => item.server));
+const simenvIds = computed(() => simenvs.value.map((item) => item.server));
+const serviceIds = computed(() => [...agentIds.value, ...simenvIds.value]);
 
+const running = ref(false);
 const uninited = ref(true);
-const type = ref("");
-const service = ref<Nullable<{ server: string; name: string }>>(null);
+const service = ref<Nullable<Service>>(null);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const details = ref<Record<string, any>>({});
 
 function getAsyncComp(type: string, name: string) {
-  const root = type === "agent" ? "models" : "engines";
   return defineAsyncComponent(
-    () => import(`../../plugins/${root}/${name.toLowerCase()}/details.vue`)
+    () => import(`../../plugins/${type}/${name.toLowerCase()}/details.vue`)
   );
 }
 
-const agentIds = computed(() => agents.value.map((item) => item.server));
-const simenvIds = computed(() => simenvs.value.map((item) => item.server));
-const serviceIds = computed(() => [...agentIds.value, ...simenvIds.value]);
 async function reset() {
   $q.dialog({
     title: "提示",
@@ -332,20 +331,22 @@ async function reset() {
     cancel: true,
     persistent: true,
   }).onOk(async () => {
+    running.value = true;
     try {
       await appStore.grpc!.resetService({ ids: serviceIds.value });
       uninited.value = true;
-      type.value = "";
       service.value = null;
       details.value = {};
-      // clrRefreshInterval();
+      clrRefreshInterval();
       addMsg("服务重置完成");
     } catch (e) {
       addMsg("重置服务失败：" + e, "negative");
     }
+    running.value = false;
   });
 }
 async function push() {
+  running.value = true;
   const success = "任务推送成功";
   const failure = "任务推送失败";
   try {
@@ -390,16 +391,17 @@ async function push() {
         ])
       ),
     });
-    // clrRefreshInterval();
-    // setRefreshInterval();
-    await refresh();
     uninited.value = false;
+    clrRefreshInterval();
+    setRefreshInterval();
     addMsg(success);
   } catch (e) {
     addMsg(failure + "：" + e, "negative");
   }
+  running.value = false;
 }
 async function pull() {
+  running.value = true;
   const success = "任务拉取成功";
   const failure = "任务拉取失败";
   try {
@@ -445,14 +447,14 @@ async function pull() {
         throw new Error("云端任务与本地任务不匹配");
       }
     }
-    // clrRefreshInterval();
-    // setRefreshInterval();
-    await refresh();
     uninited.value = false;
+    clrRefreshInterval();
+    setRefreshInterval();
     addMsg(success);
   } catch (e) {
     addMsg(failure + "：" + e, "negative");
   }
+  running.value = false;
 }
 async function refresh() {
   try {
@@ -463,9 +465,9 @@ async function refresh() {
     });
     for (const [k, v] of Object.entries(status)) {
       if (!details.value[k]) {
-        details.value[k] = {};
+        details.value[k] = { status: {} };
       }
-      details.value[k].status = JSON.parse(v.status);
+      Object.assign(details.value[k].status, JSON.parse(v.status));
     }
     const {
       response: { infos },
@@ -473,10 +475,12 @@ async function refresh() {
       ids: simenvIds.value,
     });
     for (const [k, v] of Object.entries(infos)) {
-      details.value[k] = {};
+      if (!details.value[k]) {
+        details.value[k] = { state: "", data: {}, logs: [] };
+      }
       details.value[k].state = v.state;
-      details.value[k].data = JSON.parse(v.data);
-      details.value[k].logs = JSON.parse(v.logs);
+      Object.assign(details.value[k].data, JSON.parse(v.data));
+      details.value[k].logs.splice(0, ...JSON.parse(v.logs));
     }
     // addMsg("刷新状态成功");
   } catch (e) {
@@ -484,22 +488,21 @@ async function refresh() {
   }
 }
 
-// let refreshInterval = 0;
-// function setRefreshInterval() {
-//   if (appStore.systemSettings.detailsRefreshInterval > 0) {
-//     refreshInterval = window.setInterval(
-//       refresh,
-//       appStore.systemSettings.detailsRefreshInterval
-//     );
-//   }
-// }
-// function clrRefreshInterval() {
-//   if (refreshInterval) {
-//     window.clearInterval(refreshInterval);
-//     refreshInterval = 0;
-//   }
-// }
-// onBeforeUnmount(clrRefreshInterval);
+let refreshInterval = 0;
+function setRefreshInterval() {
+  if (appStore.systemSettings.detailsRefreshInterval > 0) {
+    refreshInterval = window.setInterval(
+      refresh,
+      appStore.systemSettings.detailsRefreshInterval
+    );
+  }
+}
+function clrRefreshInterval() {
+  if (refreshInterval) {
+    window.clearInterval(refreshInterval);
+    refreshInterval = 0;
+  }
+}
 
 // -----------------------------------------------
 
@@ -514,6 +517,7 @@ async function control(type: string) {
   });
 }
 async function start() {
+  running.value = true;
   try {
     await control("init");
     await control("start");
@@ -522,8 +526,10 @@ async function start() {
   } catch (e) {
     addMsg("开始任务失败：" + e, "negative");
   }
+  running.value = false;
 }
 async function pause() {
+  running.value = true;
   try {
     await control("pause");
     details.value[service.value!.server].state = "SUSPENDED";
@@ -531,16 +537,20 @@ async function pause() {
   } catch (e) {
     addMsg("暂停任务失败：" + e, "negative");
   }
+  running.value = false;
 }
 async function step() {
+  running.value = true;
   try {
     await control("step");
     addMsg("任务单步运行");
   } catch (e) {
     addMsg("步进任务失败：" + e, "negative");
   }
+  running.value = false;
 }
 async function resume() {
+  running.value = true;
   try {
     await control("resume");
     details.value[service.value!.server].state = "RUNNING";
@@ -548,8 +558,10 @@ async function resume() {
   } catch (e) {
     addMsg("继续任务失败：" + e, "negative");
   }
+  running.value = false;
 }
 async function stop() {
+  running.value = true;
   try {
     await control("stop");
     details.value[service.value!.server].state = "stopped";
@@ -557,11 +569,13 @@ async function stop() {
   } catch (e) {
     addMsg("停止任务失败：" + e, "negative");
   }
+  running.value = false;
 }
 
 // -----------------------------------------------
 
 async function loadWeights() {
+  running.value = true;
   try {
     const blob = await fileOpen({
       description: "weights.pkl",
@@ -581,10 +595,16 @@ async function loadWeights() {
     }
     addMsg("加载权重成功");
   } catch (e) {
-    addMsg("加载权重失败：" + e, "negative");
+    if (e instanceof DOMException) {
+      addMsg("取消加载权重", "warning");
+    } else {
+      addMsg("加载权重失败：" + e, "negative");
+    }
   }
+  running.value = false;
 }
 async function saveWeights() {
+  running.value = true;
   try {
     const weights = await appStore.grpc!.getModelWeights({
       ids: [service.value!.server],
@@ -598,10 +618,16 @@ async function saveWeights() {
     });
     addMsg("保存权重成功");
   } catch (e) {
-    addMsg("保存权重失败：" + e, "negative");
+    if (e instanceof DOMException) {
+      addMsg("取消保存权重", "warning");
+    } else {
+      addMsg("保存权重失败：" + e, "negative");
+    }
   }
+  running.value = false;
 }
 async function loadBuffer() {
+  running.value = true;
   try {
     const blob = await fileOpen({
       description: "buffer.pkl",
@@ -621,10 +647,16 @@ async function loadBuffer() {
     }
     addMsg("加载经验成功");
   } catch (e) {
-    addMsg("加载经验失败：" + e, "negative");
+    if (e instanceof DOMException) {
+      addMsg("取消加载经验", "warning");
+    } else {
+      addMsg("加载经验失败：" + e, "negative");
+    }
   }
+  running.value = false;
 }
 async function saveBuffer() {
+  running.value = true;
   try {
     const buffer = await appStore.grpc!.getModelBuffer({
       ids: [service.value!.server],
@@ -638,10 +670,16 @@ async function saveBuffer() {
     });
     addMsg("保存经验成功");
   } catch (e) {
-    addMsg("保存经验失败：" + e, "negative");
+    if (e instanceof DOMException) {
+      addMsg("取消保存经验", "warning");
+    } else {
+      addMsg("保存经验失败：" + e, "negative");
+    }
   }
+  running.value = false;
 }
 async function loadStatus() {
+  running.value = true;
   try {
     const blob = await fileOpen({
       description: "status.json",
@@ -661,10 +699,16 @@ async function loadStatus() {
     }
     addMsg("加载状态成功");
   } catch (e) {
-    addMsg("加载状态失败：" + e, "negative");
+    if (e instanceof DOMException) {
+      addMsg("取消加载状态", "warning");
+    } else {
+      addMsg("加载状态失败：" + e, "negative");
+    }
   }
+  running.value = false;
 }
 async function saveStatus() {
+  running.value = true;
   try {
     const status = await appStore.grpc!.getModelStatus({
       ids: [service.value!.server],
@@ -678,8 +722,13 @@ async function saveStatus() {
     });
     addMsg("保存状态成功");
   } catch (e) {
-    addMsg("保存状态失败：" + e, "negative");
+    if (e instanceof DOMException) {
+      addMsg("取消保存状态", "warning");
+    } else {
+      addMsg("保存状态失败：" + e, "negative");
+    }
   }
+  running.value = false;
 }
 
 const tensorboardPort = ref(6006);
@@ -750,6 +799,6 @@ onBeforeUnmount(() => {
   height: 45%;
 }
 .ui-monitor-select {
-  width: 10rem;
+  width: 12rem;
 }
 </style>

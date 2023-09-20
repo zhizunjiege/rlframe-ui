@@ -1,5 +1,5 @@
 <template>
-  <form ref="form" @change.capture="submit">
+  <form ref="form">
     <q-card flat class="full-width transparent">
       <q-card-section>
         <q-markup-table flat separator="horizontal" class="ui-table">
@@ -452,12 +452,15 @@ function update() {
   }
   emits("update:modelValue", JSON.stringify(hypers.value));
 }
+watch(() => hypers.value, submit, { deep: true });
 
-if (props.modelValue && props.modelValue !== "{}") {
-  hypers.value = JSON.parse(props.modelValue);
-} else {
-  update();
-}
+(() => {
+  if (props.modelValue && props.modelValue !== "{}") {
+    hypers.value = JSON.parse(props.modelValue);
+  } else {
+    update();
+  }
+})();
 </script>
 
 <style scoped lang="scss"></style>

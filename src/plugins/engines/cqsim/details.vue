@@ -15,12 +15,18 @@
           </td>
         </tr>
         <tr>
+          <td>墙钟运行时长</td>
+          <td class="ellipsis">
+            {{ getDurationString(props.details.real_duration * 1000) }}
+          </td>
+        </tr>
+        <tr>
           <td>仿真步长（ms）</td>
           <td class="ellipsis">{{ props.details.sim_time_step }}</td>
         </tr>
         <tr>
           <td>仿真倍速</td>
-          <td class="ellipsis">{{ props.details.speed_ratio }}</td>
+          <td class="ellipsis">{{ props.details.real_speed_ratio }}</td>
         </tr>
         <tr>
           <td>当前样本ID</td>

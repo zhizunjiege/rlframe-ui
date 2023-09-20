@@ -20,7 +20,7 @@
         <q-space />
         <q-card-section class="q-py-none">
           <q-btn
-            :disable="selected.length === 0"
+            :disable="running || selected.length === 0"
             flat
             round
             size="sm"
@@ -65,6 +65,7 @@
           <template #body-cell-actions="scope">
             <q-td :props="scope">
               <q-btn
+                :disable="running"
                 flat
                 round
                 size="sm"
@@ -77,6 +78,7 @@
                 </q-tooltip>
               </q-btn>
               <q-btn
+                :disable="running"
                 flat
                 round
                 size="sm"
@@ -202,8 +204,11 @@ const pagination = ref({
   rowsPerPage: 12,
 });
 
+const running = ref(false);
+
 // open task
 async function openTask(id: number) {
+  running.value = true;
   if (!taskStore.saved) {
     $q.dialog(saveDialog).onOk(async (save: string) => {
       if (save === "yes") {
@@ -216,9 +221,11 @@ async function openTask(id: number) {
     await taskStore.openTask(id);
     router.push("/home/task");
   }
+  running.value = false;
 }
 // copy task
 async function copyTask(id: number) {
+  running.value = true;
   const task = await appStore.rest!.getTask(id);
   task.task.id = -1;
   task.task.name = `${task.task.name} - 副本`;
@@ -239,9 +246,11 @@ async function copyTask(id: number) {
     create_time: timestamp,
     update_time: timestamp,
   });
+  running.value = false;
 }
 // delete selected tasks
 async function deleteTasks() {
+  running.value = true;
   if (
     taskStore.task &&
     selected.value.find((item) => item.id === taskStore.task!.task.id)
@@ -266,6 +275,7 @@ async function deleteTasks() {
       selected.value = [];
     });
   }
+  running.value = false;
 }
 
 // initialize

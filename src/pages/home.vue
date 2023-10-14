@@ -201,13 +201,13 @@ function clsTask() {
   width: 50%;
 }
 .ui-table {
-  table {
+  > table {
     table-layout: fixed;
-  }
-  td {
-    font-size: 0.875rem !important;
-    padding: 0.5rem 1.5rem !important;
-    border-color: var(--ui-secondary) !important;
+    td {
+      font-size: 0.875rem !important;
+      padding: 0.5rem 1.5rem !important;
+      border-color: var(--ui-secondary) !important;
+    }
   }
 }
 .ui-input {

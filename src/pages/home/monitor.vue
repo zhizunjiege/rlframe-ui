@@ -583,7 +583,7 @@ async function loadWeights() {
       mimeTypes: ["application/octet-stream"],
       multiple: false,
     });
-    if (blob.length === 0) {
+    if (blob.size === 0) {
       throw new Error("本地权重为空");
     } else {
       const weights = new Uint8Array(await blob.arrayBuffer());
@@ -635,7 +635,7 @@ async function loadBuffer() {
       mimeTypes: ["application/octet-stream"],
       multiple: false,
     });
-    if (blob.length === 0) {
+    if (blob.size === 0) {
       throw new Error("本地经验为空");
     } else {
       const buffer = new Uint8Array(await blob.arrayBuffer());
@@ -687,7 +687,7 @@ async function loadStatus() {
       mimeTypes: ["application/json"],
       multiple: false,
     });
-    if (blob.length === 0) {
+    if (blob.size === 0) {
       throw new Error("本地状态为空");
     } else {
       const status = await blob.text();

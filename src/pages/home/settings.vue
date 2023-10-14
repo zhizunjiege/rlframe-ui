@@ -321,7 +321,7 @@ async function uploadModel() {
       mimeTypes: ["text/plain"],
       multiple: false,
     });
-    if (blob.length === 0) {
+    if (blob.size === 0) {
       throw new Error("模型文件为空");
     } else {
       const zip = new JSZip();
@@ -366,7 +366,7 @@ async function uploadEngine() {
       mimeTypes: ["text/plain"],
       multiple: false,
     });
-    if (blob.length === 0) {
+    if (blob.size === 0) {
       throw new Error("引擎文件为空");
     } else {
       const zip = new JSZip();

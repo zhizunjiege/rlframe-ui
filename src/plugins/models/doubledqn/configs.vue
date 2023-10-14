@@ -50,7 +50,10 @@
                     <q-icon
                       name="bi-x-circle"
                       class="ui-clickable"
-                      @click="hypers.hidden_layers.splice(index, 1)"
+                      @click="
+                        hypers.hidden_layers.length > 1 &&
+                          hypers.hidden_layers.splice(index, 1)
+                      "
                     />
                   </template>
                 </q-input>
@@ -106,7 +109,7 @@
               <td>经验回放池大小</td>
               <td>
                 <q-input
-                  v-model.number="hypers.replay_size"
+                  v-model.number="hypers.buffer_size"
                   dense
                   filled
                   type="number"
@@ -235,20 +238,6 @@
               </td>
             </tr>
             <tr>
-              <td>数据类型</td>
-              <td>
-                <q-select
-                  v-model="hypers.dtype"
-                  :options="['float32', 'float64']"
-                  dense
-                  filled
-                  options-dense
-                  popup-content-class="bg-secondary"
-                  class="ui-input"
-                />
-              </td>
-            </tr>
-            <tr>
               <td>随机种子</td>
               <td>
                 <q-input
@@ -275,7 +264,7 @@ type DoubleDQNHypers = {
   hidden_layers: number[];
   lr: number;
   gamma: number;
-  replay_size: number;
+  buffer_size: number;
   batch_size: number;
   epsilon_max: number;
   epsilon_min: number;
@@ -284,7 +273,6 @@ type DoubleDQNHypers = {
   update_after: number;
   update_online_every: number;
   update_target_every: number;
-  dtype: "float32" | "float64";
   seed: Nullable<number | string>;
 };
 
@@ -300,17 +288,16 @@ const hypers = ref<DoubleDQNHypers>({
   act_num: 2,
   hidden_layers: [64, 64],
   lr: 0.001,
-  gamma: 0.95,
-  replay_size: 10000,
-  batch_size: 32,
+  gamma: 0.99,
+  buffer_size: 1000000,
+  batch_size: 64,
   epsilon_max: 1.0,
-  epsilon_min: 0.01,
-  epsilon_decay: 0.9999,
+  epsilon_min: 0.1,
+  epsilon_decay: 0.9,
   start_steps: 0,
-  update_after: 200,
+  update_after: 64,
   update_online_every: 1,
   update_target_every: 200,
-  dtype: "float32",
   seed: null,
 });
 

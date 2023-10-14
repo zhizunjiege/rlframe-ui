@@ -50,7 +50,10 @@
                     <q-icon
                       name="bi-x-circle"
                       class="ui-clickable"
-                      @click="hypers.hidden_layers_actor.splice(index, 1)"
+                      @click="
+                        hypers.hidden_layers_actor.length > 1 &&
+                          hypers.hidden_layers_actor.splice(index, 1)
+                      "
                     />
                   </template>
                 </q-input>
@@ -82,7 +85,10 @@
                     <q-icon
                       name="bi-x-circle"
                       class="ui-clickable"
-                      @click="hypers.hidden_layers_critic.splice(index, 1)"
+                      @click="
+                        hypers.hidden_layers_critic.length > 1 &&
+                          hypers.hidden_layers_critic.splice(index, 1)
+                      "
                     />
                   </template>
                 </q-input>
@@ -170,7 +176,7 @@
               <td>经验回放池大小</td>
               <td>
                 <q-input
-                  v-model.number="hypers.replay_size"
+                  v-model.number="hypers.buffer_size"
                   dense
                   filled
                   type="number"
@@ -320,29 +326,15 @@
               </td>
             </tr>
             <tr>
-              <td>在线网络更新间隔</td>
+              <td>网络更新间隔</td>
               <td>
                 <q-input
-                  v-model.number="hypers.update_online_every"
+                  v-model.number="hypers.update_every"
                   dense
                   filled
                   type="number"
                   required
                   min="1"
-                  class="ui-input"
-                />
-              </td>
-            </tr>
-            <tr>
-              <td>数据类型</td>
-              <td>
-                <q-select
-                  v-model="hypers.dtype"
-                  :options="['float32', 'float64']"
-                  dense
-                  filled
-                  options-dense
-                  popup-content-class="bg-secondary"
                   class="ui-input"
                 />
               </td>
@@ -377,9 +369,9 @@ type DDPGHypers = {
   lr_critic: number;
   gamma: number;
   tau: number;
-  replay_size: number;
+  buffer_size: number;
   batch_size: number;
-  noise_type: "normal" | "ou";
+  noise_type: "ou" | "normal";
   noise_sigma: number;
   noise_theta: number;
   noise_dt: number;
@@ -387,8 +379,7 @@ type DDPGHypers = {
   noise_min: number;
   noise_decay: number;
   update_after: number;
-  update_online_every: number;
-  dtype: "float32" | "float64";
+  update_every: number;
   seed: Nullable<number | string>;
 };
 
@@ -408,7 +399,7 @@ const hypers = ref<DDPGHypers>({
   lr_critic: 0.001,
   gamma: 0.99,
   tau: 0.001,
-  replay_size: 1000000,
+  buffer_size: 1000000,
   batch_size: 64,
   noise_type: "ou",
   noise_sigma: 0.2,
@@ -418,8 +409,7 @@ const hypers = ref<DDPGHypers>({
   noise_min: 1.0,
   noise_decay: 1.0,
   update_after: 64,
-  update_online_every: 1,
-  dtype: "float32",
+  update_every: 1,
   seed: null,
 });
 

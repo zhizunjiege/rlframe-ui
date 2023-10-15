@@ -60,7 +60,7 @@ export default defineConfig({
           if (id.includes("/node_modules/")) {
             const modules = ["quasar"];
             const chunk = modules.find((module) =>
-              id.includes(`/node_modules/${module}`)
+              id.includes(`/node_modules/${module}`),
             );
             return chunk ? `vendor-${chunk}` : "vendor";
           }

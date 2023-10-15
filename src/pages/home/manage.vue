@@ -270,7 +270,7 @@ async function deleteTasks() {
       const tasks = selected.value.map((item) => item.id);
       await appStore.rest!.delTask(tasks);
       rows.value = rows.value.filter(
-        (item) => !tasks.find((id) => id === item.id)
+        (item) => !tasks.find((id) => id === item.id),
       );
       selected.value = [];
     });
@@ -288,7 +288,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 </script>
 

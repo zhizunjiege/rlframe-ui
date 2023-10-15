@@ -67,7 +67,7 @@ class RestClient {
     table: T,
     columns: (keyof DBTables[T])[] = [],
     options: { [key in keyof DBTables[T]]?: DBTables[T][key] } = {},
-    conjunc: "AND" | "OR" = "AND"
+    conjunc: "AND" | "OR" = "AND",
   ): Promise<DBTables[T][]> {
     const colArgs = columns.map((v) => `columns=${v as string}`);
     const optArgs = Object.entries(options).map(([k, v]) => `${k}=${v}`);
@@ -85,7 +85,7 @@ class RestClient {
 
   async insert<T extends keyof DBTables>(
     table: T,
-    data: Modified<DBTables[T], { id?: number }>
+    data: Modified<DBTables[T], { id?: number }>,
   ): Promise<{ lastrowid: number }> {
     const row = { ...data } as DBTables[T];
     const response = await fetch(`${this.addr}/${table}`, {
@@ -104,7 +104,7 @@ class RestClient {
 
   async update<T extends keyof DBTables>(
     table: T,
-    data: Modified<Partial<DBTables[T]>, { id: number }>
+    data: Modified<Partial<DBTables[T]>, { id: number }>,
   ): Promise<{ rowcount: number }> {
     const row = { ...data } as DBTables[T];
     const response = await fetch(`${this.addr}/${table}`, {
@@ -123,13 +123,13 @@ class RestClient {
 
   async replace<T extends keyof DBTables>(
     table: T,
-    data: Partial<DBTables[T]>
+    data: Partial<DBTables[T]>,
   ): Promise<{ lastrowid: number; rowcount: number }> {
     const id = data.id ?? -1;
     if (id < 0) {
       const rst = await this.insert(
         table,
-        data as Modified<DBTables[T], { id?: number }>
+        data as Modified<DBTables[T], { id?: number }>,
       );
       return {
         lastrowid: rst.lastrowid,
@@ -138,7 +138,7 @@ class RestClient {
     } else {
       const rst = await this.update(
         table,
-        data as Modified<Partial<DBTables[T]>, { id: number }>
+        data as Modified<Partial<DBTables[T]>, { id: number }>,
       );
       return {
         lastrowid: id,
@@ -149,7 +149,7 @@ class RestClient {
 
   async delete<T extends keyof DBTables>(
     table: T,
-    ids: number[]
+    ids: number[],
   ): Promise<{ rowcount: number }> {
     const args = ids.map((v) => `ids=${v}`).join("&");
     const response = await fetch(`${this.addr}/${table}?${args}`, {

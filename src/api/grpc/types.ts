@@ -209,21 +209,21 @@ class CommonRequest$Type extends MessageType<CommonRequest> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: CommonRequest
+    target?: CommonRequest,
   ): CommonRequest {
     return target ?? this.create();
   }
   internalBinaryWrite(
     message: CommonRequest,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     let u = options.writeUnknownFields;
     if (u !== false)
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -251,21 +251,21 @@ class CommonResponse$Type extends MessageType<CommonResponse> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: CommonResponse
+    target?: CommonResponse,
   ): CommonResponse {
     return target ?? this.create();
   }
   internalBinaryWrite(
     message: CommonResponse,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     let u = options.writeUnknownFields;
     if (u !== false)
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -297,7 +297,7 @@ class CallData$Type extends MessageType<CallData> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: CallData
+    target?: CallData,
   ): CallData {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -317,7 +317,7 @@ class CallData$Type extends MessageType<CallData> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -326,7 +326,7 @@ class CallData$Type extends MessageType<CallData> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -335,7 +335,7 @@ class CallData$Type extends MessageType<CallData> {
   internalBinaryWrite(
     message: CallData,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* string name = 1; */
     if (message.name !== "")
@@ -351,7 +351,7 @@ class CallData$Type extends MessageType<CallData> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -386,7 +386,7 @@ class ServiceState$Type extends MessageType<ServiceState> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: ServiceState
+    target?: ServiceState,
   ): ServiceState {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -400,7 +400,7 @@ class ServiceState$Type extends MessageType<ServiceState> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -409,7 +409,7 @@ class ServiceState$Type extends MessageType<ServiceState> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -418,7 +418,7 @@ class ServiceState$Type extends MessageType<ServiceState> {
   internalBinaryWrite(
     message: ServiceState,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* game.types.ServiceState.State state = 1; */
     if (message.state !== 0)
@@ -428,7 +428,7 @@ class ServiceState$Type extends MessageType<ServiceState> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -499,7 +499,7 @@ class SimParam$Type extends MessageType<SimParam> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: SimParam
+    target?: SimParam,
   ): SimParam {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -537,7 +537,7 @@ class SimParam$Type extends MessageType<SimParam> {
               reader,
               reader.uint32(),
               options,
-              (message.value as any).varray
+              (message.value as any).varray,
             ),
           };
           break;
@@ -548,7 +548,7 @@ class SimParam$Type extends MessageType<SimParam> {
               reader,
               reader.uint32(),
               options,
-              (message.value as any).vstruct
+              (message.value as any).vstruct,
             ),
           };
           break;
@@ -556,7 +556,7 @@ class SimParam$Type extends MessageType<SimParam> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -565,7 +565,7 @@ class SimParam$Type extends MessageType<SimParam> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -574,7 +574,7 @@ class SimParam$Type extends MessageType<SimParam> {
   internalBinaryWrite(
     message: SimParam,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* double vdouble = 1; */
     if (message.value.oneofKind === "vdouble")
@@ -593,21 +593,21 @@ class SimParam$Type extends MessageType<SimParam> {
       SimParam_Array.internalBinaryWrite(
         message.value.varray,
         writer.tag(5, WireType.LengthDelimited).fork(),
-        options
+        options,
       ).join();
     /* game.types.SimParam.Struct vstruct = 6; */
     if (message.value.oneofKind === "vstruct")
       SimParam_Struct.internalBinaryWrite(
         message.value.vstruct,
         writer.tag(6, WireType.LengthDelimited).fork(),
-        options
+        options,
       ).join();
     let u = options.writeUnknownFields;
     if (u !== false)
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -643,7 +643,7 @@ class SimParam_Array$Type extends MessageType<SimParam_Array> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: SimParam_Array
+    target?: SimParam_Array,
   ): SimParam_Array {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -652,14 +652,14 @@ class SimParam_Array$Type extends MessageType<SimParam_Array> {
       switch (fieldNo) {
         case /* repeated game.types.SimParam items */ 1:
           message.items.push(
-            SimParam.internalBinaryRead(reader, reader.uint32(), options)
+            SimParam.internalBinaryRead(reader, reader.uint32(), options),
           );
           break;
         default:
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -668,7 +668,7 @@ class SimParam_Array$Type extends MessageType<SimParam_Array> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -677,21 +677,21 @@ class SimParam_Array$Type extends MessageType<SimParam_Array> {
   internalBinaryWrite(
     message: SimParam_Array,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* repeated game.types.SimParam items = 1; */
     for (let i = 0; i < message.items.length; i++)
       SimParam.internalBinaryWrite(
         message.items[i],
         writer.tag(1, WireType.LengthDelimited).fork(),
-        options
+        options,
       ).join();
     let u = options.writeUnknownFields;
     if (u !== false)
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -727,7 +727,7 @@ class SimParam_Struct$Type extends MessageType<SimParam_Struct> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: SimParam_Struct
+    target?: SimParam_Struct,
   ): SimParam_Struct {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -741,7 +741,7 @@ class SimParam_Struct$Type extends MessageType<SimParam_Struct> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -750,7 +750,7 @@ class SimParam_Struct$Type extends MessageType<SimParam_Struct> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -759,7 +759,7 @@ class SimParam_Struct$Type extends MessageType<SimParam_Struct> {
   private binaryReadMap1(
     map: SimParam_Struct["fields"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -776,7 +776,7 @@ class SimParam_Struct$Type extends MessageType<SimParam_Struct> {
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.types.SimParam.Struct.fields"
+            "unknown map entry field for field game.types.SimParam.Struct.fields",
           );
       }
     }
@@ -785,7 +785,7 @@ class SimParam_Struct$Type extends MessageType<SimParam_Struct> {
   internalBinaryWrite(
     message: SimParam_Struct,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.types.SimParam> fields = 1; */
     for (let k of Object.keys(message.fields)) {
@@ -803,7 +803,7 @@ class SimParam_Struct$Type extends MessageType<SimParam_Struct> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -839,7 +839,7 @@ class SimEntity$Type extends MessageType<SimEntity> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: SimEntity
+    target?: SimEntity,
   ): SimEntity {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -853,7 +853,7 @@ class SimEntity$Type extends MessageType<SimEntity> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -862,7 +862,7 @@ class SimEntity$Type extends MessageType<SimEntity> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -871,7 +871,7 @@ class SimEntity$Type extends MessageType<SimEntity> {
   private binaryReadMap1(
     map: SimEntity["params"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -888,7 +888,7 @@ class SimEntity$Type extends MessageType<SimEntity> {
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.types.SimEntity.params"
+            "unknown map entry field for field game.types.SimEntity.params",
           );
       }
     }
@@ -897,7 +897,7 @@ class SimEntity$Type extends MessageType<SimEntity> {
   internalBinaryWrite(
     message: SimEntity,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.types.SimParam> params = 1; */
     for (let k of Object.keys(message.params)) {
@@ -915,7 +915,7 @@ class SimEntity$Type extends MessageType<SimEntity> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -951,7 +951,7 @@ class SimModel$Type extends MessageType<SimModel> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: SimModel
+    target?: SimModel,
   ): SimModel {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -960,14 +960,14 @@ class SimModel$Type extends MessageType<SimModel> {
       switch (fieldNo) {
         case /* repeated game.types.SimEntity entities */ 1:
           message.entities.push(
-            SimEntity.internalBinaryRead(reader, reader.uint32(), options)
+            SimEntity.internalBinaryRead(reader, reader.uint32(), options),
           );
           break;
         default:
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -976,7 +976,7 @@ class SimModel$Type extends MessageType<SimModel> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -985,21 +985,21 @@ class SimModel$Type extends MessageType<SimModel> {
   internalBinaryWrite(
     message: SimModel,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* repeated game.types.SimEntity entities = 1; */
     for (let i = 0; i < message.entities.length; i++)
       SimEntity.internalBinaryWrite(
         message.entities[i],
         writer.tag(1, WireType.LengthDelimited).fork(),
-        options
+        options,
       ).join();
     let u = options.writeUnknownFields;
     if (u !== false)
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -1043,7 +1043,7 @@ class SimState$Type extends MessageType<SimState> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: SimState
+    target?: SimState,
   ): SimState {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -1066,7 +1066,7 @@ class SimState$Type extends MessageType<SimState> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -1075,7 +1075,7 @@ class SimState$Type extends MessageType<SimState> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -1084,7 +1084,7 @@ class SimState$Type extends MessageType<SimState> {
   private binaryReadMap1(
     map: SimState["states"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -1101,7 +1101,7 @@ class SimState$Type extends MessageType<SimState> {
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.types.SimState.states"
+            "unknown map entry field for field game.types.SimState.states",
           );
       }
     }
@@ -1110,7 +1110,7 @@ class SimState$Type extends MessageType<SimState> {
   internalBinaryWrite(
     message: SimState,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.types.SimModel> states = 1; */
     for (let k of Object.keys(message.states)) {
@@ -1137,7 +1137,7 @@ class SimState$Type extends MessageType<SimState> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -1173,7 +1173,7 @@ class SimAction$Type extends MessageType<SimAction> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: SimAction
+    target?: SimAction,
   ): SimAction {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -1187,7 +1187,7 @@ class SimAction$Type extends MessageType<SimAction> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -1196,7 +1196,7 @@ class SimAction$Type extends MessageType<SimAction> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -1205,7 +1205,7 @@ class SimAction$Type extends MessageType<SimAction> {
   private binaryReadMap1(
     map: SimAction["actions"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -1222,7 +1222,7 @@ class SimAction$Type extends MessageType<SimAction> {
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.types.SimAction.actions"
+            "unknown map entry field for field game.types.SimAction.actions",
           );
       }
     }
@@ -1231,7 +1231,7 @@ class SimAction$Type extends MessageType<SimAction> {
   internalBinaryWrite(
     message: SimAction,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.types.SimModel> actions = 1; */
     for (let k of Object.keys(message.actions)) {
@@ -1249,7 +1249,7 @@ class SimAction$Type extends MessageType<SimAction> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }

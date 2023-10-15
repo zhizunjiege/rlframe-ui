@@ -142,7 +142,7 @@
                   @blur="
                     args.sim_start_time = getTimestampNumber(
                       ($event.target as HTMLInputElement).value,
-                      false
+                      false,
                     )
                   "
                 />
@@ -161,7 +161,7 @@
                   @blur="
                     args.sim_duration =
                       getDurationNumber(
-                        ($event.target as HTMLInputElement).value
+                        ($event.target as HTMLInputElement).value,
                       ) / 1000
                   "
                 />
@@ -508,12 +508,12 @@ const appStore = useAppStore();
 const agentAddrs = computed(() =>
   appStore.services
     .filter((item) => item.type === "agent")
-    .map((item) => `${item.host}:${item.port}`)
+    .map((item) => `${item.host}:${item.port}`),
 );
 const simenvAddrs = computed(() =>
   appStore.services
     .filter((item) => item.type === "simenv")
-    .map((item) => `${item.host}:${item.port}`)
+    .map((item) => `${item.host}:${item.port}`),
 );
 
 const inScenario = ref(true);
@@ -525,11 +525,11 @@ async function getScenariosAndExpDesigns() {
   try {
     scenarios.value = await getScenarioList(
       args.value.res_addr,
-      args.value.x_token
+      args.value.x_token,
     );
     expdesigns.value = await getExpDesignList(
       args.value.res_addr,
-      args.value.x_token
+      args.value.x_token,
     );
   } catch (e) {
     scenarios.value = [];
@@ -558,7 +558,7 @@ async function parseModels(id: number) {
     const scenario = await getScenarioFile(
       args.value.res_addr,
       args.value.x_token,
-      id
+      id,
     );
     const obj = scenarioXml2Obj(scenario);
 
@@ -583,7 +583,7 @@ async function parseModels(id: number) {
     const tmpModels = await getModels(
       args.value.res_addr,
       args.value.x_token,
-      Object.keys(record)
+      Object.keys(record),
     );
 
     models.value = {};

@@ -320,7 +320,7 @@ const details = ref<Record<string, any>>({});
 
 function getAsyncComp(type: string, name: string) {
   return defineAsyncComponent(
-    () => import(`../../plugins/${type}/${name.toLowerCase()}/details.vue`)
+    () => import(`../../plugins/${type}/${name.toLowerCase()}/details.vue`),
   );
 }
 
@@ -380,7 +380,7 @@ async function push() {
               })),
             },
           ];
-        })
+        }),
       ),
     });
     await appStore.grpc!.setSimenvConfig({
@@ -388,7 +388,7 @@ async function push() {
         taskStore.task!.simenvs.map((simenv) => [
           simenv.server,
           { name: simenv.name, args: simenv.args },
-        ])
+        ]),
       ),
     });
     uninited.value = false;
@@ -420,7 +420,7 @@ async function pull() {
     });
     for (const [server, agent] of Object.entries(agents)) {
       const item = taskStore.task!.agents.find(
-        (item) => item.server === server
+        (item) => item.server === server,
       );
       if (
         !item ||
@@ -441,7 +441,7 @@ async function pull() {
     });
     for (const [server, simenv] of Object.entries(simenvs)) {
       const item = taskStore.task!.simenvs.find(
-        (item) => item.server === server
+        (item) => item.server === server,
       );
       if (!item || item.name !== simenv.name || item.args !== simenv.args) {
         throw new Error("云端任务与本地任务不匹配");
@@ -493,7 +493,7 @@ function setRefreshInterval() {
   if (appStore.systemSettings.detailsRefreshInterval > 0) {
     refreshInterval = window.setInterval(
       refresh,
-      appStore.systemSettings.detailsRefreshInterval
+      appStore.systemSettings.detailsRefreshInterval,
     );
   }
 }
@@ -734,7 +734,7 @@ async function saveStatus() {
 const tensorboardPort = ref(6006);
 function openTensorboard() {
   const agent = appStore.services.find(
-    (item) => item.name === service.value!.server
+    (item) => item.name === service.value!.server,
   );
   const url = `http://${agent!.host}:${tensorboardPort.value}`;
   window.open(url, "_blank");
@@ -772,7 +772,7 @@ const messageLength = computed(() => {
 });
 function clearMessages() {
   messages.value = messages.value.filter(
-    (item) => !messageOption.value.includes(item.type)
+    (item) => !messageOption.value.includes(item.type),
   );
 }
 

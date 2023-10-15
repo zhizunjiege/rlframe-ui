@@ -137,7 +137,7 @@ const appStore = useAppStore();
 const taskStore = useTaskStore();
 
 const simenvServices = computed(() =>
-  appStore.services.filter((v) => v.type === "simenv").map((v) => v.name)
+  appStore.services.filter((v) => v.type === "simenv").map((v) => v.name),
 );
 
 function addService() {
@@ -148,7 +148,7 @@ function delService(index: number) {
 }
 async function copyService(index: number) {
   await navigator.clipboard.writeText(
-    JSON.stringify(taskStore.task!.simenvs[index])
+    JSON.stringify(taskStore.task!.simenvs[index]),
   );
   $q.notify({
     type: "positive",

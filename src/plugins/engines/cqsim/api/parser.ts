@@ -21,7 +21,7 @@ function handleForceSides(forceSides: Element) {
     if (unitsElements.length > 0) {
       const unitElements = unitsElements[0].getElementsByTagName("Unit");
       units = Array.from(unitElements).map(
-        (item) => item.getAttribute("id") ?? ""
+        (item) => item.getAttribute("id") ?? "",
       );
     } else {
       units = [];

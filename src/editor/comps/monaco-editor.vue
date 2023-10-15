@@ -14,7 +14,7 @@ const props = withDefaults(
   {
     readonly: false,
     minimap: false,
-  }
+  },
 );
 const emits = defineEmits<{
   (e: "update:modelValue", value: string): void;
@@ -43,13 +43,13 @@ onMounted(() => {
     },
     {
       immediate: true,
-    }
+    },
   );
   watch(
     () => props.modelValue,
     () => {
       editor!.setValue(props.modelValue);
-    }
+    },
   );
   editor.onDidBlurEditorText(() => {
     emits("update:modelValue", editor!.getValue());

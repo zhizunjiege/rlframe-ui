@@ -32,7 +32,7 @@ export interface IBFFClient {
    */
   resetServer(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, CommonResponse>;
   /**
    * register services
@@ -41,7 +41,7 @@ export interface IBFFClient {
    */
   registerService(
     input: ServiceInfoMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceInfoMap, CommonResponse>;
   /**
    * unregister services
@@ -50,7 +50,7 @@ export interface IBFFClient {
    */
   unRegisterService(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, CommonResponse>;
   /**
    * get services info
@@ -59,7 +59,7 @@ export interface IBFFClient {
    */
   getServiceInfo(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, ServiceInfoMap>;
   /**
    * set services info
@@ -68,7 +68,7 @@ export interface IBFFClient {
    */
   setServiceInfo(
     input: ServiceInfoMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceInfoMap, CommonResponse>;
   /**
    * reset simenv/agent services state
@@ -77,7 +77,7 @@ export interface IBFFClient {
    */
   resetService(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, CommonResponse>;
   /**
    * start simenv/agent services state
@@ -86,7 +86,7 @@ export interface IBFFClient {
    */
   queryService(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, ServiceStateMap>;
   /**
    * get simenv configs
@@ -95,7 +95,7 @@ export interface IBFFClient {
    */
   getSimenvConfig(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, SimenvConfigMap>;
   /**
    * set simenv configs
@@ -104,7 +104,7 @@ export interface IBFFClient {
    */
   setSimenvConfig(
     input: SimenvConfigMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<SimenvConfigMap, CommonResponse>;
   /**
    * control simenv
@@ -113,7 +113,7 @@ export interface IBFFClient {
    */
   simControl(
     input: SimCmdMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<SimCmdMap, CommonResponse>;
   /**
    * get simenv info
@@ -122,7 +122,7 @@ export interface IBFFClient {
    */
   simMonitor(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, SimInfoMap>;
   /**
    * get agent configs
@@ -131,7 +131,7 @@ export interface IBFFClient {
    */
   getAgentConfig(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, AgentConfigMap>;
   /**
    * set agent configs
@@ -140,7 +140,7 @@ export interface IBFFClient {
    */
   setAgentConfig(
     input: AgentConfigMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<AgentConfigMap, CommonResponse>;
   /**
    * get agent mode
@@ -149,7 +149,7 @@ export interface IBFFClient {
    */
   getAgentMode(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, AgentModeMap>;
   /**
    * set agent mode
@@ -158,7 +158,7 @@ export interface IBFFClient {
    */
   setAgentMode(
     input: AgentModeMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<AgentModeMap, CommonResponse>;
   /**
    * get model weights
@@ -167,7 +167,7 @@ export interface IBFFClient {
    */
   getModelWeights(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, ModelWeightsMap>;
   /**
    * set model weights
@@ -176,7 +176,7 @@ export interface IBFFClient {
    */
   setModelWeights(
     input: ModelWeightsMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ModelWeightsMap, CommonResponse>;
   /**
    * get model buffer
@@ -185,7 +185,7 @@ export interface IBFFClient {
    */
   getModelBuffer(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, ModelBufferMap>;
   /**
    * set model buffer
@@ -194,7 +194,7 @@ export interface IBFFClient {
    */
   setModelBuffer(
     input: ModelBufferMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ModelBufferMap, CommonResponse>;
   /**
    * get model status
@@ -203,7 +203,7 @@ export interface IBFFClient {
    */
   getModelStatus(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, ModelStatusMap>;
   /**
    * set model status
@@ -212,7 +212,7 @@ export interface IBFFClient {
    */
   setModelStatus(
     input: ModelStatusMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ModelStatusMap, CommonResponse>;
   /**
    * any rpc call
@@ -221,7 +221,7 @@ export interface IBFFClient {
    */
   call(
     input: CallDataMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CallDataMap, CallDataMap>;
 }
 /**
@@ -239,7 +239,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   resetServer(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, CommonResponse> {
     const method = this.methods[0],
       opt = this._transport.mergeOptions(options);
@@ -248,7 +248,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -258,7 +258,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   registerService(
     input: ServiceInfoMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceInfoMap, CommonResponse> {
     const method = this.methods[1],
       opt = this._transport.mergeOptions(options);
@@ -267,7 +267,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -277,7 +277,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   unRegisterService(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, CommonResponse> {
     const method = this.methods[2],
       opt = this._transport.mergeOptions(options);
@@ -286,7 +286,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -296,7 +296,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   getServiceInfo(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, ServiceInfoMap> {
     const method = this.methods[3],
       opt = this._transport.mergeOptions(options);
@@ -305,7 +305,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -315,7 +315,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   setServiceInfo(
     input: ServiceInfoMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceInfoMap, CommonResponse> {
     const method = this.methods[4],
       opt = this._transport.mergeOptions(options);
@@ -324,7 +324,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -334,7 +334,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   resetService(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, CommonResponse> {
     const method = this.methods[5],
       opt = this._transport.mergeOptions(options);
@@ -343,7 +343,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -353,7 +353,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   queryService(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, ServiceStateMap> {
     const method = this.methods[6],
       opt = this._transport.mergeOptions(options);
@@ -362,7 +362,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -372,7 +372,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   getSimenvConfig(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, SimenvConfigMap> {
     const method = this.methods[7],
       opt = this._transport.mergeOptions(options);
@@ -381,7 +381,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -391,7 +391,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   setSimenvConfig(
     input: SimenvConfigMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<SimenvConfigMap, CommonResponse> {
     const method = this.methods[8],
       opt = this._transport.mergeOptions(options);
@@ -400,7 +400,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -410,7 +410,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   simControl(
     input: SimCmdMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<SimCmdMap, CommonResponse> {
     const method = this.methods[9],
       opt = this._transport.mergeOptions(options);
@@ -419,7 +419,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -429,7 +429,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   simMonitor(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, SimInfoMap> {
     const method = this.methods[10],
       opt = this._transport.mergeOptions(options);
@@ -438,7 +438,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -448,7 +448,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   getAgentConfig(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, AgentConfigMap> {
     const method = this.methods[11],
       opt = this._transport.mergeOptions(options);
@@ -457,7 +457,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -467,7 +467,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   setAgentConfig(
     input: AgentConfigMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<AgentConfigMap, CommonResponse> {
     const method = this.methods[12],
       opt = this._transport.mergeOptions(options);
@@ -476,7 +476,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -486,7 +486,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   getAgentMode(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, AgentModeMap> {
     const method = this.methods[13],
       opt = this._transport.mergeOptions(options);
@@ -495,7 +495,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -505,7 +505,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   setAgentMode(
     input: AgentModeMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<AgentModeMap, CommonResponse> {
     const method = this.methods[14],
       opt = this._transport.mergeOptions(options);
@@ -514,7 +514,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -524,7 +524,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   getModelWeights(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, ModelWeightsMap> {
     const method = this.methods[15],
       opt = this._transport.mergeOptions(options);
@@ -533,7 +533,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -543,7 +543,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   setModelWeights(
     input: ModelWeightsMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ModelWeightsMap, CommonResponse> {
     const method = this.methods[16],
       opt = this._transport.mergeOptions(options);
@@ -552,7 +552,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -562,7 +562,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   getModelBuffer(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, ModelBufferMap> {
     const method = this.methods[17],
       opt = this._transport.mergeOptions(options);
@@ -571,7 +571,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -581,7 +581,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   setModelBuffer(
     input: ModelBufferMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ModelBufferMap, CommonResponse> {
     const method = this.methods[18],
       opt = this._transport.mergeOptions(options);
@@ -590,7 +590,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -600,7 +600,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   getModelStatus(
     input: ServiceIdList,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ServiceIdList, ModelStatusMap> {
     const method = this.methods[19],
       opt = this._transport.mergeOptions(options);
@@ -609,7 +609,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -619,7 +619,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   setModelStatus(
     input: ModelStatusMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ModelStatusMap, CommonResponse> {
     const method = this.methods[20],
       opt = this._transport.mergeOptions(options);
@@ -628,7 +628,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -638,7 +638,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
    */
   call(
     input: CallDataMap,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CallDataMap, CallDataMap> {
     const method = this.methods[21],
       opt = this._transport.mergeOptions(options);
@@ -647,7 +647,7 @@ export class BFFClient implements IBFFClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
 }

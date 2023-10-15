@@ -75,7 +75,7 @@ watch(
   {
     immediate: true,
     deep: true,
-  }
+  },
 );
 </script>
 

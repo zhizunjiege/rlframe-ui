@@ -204,7 +204,7 @@ class ServiceInfo$Type extends MessageType<ServiceInfo> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: ServiceInfo
+    target?: ServiceInfo,
   ): ServiceInfo {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -230,7 +230,7 @@ class ServiceInfo$Type extends MessageType<ServiceInfo> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -239,7 +239,7 @@ class ServiceInfo$Type extends MessageType<ServiceInfo> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -248,7 +248,7 @@ class ServiceInfo$Type extends MessageType<ServiceInfo> {
   internalBinaryWrite(
     message: ServiceInfo,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* string type = 1; */
     if (message.type !== "")
@@ -269,7 +269,7 @@ class ServiceInfo$Type extends MessageType<ServiceInfo> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -305,7 +305,7 @@ class ServiceIdList$Type extends MessageType<ServiceIdList> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: ServiceIdList
+    target?: ServiceIdList,
   ): ServiceIdList {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -319,7 +319,7 @@ class ServiceIdList$Type extends MessageType<ServiceIdList> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -328,7 +328,7 @@ class ServiceIdList$Type extends MessageType<ServiceIdList> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -337,7 +337,7 @@ class ServiceIdList$Type extends MessageType<ServiceIdList> {
   internalBinaryWrite(
     message: ServiceIdList,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* repeated string ids = 1; */
     for (let i = 0; i < message.ids.length; i++)
@@ -347,7 +347,7 @@ class ServiceIdList$Type extends MessageType<ServiceIdList> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -383,7 +383,7 @@ class ServiceInfoMap$Type extends MessageType<ServiceInfoMap> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: ServiceInfoMap
+    target?: ServiceInfoMap,
   ): ServiceInfoMap {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -397,7 +397,7 @@ class ServiceInfoMap$Type extends MessageType<ServiceInfoMap> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -406,7 +406,7 @@ class ServiceInfoMap$Type extends MessageType<ServiceInfoMap> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -415,7 +415,7 @@ class ServiceInfoMap$Type extends MessageType<ServiceInfoMap> {
   private binaryReadMap1(
     map: ServiceInfoMap["services"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -431,12 +431,12 @@ class ServiceInfoMap$Type extends MessageType<ServiceInfoMap> {
           val = ServiceInfo.internalBinaryRead(
             reader,
             reader.uint32(),
-            options
+            options,
           );
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.bff.ServiceInfoMap.services"
+            "unknown map entry field for field game.bff.ServiceInfoMap.services",
           );
       }
     }
@@ -445,7 +445,7 @@ class ServiceInfoMap$Type extends MessageType<ServiceInfoMap> {
   internalBinaryWrite(
     message: ServiceInfoMap,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.bff.ServiceInfo> services = 1; */
     for (let k of Object.keys(message.services)) {
@@ -463,7 +463,7 @@ class ServiceInfoMap$Type extends MessageType<ServiceInfoMap> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -499,7 +499,7 @@ class ServiceStateMap$Type extends MessageType<ServiceStateMap> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: ServiceStateMap
+    target?: ServiceStateMap,
   ): ServiceStateMap {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -513,7 +513,7 @@ class ServiceStateMap$Type extends MessageType<ServiceStateMap> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -522,7 +522,7 @@ class ServiceStateMap$Type extends MessageType<ServiceStateMap> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -531,7 +531,7 @@ class ServiceStateMap$Type extends MessageType<ServiceStateMap> {
   private binaryReadMap1(
     map: ServiceStateMap["states"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -547,12 +547,12 @@ class ServiceStateMap$Type extends MessageType<ServiceStateMap> {
           val = ServiceState.internalBinaryRead(
             reader,
             reader.uint32(),
-            options
+            options,
           );
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.bff.ServiceStateMap.states"
+            "unknown map entry field for field game.bff.ServiceStateMap.states",
           );
       }
     }
@@ -561,7 +561,7 @@ class ServiceStateMap$Type extends MessageType<ServiceStateMap> {
   internalBinaryWrite(
     message: ServiceStateMap,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.types.ServiceState> states = 1; */
     for (let k of Object.keys(message.states)) {
@@ -579,7 +579,7 @@ class ServiceStateMap$Type extends MessageType<ServiceStateMap> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -615,7 +615,7 @@ class SimenvConfigMap$Type extends MessageType<SimenvConfigMap> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: SimenvConfigMap
+    target?: SimenvConfigMap,
   ): SimenvConfigMap {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -629,7 +629,7 @@ class SimenvConfigMap$Type extends MessageType<SimenvConfigMap> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -638,7 +638,7 @@ class SimenvConfigMap$Type extends MessageType<SimenvConfigMap> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -647,7 +647,7 @@ class SimenvConfigMap$Type extends MessageType<SimenvConfigMap> {
   private binaryReadMap1(
     map: SimenvConfigMap["configs"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -663,12 +663,12 @@ class SimenvConfigMap$Type extends MessageType<SimenvConfigMap> {
           val = SimenvConfig.internalBinaryRead(
             reader,
             reader.uint32(),
-            options
+            options,
           );
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.bff.SimenvConfigMap.configs"
+            "unknown map entry field for field game.bff.SimenvConfigMap.configs",
           );
       }
     }
@@ -677,7 +677,7 @@ class SimenvConfigMap$Type extends MessageType<SimenvConfigMap> {
   internalBinaryWrite(
     message: SimenvConfigMap,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.simenv.SimenvConfig> configs = 1; */
     for (let k of Object.keys(message.configs)) {
@@ -695,7 +695,7 @@ class SimenvConfigMap$Type extends MessageType<SimenvConfigMap> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -731,7 +731,7 @@ class SimCmdMap$Type extends MessageType<SimCmdMap> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: SimCmdMap
+    target?: SimCmdMap,
   ): SimCmdMap {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -745,7 +745,7 @@ class SimCmdMap$Type extends MessageType<SimCmdMap> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -754,7 +754,7 @@ class SimCmdMap$Type extends MessageType<SimCmdMap> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -763,7 +763,7 @@ class SimCmdMap$Type extends MessageType<SimCmdMap> {
   private binaryReadMap1(
     map: SimCmdMap["cmds"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -780,7 +780,7 @@ class SimCmdMap$Type extends MessageType<SimCmdMap> {
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.bff.SimCmdMap.cmds"
+            "unknown map entry field for field game.bff.SimCmdMap.cmds",
           );
       }
     }
@@ -789,7 +789,7 @@ class SimCmdMap$Type extends MessageType<SimCmdMap> {
   internalBinaryWrite(
     message: SimCmdMap,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.simenv.SimCmd> cmds = 1; */
     for (let k of Object.keys(message.cmds)) {
@@ -807,7 +807,7 @@ class SimCmdMap$Type extends MessageType<SimCmdMap> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -843,7 +843,7 @@ class SimInfoMap$Type extends MessageType<SimInfoMap> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: SimInfoMap
+    target?: SimInfoMap,
   ): SimInfoMap {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -857,7 +857,7 @@ class SimInfoMap$Type extends MessageType<SimInfoMap> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -866,7 +866,7 @@ class SimInfoMap$Type extends MessageType<SimInfoMap> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -875,7 +875,7 @@ class SimInfoMap$Type extends MessageType<SimInfoMap> {
   private binaryReadMap1(
     map: SimInfoMap["infos"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -892,7 +892,7 @@ class SimInfoMap$Type extends MessageType<SimInfoMap> {
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.bff.SimInfoMap.infos"
+            "unknown map entry field for field game.bff.SimInfoMap.infos",
           );
       }
     }
@@ -901,7 +901,7 @@ class SimInfoMap$Type extends MessageType<SimInfoMap> {
   internalBinaryWrite(
     message: SimInfoMap,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.simenv.SimInfo> infos = 1; */
     for (let k of Object.keys(message.infos)) {
@@ -919,7 +919,7 @@ class SimInfoMap$Type extends MessageType<SimInfoMap> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -955,7 +955,7 @@ class AgentConfigMap$Type extends MessageType<AgentConfigMap> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: AgentConfigMap
+    target?: AgentConfigMap,
   ): AgentConfigMap {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -969,7 +969,7 @@ class AgentConfigMap$Type extends MessageType<AgentConfigMap> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -978,7 +978,7 @@ class AgentConfigMap$Type extends MessageType<AgentConfigMap> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -987,7 +987,7 @@ class AgentConfigMap$Type extends MessageType<AgentConfigMap> {
   private binaryReadMap1(
     map: AgentConfigMap["configs"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -1003,12 +1003,12 @@ class AgentConfigMap$Type extends MessageType<AgentConfigMap> {
           val = AgentConfig.internalBinaryRead(
             reader,
             reader.uint32(),
-            options
+            options,
           );
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.bff.AgentConfigMap.configs"
+            "unknown map entry field for field game.bff.AgentConfigMap.configs",
           );
       }
     }
@@ -1017,7 +1017,7 @@ class AgentConfigMap$Type extends MessageType<AgentConfigMap> {
   internalBinaryWrite(
     message: AgentConfigMap,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.agent.AgentConfig> configs = 1; */
     for (let k of Object.keys(message.configs)) {
@@ -1035,7 +1035,7 @@ class AgentConfigMap$Type extends MessageType<AgentConfigMap> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -1071,7 +1071,7 @@ class AgentModeMap$Type extends MessageType<AgentModeMap> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: AgentModeMap
+    target?: AgentModeMap,
   ): AgentModeMap {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -1085,7 +1085,7 @@ class AgentModeMap$Type extends MessageType<AgentModeMap> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -1094,7 +1094,7 @@ class AgentModeMap$Type extends MessageType<AgentModeMap> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -1103,7 +1103,7 @@ class AgentModeMap$Type extends MessageType<AgentModeMap> {
   private binaryReadMap1(
     map: AgentModeMap["modes"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -1120,7 +1120,7 @@ class AgentModeMap$Type extends MessageType<AgentModeMap> {
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.bff.AgentModeMap.modes"
+            "unknown map entry field for field game.bff.AgentModeMap.modes",
           );
       }
     }
@@ -1129,7 +1129,7 @@ class AgentModeMap$Type extends MessageType<AgentModeMap> {
   internalBinaryWrite(
     message: AgentModeMap,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.agent.AgentMode> modes = 1; */
     for (let k of Object.keys(message.modes)) {
@@ -1147,7 +1147,7 @@ class AgentModeMap$Type extends MessageType<AgentModeMap> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -1183,7 +1183,7 @@ class ModelWeightsMap$Type extends MessageType<ModelWeightsMap> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: ModelWeightsMap
+    target?: ModelWeightsMap,
   ): ModelWeightsMap {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -1197,7 +1197,7 @@ class ModelWeightsMap$Type extends MessageType<ModelWeightsMap> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -1206,7 +1206,7 @@ class ModelWeightsMap$Type extends MessageType<ModelWeightsMap> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -1215,7 +1215,7 @@ class ModelWeightsMap$Type extends MessageType<ModelWeightsMap> {
   private binaryReadMap1(
     map: ModelWeightsMap["weights"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -1231,12 +1231,12 @@ class ModelWeightsMap$Type extends MessageType<ModelWeightsMap> {
           val = ModelWeights.internalBinaryRead(
             reader,
             reader.uint32(),
-            options
+            options,
           );
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.bff.ModelWeightsMap.weights"
+            "unknown map entry field for field game.bff.ModelWeightsMap.weights",
           );
       }
     }
@@ -1245,7 +1245,7 @@ class ModelWeightsMap$Type extends MessageType<ModelWeightsMap> {
   internalBinaryWrite(
     message: ModelWeightsMap,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.agent.ModelWeights> weights = 1; */
     for (let k of Object.keys(message.weights)) {
@@ -1263,7 +1263,7 @@ class ModelWeightsMap$Type extends MessageType<ModelWeightsMap> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -1299,7 +1299,7 @@ class ModelBufferMap$Type extends MessageType<ModelBufferMap> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: ModelBufferMap
+    target?: ModelBufferMap,
   ): ModelBufferMap {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -1313,7 +1313,7 @@ class ModelBufferMap$Type extends MessageType<ModelBufferMap> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -1322,7 +1322,7 @@ class ModelBufferMap$Type extends MessageType<ModelBufferMap> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -1331,7 +1331,7 @@ class ModelBufferMap$Type extends MessageType<ModelBufferMap> {
   private binaryReadMap1(
     map: ModelBufferMap["buffers"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -1347,12 +1347,12 @@ class ModelBufferMap$Type extends MessageType<ModelBufferMap> {
           val = ModelBuffer.internalBinaryRead(
             reader,
             reader.uint32(),
-            options
+            options,
           );
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.bff.ModelBufferMap.buffers"
+            "unknown map entry field for field game.bff.ModelBufferMap.buffers",
           );
       }
     }
@@ -1361,7 +1361,7 @@ class ModelBufferMap$Type extends MessageType<ModelBufferMap> {
   internalBinaryWrite(
     message: ModelBufferMap,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.agent.ModelBuffer> buffers = 1; */
     for (let k of Object.keys(message.buffers)) {
@@ -1379,7 +1379,7 @@ class ModelBufferMap$Type extends MessageType<ModelBufferMap> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -1415,7 +1415,7 @@ class ModelStatusMap$Type extends MessageType<ModelStatusMap> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: ModelStatusMap
+    target?: ModelStatusMap,
   ): ModelStatusMap {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -1429,7 +1429,7 @@ class ModelStatusMap$Type extends MessageType<ModelStatusMap> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -1438,7 +1438,7 @@ class ModelStatusMap$Type extends MessageType<ModelStatusMap> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -1447,7 +1447,7 @@ class ModelStatusMap$Type extends MessageType<ModelStatusMap> {
   private binaryReadMap1(
     map: ModelStatusMap["status"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -1463,12 +1463,12 @@ class ModelStatusMap$Type extends MessageType<ModelStatusMap> {
           val = ModelStatus.internalBinaryRead(
             reader,
             reader.uint32(),
-            options
+            options,
           );
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.bff.ModelStatusMap.status"
+            "unknown map entry field for field game.bff.ModelStatusMap.status",
           );
       }
     }
@@ -1477,7 +1477,7 @@ class ModelStatusMap$Type extends MessageType<ModelStatusMap> {
   internalBinaryWrite(
     message: ModelStatusMap,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.agent.ModelStatus> status = 1; */
     for (let k of Object.keys(message.status)) {
@@ -1495,7 +1495,7 @@ class ModelStatusMap$Type extends MessageType<ModelStatusMap> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -1531,7 +1531,7 @@ class CallDataMap$Type extends MessageType<CallDataMap> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: CallDataMap
+    target?: CallDataMap,
   ): CallDataMap {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -1545,7 +1545,7 @@ class CallDataMap$Type extends MessageType<CallDataMap> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -1554,7 +1554,7 @@ class CallDataMap$Type extends MessageType<CallDataMap> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -1563,7 +1563,7 @@ class CallDataMap$Type extends MessageType<CallDataMap> {
   private binaryReadMap1(
     map: CallDataMap["data"],
     reader: IBinaryReader,
-    options: BinaryReadOptions
+    options: BinaryReadOptions,
   ): void {
     let len = reader.uint32(),
       end = reader.pos + len,
@@ -1580,7 +1580,7 @@ class CallDataMap$Type extends MessageType<CallDataMap> {
           break;
         default:
           throw new globalThis.Error(
-            "unknown map entry field for field game.bff.CallDataMap.data"
+            "unknown map entry field for field game.bff.CallDataMap.data",
           );
       }
     }
@@ -1589,7 +1589,7 @@ class CallDataMap$Type extends MessageType<CallDataMap> {
   internalBinaryWrite(
     message: CallDataMap,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* map<string, game.types.CallData> data = 1; */
     for (let k of Object.keys(message.data)) {
@@ -1607,7 +1607,7 @@ class CallDataMap$Type extends MessageType<CallDataMap> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }

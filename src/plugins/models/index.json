@@ -1,7 +1,1 @@
-[
-  "DQN",
-  "DoubleDQN",
-  "DDPG",
-  "PPO",
-  "MADDPG"
-]
+["DQN", "DoubleDQN", "DDPG", "PPO", "MADDPG"]

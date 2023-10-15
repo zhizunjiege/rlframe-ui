@@ -81,7 +81,7 @@ class SimenvConfig$Type extends MessageType<SimenvConfig> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: SimenvConfig
+    target?: SimenvConfig,
   ): SimenvConfig {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -98,7 +98,7 @@ class SimenvConfig$Type extends MessageType<SimenvConfig> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -107,7 +107,7 @@ class SimenvConfig$Type extends MessageType<SimenvConfig> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -116,7 +116,7 @@ class SimenvConfig$Type extends MessageType<SimenvConfig> {
   internalBinaryWrite(
     message: SimenvConfig,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* string name = 1; */
     if (message.name !== "")
@@ -129,7 +129,7 @@ class SimenvConfig$Type extends MessageType<SimenvConfig> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -160,7 +160,7 @@ class SimCmd$Type extends MessageType<SimCmd> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: SimCmd
+    target?: SimCmd,
   ): SimCmd {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -177,7 +177,7 @@ class SimCmd$Type extends MessageType<SimCmd> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -186,7 +186,7 @@ class SimCmd$Type extends MessageType<SimCmd> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -195,7 +195,7 @@ class SimCmd$Type extends MessageType<SimCmd> {
   internalBinaryWrite(
     message: SimCmd,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* string type = 1; */
     if (message.type !== "")
@@ -208,7 +208,7 @@ class SimCmd$Type extends MessageType<SimCmd> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -240,7 +240,7 @@ class SimInfo$Type extends MessageType<SimInfo> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: SimInfo
+    target?: SimInfo,
   ): SimInfo {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -260,7 +260,7 @@ class SimInfo$Type extends MessageType<SimInfo> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -269,7 +269,7 @@ class SimInfo$Type extends MessageType<SimInfo> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -278,7 +278,7 @@ class SimInfo$Type extends MessageType<SimInfo> {
   internalBinaryWrite(
     message: SimInfo,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* string state = 1; */
     if (message.state !== "")
@@ -294,7 +294,7 @@ class SimInfo$Type extends MessageType<SimInfo> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }

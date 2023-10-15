@@ -335,7 +335,7 @@ async function uploadModel() {
         data: Object.fromEntries(
           appStore.services
             .filter((srv) => srv.type === "agent")
-            .map((srv) => [srv.name, data])
+            .map((srv) => [srv.name, data]),
         ),
       });
     }
@@ -380,7 +380,7 @@ async function uploadEngine() {
         data: Object.fromEntries(
           appStore.services
             .filter((srv) => srv.type === "simenv")
-            .map((srv) => [srv.name, data])
+            .map((srv) => [srv.name, data]),
         ),
       });
     }
@@ -422,7 +422,7 @@ async function delService(index: number) {
 async function copyService(index: number) {
   if (submit()) {
     await navigator.clipboard.writeText(
-      JSON.stringify(appStore.services[index])
+      JSON.stringify(appStore.services[index]),
     );
     $q.notify({
       type: "positive",
@@ -434,7 +434,7 @@ async function pasteService(index: number) {
   if (submit()) {
     Object.assign(
       appStore.services[index],
-      JSON.parse(await navigator.clipboard.readText())
+      JSON.parse(await navigator.clipboard.readText()),
     );
     appStore.services[index].registered = false;
     $q.notify({

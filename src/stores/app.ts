@@ -22,7 +22,7 @@ export const useAppStore = defineStore("app", {
     saveSystemSettings() {
       localStorage.setItem(
         "systemSettings",
-        JSON.stringify(this.systemSettings)
+        JSON.stringify(this.systemSettings),
       );
     },
 

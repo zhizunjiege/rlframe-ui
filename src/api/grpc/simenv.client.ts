@@ -25,7 +25,7 @@ export interface ISimenvClient {
    */
   resetService(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, CommonResponse>;
   /**
    * query simenv service state
@@ -34,7 +34,7 @@ export interface ISimenvClient {
    */
   queryService(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, ServiceState>;
   /**
    * get simenv configs
@@ -43,7 +43,7 @@ export interface ISimenvClient {
    */
   getSimenvConfig(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, SimenvConfig>;
   /**
    * set simenv configs
@@ -52,7 +52,7 @@ export interface ISimenvClient {
    */
   setSimenvConfig(
     input: SimenvConfig,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<SimenvConfig, CommonResponse>;
   /**
    * control simenv
@@ -61,7 +61,7 @@ export interface ISimenvClient {
    */
   simControl(
     input: SimCmd,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<SimCmd, CommonResponse>;
   /**
    * get simenv info
@@ -70,7 +70,7 @@ export interface ISimenvClient {
    */
   simMonitor(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, SimInfo>;
   /**
    * any rpc call
@@ -94,7 +94,7 @@ export class SimenvClient implements ISimenvClient, ServiceInfo {
    */
   resetService(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, CommonResponse> {
     const method = this.methods[0],
       opt = this._transport.mergeOptions(options);
@@ -103,7 +103,7 @@ export class SimenvClient implements ISimenvClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -113,7 +113,7 @@ export class SimenvClient implements ISimenvClient, ServiceInfo {
    */
   queryService(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, ServiceState> {
     const method = this.methods[1],
       opt = this._transport.mergeOptions(options);
@@ -122,7 +122,7 @@ export class SimenvClient implements ISimenvClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -132,7 +132,7 @@ export class SimenvClient implements ISimenvClient, ServiceInfo {
    */
   getSimenvConfig(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, SimenvConfig> {
     const method = this.methods[2],
       opt = this._transport.mergeOptions(options);
@@ -141,7 +141,7 @@ export class SimenvClient implements ISimenvClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -151,7 +151,7 @@ export class SimenvClient implements ISimenvClient, ServiceInfo {
    */
   setSimenvConfig(
     input: SimenvConfig,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<SimenvConfig, CommonResponse> {
     const method = this.methods[3],
       opt = this._transport.mergeOptions(options);
@@ -160,7 +160,7 @@ export class SimenvClient implements ISimenvClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -170,7 +170,7 @@ export class SimenvClient implements ISimenvClient, ServiceInfo {
    */
   simControl(
     input: SimCmd,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<SimCmd, CommonResponse> {
     const method = this.methods[4],
       opt = this._transport.mergeOptions(options);
@@ -179,7 +179,7 @@ export class SimenvClient implements ISimenvClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -189,7 +189,7 @@ export class SimenvClient implements ISimenvClient, ServiceInfo {
    */
   simMonitor(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, SimInfo> {
     const method = this.methods[5],
       opt = this._transport.mergeOptions(options);
@@ -198,7 +198,7 @@ export class SimenvClient implements ISimenvClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -214,7 +214,7 @@ export class SimenvClient implements ISimenvClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
 }

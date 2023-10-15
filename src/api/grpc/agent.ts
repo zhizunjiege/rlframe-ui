@@ -141,7 +141,7 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: AgentConfig
+    target?: AgentConfig,
   ): AgentConfig {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -171,15 +171,15 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
             AgentConfig_Hook.internalBinaryRead(
               reader,
               reader.uint32(),
-              options
-            )
+              options,
+            ),
           );
           break;
         default:
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -188,7 +188,7 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -197,7 +197,7 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
   internalBinaryWrite(
     message: AgentConfig,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* bool training = 1; */
     if (message.training !== false)
@@ -222,14 +222,14 @@ class AgentConfig$Type extends MessageType<AgentConfig> {
       AgentConfig_Hook.internalBinaryWrite(
         message.hooks[i],
         writer.tag(7, WireType.LengthDelimited).fork(),
-        options
+        options,
       ).join();
     let u = options.writeUnknownFields;
     if (u !== false)
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -260,7 +260,7 @@ class AgentConfig_Hook$Type extends MessageType<AgentConfig_Hook> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: AgentConfig_Hook
+    target?: AgentConfig_Hook,
   ): AgentConfig_Hook {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -277,7 +277,7 @@ class AgentConfig_Hook$Type extends MessageType<AgentConfig_Hook> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -286,7 +286,7 @@ class AgentConfig_Hook$Type extends MessageType<AgentConfig_Hook> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -295,7 +295,7 @@ class AgentConfig_Hook$Type extends MessageType<AgentConfig_Hook> {
   internalBinaryWrite(
     message: AgentConfig_Hook,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* string name = 1; */
     if (message.name !== "")
@@ -308,7 +308,7 @@ class AgentConfig_Hook$Type extends MessageType<AgentConfig_Hook> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -338,7 +338,7 @@ class AgentMode$Type extends MessageType<AgentMode> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: AgentMode
+    target?: AgentMode,
   ): AgentMode {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -352,7 +352,7 @@ class AgentMode$Type extends MessageType<AgentMode> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -361,7 +361,7 @@ class AgentMode$Type extends MessageType<AgentMode> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -370,7 +370,7 @@ class AgentMode$Type extends MessageType<AgentMode> {
   internalBinaryWrite(
     message: AgentMode,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* bool training = 1; */
     if (message.training !== false)
@@ -380,7 +380,7 @@ class AgentMode$Type extends MessageType<AgentMode> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -410,7 +410,7 @@ class ModelWeights$Type extends MessageType<ModelWeights> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: ModelWeights
+    target?: ModelWeights,
   ): ModelWeights {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -424,7 +424,7 @@ class ModelWeights$Type extends MessageType<ModelWeights> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -433,7 +433,7 @@ class ModelWeights$Type extends MessageType<ModelWeights> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -442,7 +442,7 @@ class ModelWeights$Type extends MessageType<ModelWeights> {
   internalBinaryWrite(
     message: ModelWeights,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* bytes weights = 1; */
     if (message.weights.length)
@@ -452,7 +452,7 @@ class ModelWeights$Type extends MessageType<ModelWeights> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -482,7 +482,7 @@ class ModelBuffer$Type extends MessageType<ModelBuffer> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: ModelBuffer
+    target?: ModelBuffer,
   ): ModelBuffer {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -496,7 +496,7 @@ class ModelBuffer$Type extends MessageType<ModelBuffer> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -505,7 +505,7 @@ class ModelBuffer$Type extends MessageType<ModelBuffer> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -514,7 +514,7 @@ class ModelBuffer$Type extends MessageType<ModelBuffer> {
   internalBinaryWrite(
     message: ModelBuffer,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* bytes buffer = 1; */
     if (message.buffer.length)
@@ -524,7 +524,7 @@ class ModelBuffer$Type extends MessageType<ModelBuffer> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }
@@ -554,7 +554,7 @@ class ModelStatus$Type extends MessageType<ModelStatus> {
     reader: IBinaryReader,
     length: number,
     options: BinaryReadOptions,
-    target?: ModelStatus
+    target?: ModelStatus,
   ): ModelStatus {
     let message = target ?? this.create(),
       end = reader.pos + length;
@@ -568,7 +568,7 @@ class ModelStatus$Type extends MessageType<ModelStatus> {
           let u = options.readUnknownField;
           if (u === "throw")
             throw new globalThis.Error(
-              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`
+              `Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`,
             );
           let d = reader.skip(wireType);
           if (u !== false)
@@ -577,7 +577,7 @@ class ModelStatus$Type extends MessageType<ModelStatus> {
               message,
               fieldNo,
               wireType,
-              d
+              d,
             );
       }
     }
@@ -586,7 +586,7 @@ class ModelStatus$Type extends MessageType<ModelStatus> {
   internalBinaryWrite(
     message: ModelStatus,
     writer: IBinaryWriter,
-    options: BinaryWriteOptions
+    options: BinaryWriteOptions,
   ): IBinaryWriter {
     /* string status = 1; */
     if (message.status !== "")
@@ -596,7 +596,7 @@ class ModelStatus$Type extends MessageType<ModelStatus> {
       (u == true ? UnknownFieldHandler.onWrite : u)(
         this.typeName,
         message,
-        writer
+        writer,
       );
     return writer;
   }

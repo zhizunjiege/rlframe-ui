@@ -30,7 +30,7 @@ export interface IAgentClient {
    */
   resetService(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, CommonResponse>;
   /**
    * query agent service state
@@ -39,7 +39,7 @@ export interface IAgentClient {
    */
   queryService(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, ServiceState>;
   /**
    * get agent configs
@@ -48,7 +48,7 @@ export interface IAgentClient {
    */
   getAgentConfig(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, AgentConfig>;
   /**
    * set agent configs
@@ -57,7 +57,7 @@ export interface IAgentClient {
    */
   setAgentConfig(
     input: AgentConfig,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<AgentConfig, CommonResponse>;
   /**
    * get agent mode
@@ -66,7 +66,7 @@ export interface IAgentClient {
    */
   getAgentMode(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, AgentMode>;
   /**
    * set agent mode
@@ -75,7 +75,7 @@ export interface IAgentClient {
    */
   setAgentMode(
     input: AgentMode,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<AgentMode, CommonResponse>;
   /**
    * get model weights
@@ -84,7 +84,7 @@ export interface IAgentClient {
    */
   getModelWeights(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, ModelWeights>;
   /**
    * set model weights
@@ -93,7 +93,7 @@ export interface IAgentClient {
    */
   setModelWeights(
     input: ModelWeights,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ModelWeights, CommonResponse>;
   /**
    * get model buffer
@@ -102,7 +102,7 @@ export interface IAgentClient {
    */
   getModelBuffer(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, ModelBuffer>;
   /**
    * set model buffer
@@ -111,7 +111,7 @@ export interface IAgentClient {
    */
   setModelBuffer(
     input: ModelBuffer,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ModelBuffer, CommonResponse>;
   /**
    * get model status
@@ -120,7 +120,7 @@ export interface IAgentClient {
    */
   getModelStatus(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, ModelStatus>;
   /**
    * set model status
@@ -129,7 +129,7 @@ export interface IAgentClient {
    */
   setModelStatus(
     input: ModelStatus,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ModelStatus, CommonResponse>;
   /**
    * get action
@@ -159,7 +159,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
    */
   resetService(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, CommonResponse> {
     const method = this.methods[0],
       opt = this._transport.mergeOptions(options);
@@ -168,7 +168,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -178,7 +178,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
    */
   queryService(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, ServiceState> {
     const method = this.methods[1],
       opt = this._transport.mergeOptions(options);
@@ -187,7 +187,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -197,7 +197,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
    */
   getAgentConfig(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, AgentConfig> {
     const method = this.methods[2],
       opt = this._transport.mergeOptions(options);
@@ -206,7 +206,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -216,7 +216,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
    */
   setAgentConfig(
     input: AgentConfig,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<AgentConfig, CommonResponse> {
     const method = this.methods[3],
       opt = this._transport.mergeOptions(options);
@@ -225,7 +225,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -235,7 +235,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
    */
   getAgentMode(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, AgentMode> {
     const method = this.methods[4],
       opt = this._transport.mergeOptions(options);
@@ -244,7 +244,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -254,7 +254,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
    */
   setAgentMode(
     input: AgentMode,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<AgentMode, CommonResponse> {
     const method = this.methods[5],
       opt = this._transport.mergeOptions(options);
@@ -263,7 +263,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -273,7 +273,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
    */
   getModelWeights(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, ModelWeights> {
     const method = this.methods[6],
       opt = this._transport.mergeOptions(options);
@@ -282,7 +282,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -292,7 +292,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
    */
   setModelWeights(
     input: ModelWeights,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ModelWeights, CommonResponse> {
     const method = this.methods[7],
       opt = this._transport.mergeOptions(options);
@@ -301,7 +301,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -311,7 +311,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
    */
   getModelBuffer(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, ModelBuffer> {
     const method = this.methods[8],
       opt = this._transport.mergeOptions(options);
@@ -320,7 +320,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -330,7 +330,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
    */
   setModelBuffer(
     input: ModelBuffer,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ModelBuffer, CommonResponse> {
     const method = this.methods[9],
       opt = this._transport.mergeOptions(options);
@@ -339,7 +339,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -349,7 +349,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
    */
   getModelStatus(
     input: CommonRequest,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<CommonRequest, ModelStatus> {
     const method = this.methods[10],
       opt = this._transport.mergeOptions(options);
@@ -358,7 +358,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -368,7 +368,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
    */
   setModelStatus(
     input: ModelStatus,
-    options?: RpcOptions
+    options?: RpcOptions,
   ): UnaryCall<ModelStatus, CommonResponse> {
     const method = this.methods[11],
       opt = this._transport.mergeOptions(options);
@@ -377,7 +377,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
   /**
@@ -392,7 +392,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       "duplex",
       this._transport,
       method,
-      opt
+      opt,
     );
   }
   /**
@@ -408,7 +408,7 @@ export class AgentClient implements IAgentClient, ServiceInfo {
       this._transport,
       method,
       opt,
-      input
+      input,
     );
   }
 }

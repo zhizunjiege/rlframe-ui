@@ -76,7 +76,7 @@
               </td>
               <td v-else-if="hypers.policy === 'multi-discrete'">
                 <q-input
-                  v-for="(dim, index) in (hypers.act_dim as number[])"
+                  v-for="(dim, index) in hypers.act_dim as number[]"
                   :key="index"
                   v-model.number="(hypers.act_dim as number[])[index]"
                   dense
@@ -124,7 +124,7 @@
                 <q-markup-table flat separator="none" class="hybrid-table">
                   <tbody>
                     <tr
-                      v-for="(action1, index1) in (hypers.act_dim as number[][])"
+                      v-for="(action1, index1) in hypers.act_dim as number[][]"
                       :key="index1"
                     >
                       <td v-for="(action2, index2) in action1" :key="index2">
@@ -446,20 +446,24 @@ function policyChanged(policy: string) {
   }
 }
 
-const form = ref<Nullable<HTMLFormElement>>(null);
-function submit() {
-  if (!form.value!.reportValidity()) {
-    return;
-  }
-  update();
-}
 function update() {
   if (hypers.value.seed === "") {
     hypers.value.seed = null;
   }
   emits("update:modelValue", JSON.stringify(hypers.value));
 }
-watch(() => hypers.value, submit, { deep: true });
+
+const form = ref<Nullable<HTMLFormElement>>(null);
+watch(
+  () => hypers.value,
+  () => {
+    if (form.value && !form.value.reportValidity()) {
+      return;
+    }
+    update();
+  },
+  { deep: true },
+);
 
 (() => {
   if (props.modelValue && props.modelValue !== "{}") {

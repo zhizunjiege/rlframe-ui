@@ -28,6 +28,7 @@
                 popup-content-class="bg-secondary"
                 class="ui-input"
                 @new-value="newvalFunc"
+                @update:model-value="updateFunc"
               />
             </td>
           </tr>
@@ -41,17 +42,31 @@
         label="算法参数"
         header-class="q-px-lg bg-secondary text-subtitle2"
       >
-        <div v-if="rlModels.includes(agent.name)" class="full-width">
+        <div v-if="predefined && !editable" class="full-width">
           <component
             :is="getModelAsyncComp(agent.name)"
             v-model="agent.hypers"
-            v-memo="[agent.name]"
+            v-memo="[memoKey]"
           />
         </div>
         <div v-else class="full-width">
           <div class="full-width ui-editor">
             <monaco-editor v-model="agent.hypers" language="json" />
           </div>
+        </div>
+        <div v-show="predefined" class="full-width q-pa-md">
+          <q-btn
+            :icon="'bi-toggle-' + (editable ? 'on' : 'off')"
+            flat
+            dense
+            square
+            class="full-width bg-secondary ui-clickable"
+            @click="modeFunc"
+          >
+            <q-tooltip anchor="top middle" self="bottom middle">
+              切换编辑模式
+            </q-tooltip>
+          </q-btn>
         </div>
       </q-expansion-item>
     </q-card-section>
@@ -174,7 +189,7 @@ const agent = taskStore.task!.agents[index.value];
 const currentModels = ref(deepCopy(rlModels));
 async function newvalFunc(
   val: string,
-  done?: (v?: string, m?: "toggle" | "add" | "add-unique") => void
+  done?: (v?: string, m?: "toggle" | "add" | "add-unique") => void,
 ) {
   if (val?.length > 0) {
     if (!currentModels.value.includes(val)) {
@@ -187,8 +202,21 @@ newvalFunc(agent.name);
 
 function getModelAsyncComp(name: string) {
   return defineAsyncComponent(
-    () => import(`../../../../plugins/models/${name.toLowerCase()}/configs.vue`)
+    () =>
+      import(`../../../../plugins/models/${name.toLowerCase()}/configs.vue`),
   );
+}
+
+const predefined = computed(() => rlModels.includes(agent.name));
+const editable = ref(false);
+const memoKey = ref(0);
+function updateFunc() {
+  agent.hypers = "{}";
+  memoKey.value++;
+}
+function modeFunc() {
+  editable.value = !editable.value;
+  memoKey.value++;
 }
 
 type Hooks = {
@@ -200,16 +228,10 @@ const hooks = reactive<Hooks[]>(JSON.parse(agent.hooks));
 
 function getHookAsyncComp(name: string) {
   return defineAsyncComponent(
-    () => import(`../../../../plugins/hooks/${name.toLowerCase()}.vue`)
+    () => import(`../../../../plugins/hooks/${name.toLowerCase()}.vue`),
   );
 }
 
-watch(
-  () => agent.name,
-  () => {
-    agent.hypers = "{}";
-  }
-);
 watch(hooks, () => {
   agent.hooks = JSON.stringify(hooks);
 });

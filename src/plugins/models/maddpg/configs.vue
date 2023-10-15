@@ -429,20 +429,24 @@ const hypers = ref<MADDPGHypers>({
   seed: null,
 });
 
-const form = ref<Nullable<HTMLFormElement>>(null);
-function submit() {
-  if (!form.value!.reportValidity()) {
-    return;
-  }
-  update();
-}
 function update() {
   if (hypers.value.seed === "") {
     hypers.value.seed = null;
   }
   emits("update:modelValue", JSON.stringify(hypers.value));
 }
-watch(() => hypers.value, submit, { deep: true });
+
+const form = ref<Nullable<HTMLFormElement>>(null);
+watch(
+  () => hypers.value,
+  () => {
+    if (form.value && !form.value.reportValidity()) {
+      return;
+    }
+    update();
+  },
+  { deep: true },
+);
 
 (() => {
   if (props.modelValue && props.modelValue !== "{}") {

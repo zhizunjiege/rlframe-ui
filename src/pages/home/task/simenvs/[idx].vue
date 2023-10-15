@@ -17,6 +17,7 @@
                 popup-content-class="bg-secondary"
                 class="ui-input"
                 @new-value="newvalFunc"
+                @update:model-value="updateFunc"
               />
             </td>
           </tr>
@@ -30,17 +31,31 @@
         label="引擎参数"
         header-class="q-px-lg bg-secondary text-subtitle2"
       >
-        <div v-if="simEngines.includes(simenv.name)" class="full-width">
+        <div v-if="predefined && !editable" class="full-width">
           <component
             :is="getAsyncComp(simenv.name)"
             v-model="simenv.args"
-            v-memo="[simenv.name]"
+            v-memo="[memoKey]"
           />
         </div>
         <div v-else class="full-width">
           <div class="full-width ui-editor">
             <monaco-editor v-model="simenv.args" language="json" />
           </div>
+        </div>
+        <div v-show="predefined" class="full-width q-pa-md">
+          <q-btn
+            :icon="'bi-toggle-' + (editable ? 'on' : 'off')"
+            flat
+            dense
+            square
+            class="full-width bg-secondary ui-clickable"
+            @click="modeFunc"
+          >
+            <q-tooltip anchor="top middle" self="bottom middle">
+              切换编辑模式
+            </q-tooltip>
+          </q-btn>
         </div>
       </q-expansion-item>
     </q-card-section>
@@ -63,7 +78,7 @@ const simenv = taskStore.task!.simenvs[index.value];
 const currentEngines = ref(deepCopy(simEngines));
 async function newvalFunc(
   val: string,
-  done?: (v?: string, m?: "toggle" | "add" | "add-unique") => void
+  done?: (v?: string, m?: "toggle" | "add" | "add-unique") => void,
 ) {
   if (val?.length > 0) {
     if (!currentEngines.value.includes(val)) {
@@ -77,8 +92,20 @@ newvalFunc(simenv.name);
 function getAsyncComp(name: string) {
   return defineAsyncComponent(
     () =>
-      import(`../../../../plugins/engines/${name.toLowerCase()}/configs.vue`)
+      import(`../../../../plugins/engines/${name.toLowerCase()}/configs.vue`),
   );
+}
+
+const predefined = computed(() => simEngines.includes(simenv.name));
+const editable = ref(false);
+const memoKey = ref(0);
+function updateFunc() {
+  simenv.args = "{}";
+  memoKey.value++;
+}
+function modeFunc() {
+  editable.value = !editable.value;
+  memoKey.value++;
 }
 </script>
 

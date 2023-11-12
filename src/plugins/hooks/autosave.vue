@@ -29,6 +29,36 @@
       />
     </td>
   </tr>
+  <tr>
+    <td>保存权重</td>
+    <td>
+      <q-checkbox
+        v-model="args.save_weights"
+        class="float-right"
+        @blur="update"
+      />
+    </td>
+  </tr>
+  <tr>
+    <td>保存经验</td>
+    <td>
+      <q-checkbox
+        v-model="args.save_buffer"
+        class="float-right"
+        @blur="update"
+      />
+    </td>
+  </tr>
+  <tr>
+    <td>保存状态</td>
+    <td>
+      <q-checkbox
+        v-model="args.save_status"
+        class="float-right"
+        @blur="update"
+      />
+    </td>
+  </tr>
 </template>
 
 <script setup lang="ts">
@@ -37,6 +67,9 @@ import { deepCopy, isEmpty } from "~/utils";
 type AutoSaveArgs = {
   per_steps: number;
   per_episodes: number;
+  save_weights: boolean;
+  save_buffer: boolean;
+  save_status: boolean;
 };
 
 const props = defineProps<{
@@ -49,6 +82,9 @@ const emits = defineEmits<{
 const args = ref<AutoSaveArgs>({
   per_steps: 10000,
   per_episodes: 100,
+  save_weights: true,
+  save_buffer: false,
+  save_status: false,
 });
 
 function update() {

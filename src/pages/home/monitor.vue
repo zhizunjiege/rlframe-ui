@@ -96,27 +96,34 @@
               <q-btn :disable="running" label="加载状态" @click="loadStatus" />
               <q-btn :disable="running" label="保存状态" @click="saveStatus" />
             </q-btn-group>
-            <q-input
-              v-model="tensorboardPort"
-              dense
-              standout="bg-ignore"
-              input-class="text-foreground"
-              class="full-width"
-            >
-              <template #after>
-                <q-btn
-                  round
-                  icon="bi-fonts"
-                  color="secondary"
-                  text-color="accent"
-                  @click="openTensorboard"
-                >
-                  <q-tooltip anchor="top middle" self="center middle">
-                    打开Tensorboard窗口
-                  </q-tooltip>
-                </q-btn>
-              </template>
-            </q-input>
+            <div class="row flex-center">
+              <q-btn
+                :disable="(service as AgentTable).training === 0"
+                label="切换训练模式"
+                class="col-6"
+                @click="switchTrainingMode"
+              />
+              <q-input
+                v-model.number="tensorboardPort"
+                dense
+                filled
+                class="col-6"
+              >
+                <template #after>
+                  <q-btn
+                    round
+                    icon="bi-fonts"
+                    color="secondary"
+                    text-color="accent"
+                    @click="openTensorboard"
+                  >
+                    <q-tooltip anchor="top middle" self="center middle">
+                      打开Tensorboard窗口
+                    </q-tooltip>
+                  </q-btn>
+                </template>
+              </q-input>
+            </div>
           </q-card-section>
         </template>
         <template v-if="simenvs.includes(service as SimenvTable)">
@@ -731,6 +738,25 @@ async function saveStatus() {
   running.value = false;
 }
 
+async function switchTrainingMode() {
+  running.value = true;
+  try {
+    const modes = await appStore.grpc!.getAgentMode({
+      ids: [service.value!.server],
+    });
+    const training = !modes.response.modes[service.value!.server].training;
+    await appStore.grpc!.setAgentMode({
+      modes: {
+        [service.value!.server]: { training },
+      },
+    });
+    addMsg(`切换训练模式为：${training}`);
+  } catch (e) {
+    addMsg("切换训练模式失败：" + e, "negative");
+  }
+  running.value = false;
+}
+
 const tensorboardPort = ref(6006);
 function openTensorboard() {
   const agent = appStore.services.find(
@@ -738,6 +764,7 @@ function openTensorboard() {
   );
   const url = `http://${agent!.host}:${tensorboardPort.value}`;
   window.open(url, "_blank");
+  addMsg(`打开Tensorboard窗口：${url}`);
 }
 
 // -----------------------------------------------

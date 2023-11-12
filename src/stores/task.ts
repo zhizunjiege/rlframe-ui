@@ -79,6 +79,7 @@ export const useTaskStore = defineStore("task", {
           if (agent.id < 0) {
             agent.id = ids.agents[i];
             agent.create_time = timestamp;
+            agent.task = this.task.task.id;
           }
           agent.update_time = timestamp;
         }
@@ -88,6 +89,7 @@ export const useTaskStore = defineStore("task", {
           if (simenv.id < 0) {
             simenv.id = ids.simenvs[i];
             simenv.create_time = timestamp;
+            simenv.task = this.task.task.id;
           }
           simenv.update_time = timestamp;
         }

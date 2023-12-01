@@ -46,14 +46,6 @@ const router = useRouter();
 
 const taskStore = useTaskStore();
 
-if (!taskStore.task) {
-  $q.notify({
-    type: "warning",
-    message: "暂无任务",
-  });
-  router.push("/home");
-}
-
 const step = ref("");
 
 const steps = [
@@ -77,6 +69,16 @@ watch(
     deep: true,
   },
 );
+
+onActivated(() => {
+  if (!taskStore.task) {
+    $q.notify({
+      type: "warning",
+      message: "暂无任务",
+    });
+    router.push("/home");
+  }
+});
 </script>
 
 <style scoped lang="scss"></style>

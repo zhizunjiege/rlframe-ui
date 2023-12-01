@@ -127,7 +127,7 @@ async function openTask(index: number) {
 }
 .ui-index-row {
   &:hover {
-    background-color: var(--ui-primary);
+    background-color: var(--ui-secondary);
   }
 }
 </style>
